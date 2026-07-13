@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import ClientWrapper from "./components/ClientWrapper";
 
-const montserrat = Montserrat({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "ThinkDocs | Gestão da Qualidade",
@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={montserrat.className}>
+      <body className={inter.className}>
         <ClientWrapper>
           {children}
         </ClientWrapper>

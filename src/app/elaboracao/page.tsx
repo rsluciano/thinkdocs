@@ -187,6 +187,8 @@ function ElaboracaoContent() {
 
   return (
     <div className="animate-fade-in">
+    <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>← Voltar ao Dashboard</button>
+
       <h1 className="text-3xl font-bold" style={{ marginBottom: '0.5rem' }}>
         {devolvidoId ? 'Correção de Documento Devolvido' : (revisaoId ? 'Revisão de Documento' : 'Elaboração de Documentos')}
       </h1>

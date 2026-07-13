@@ -110,6 +110,8 @@ export default function SetoresPage() {
 
   return (
     <div className="animate-fade-in">
+    <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>← Voltar ao Dashboard</button>
+
       <div style={{ marginBottom: '2rem' }}>
         <h1 className="text-3xl font-bold">Setores</h1>
         <p className="text-muted" style={{ marginTop: '0.5rem' }}>Navegue pelos documentos do sistema separados por área/setor de aplicação.</p>
