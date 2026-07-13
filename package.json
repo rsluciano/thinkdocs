@@ -1,10 +1,10 @@
 {
   "name": "thinkdocs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "rm -rf .next && next build",
     "start": "next start",
     "lint": "echo 'Lint ignorado'",
     "postinstall": "prisma generate"
