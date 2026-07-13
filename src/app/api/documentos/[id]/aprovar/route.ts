@@ -101,6 +101,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ message: `Documento marcado como ${status}`, documento: updatedDoc }, { status: 200 });
 
   } catch (error: any) {
-    return NextResponse.json({ error: "Erro interno ao atualizar documento" }, { status: 500 });
+    console.error("ERRO NO APROVAR:", error);
+    return NextResponse.json({ error: "Erro interno ao atualizar documento", details: error.message || error.toString() }, { status: 500 });
   }
 }

@@ -54,7 +54,7 @@ export default function Aprovacoes() {
     }
 
     try {
-      const res = await fetch(`/api/documentos/${id}/aprovar`, {
+      const res = await fetch(`/api/documentos/${id}/avaliar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status, aprovadorNome: user.nome, motivoReprovacao })
@@ -65,7 +65,7 @@ export default function Aprovacoes() {
         setDocumentos((prev) => prev.filter((d) => d.id !== id));
       } else {
         const errData = await res.json().catch(() => ({}));
-        alert(`Falha ao processar avaliação. Detalhes: ${errData.details || errData.error || 'Erro desconhecido'}`);
+        alert(`NOVO ERRO AVALIACAO: ${errData.details || errData.error || 'Erro desconhecido'}`);
       }
     } catch (err) {
       alert('Erro de conexão.');
