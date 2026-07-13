@@ -34,4 +34,7 @@ model Documento {
   status             String
   revisao            Int      @default(1)
   motivoReprovacao   String?
+  aprovadoPor        String?
+  dataAprovacao      DateTime?
+  dataObsoletado     DateTime?
 }

@@ -54,7 +54,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     });
 
     if (status === "Reprovado" && motivoReprovacao) {
-      const autorUsuario = await prisma.usuario.findFirst({ where: { nome: doc.autorNome, empresaId: doc.empresaId } });
+      const autorUsuario = await prisma.usuario.findFirst({ where: { nome: doc.autor, empresaId: doc.empresaId } });
       if (autorUsuario && autorUsuario.email) {
         await emailService.notificarDevolucao(
           autorUsuario.email,
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       }
     } else if (status === "Vigente") {
       // (Opcional) Notificar que foi aprovado (Autor)
-      const autorUsuario = await prisma.usuario.findFirst({ where: { nome: doc.autorNome, empresaId: doc.empresaId } });
+      const autorUsuario = await prisma.usuario.findFirst({ where: { nome: doc.autor, empresaId: doc.empresaId } });
       if (autorUsuario && autorUsuario.email) {
         await emailService.sendEmail({
           to: autorUsuario.email,
