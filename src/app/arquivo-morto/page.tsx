@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -10,7 +10,7 @@ export default function ArquivoMorto() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
 
-  // Auth Check Simples (Protótipo)
+  // Auth Check Simples (ProtÃ³tipo)
   useEffect(() => {
     const savedUser = localStorage.getItem('thinkdocs_user');
     if (!savedUser) {
@@ -36,7 +36,7 @@ export default function ArquivoMorto() {
     }
   };
 
-  // Função para calcular o status e a cor com base na data de validade
+  // FunÃ§Ã£o para calcular o status e a cor com base na data de validade
   const getStatusInfo = (validadeStr: string | null) => {
     if (!validadeStr) return { label: 'Sem Validade', bg: '#f1f5f9', text: '#475569' };
 
@@ -67,10 +67,12 @@ export default function ArquivoMorto() {
 
   return (
     <div className="animate-fade-in">
+    <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>← Voltar ao Dashboard</button>
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
-          <h1 className="text-3xl font-bold">Arquivo Morto (Histórico)</h1>
-          <p className="text-muted" style={{ marginTop: '0.5rem' }}>Visualizando o histórico de documentos obsoletos que já foram substituídos.</p>
+          <h1 className="text-3xl font-bold">Arquivo Morto (HistÃ³rico)</h1>
+          <p className="text-muted" style={{ marginTop: '0.5rem' }}>Visualizando o histÃ³rico de documentos obsoletos que jÃ¡ foram substituÃ­dos.</p>
         </div>
       </div>
 
@@ -78,19 +80,19 @@ export default function ArquivoMorto() {
         {loading ? (
           <div style={{ padding: '2rem', textAlign: 'center' }}>Carregando Lista Mestra...</div>
         ) : documentos.length === 0 ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--muted)' }}>Nenhum documento obsoleto encontrado no histórico.</div>
+          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--muted)' }}>Nenhum documento obsoleto encontrado no histÃ³rico.</div>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid var(--border)' }}>
-                <th style={{ padding: '1rem' }}>Código</th>
-                <th style={{ padding: '1rem' }}>Título</th>
+                <th style={{ padding: '1rem' }}>CÃ³digo</th>
+                <th style={{ padding: '1rem' }}>TÃ­tulo</th>
                 <th style={{ padding: '1rem' }}>Categoria</th>
-                <th style={{ padding: '1rem' }}>Revisão</th>
+                <th style={{ padding: '1rem' }}>RevisÃ£o</th>
                 <th style={{ padding: '1rem' }}>Datas</th>
                 <th style={{ padding: '1rem' }}>Autor/Aprovador</th>
                 <th style={{ padding: '1rem' }}>Status</th>
-                <th style={{ padding: '1rem' }}>Ações</th>
+                <th style={{ padding: '1rem' }}>AÃ§Ãµes</th>
               </tr>
             </thead>
             <tbody>
@@ -102,7 +104,7 @@ export default function ArquivoMorto() {
                   <td style={{ padding: '1rem', textAlign: 'center' }}>v{doc.revisao}</td>
                   <td style={{ padding: '1rem', fontSize: '0.85rem' }}>
                     <div style={{ marginBottom: '0.2rem' }}>
-                      <span style={{ fontWeight: 'bold' }}>Vigência:</span> {doc.dataAtualizacao ? new Date(doc.dataAtualizacao).toLocaleDateString('pt-BR') : 'N/D'}
+                      <span style={{ fontWeight: 'bold' }}>VigÃªncia:</span> {doc.dataAtualizacao ? new Date(doc.dataAtualizacao).toLocaleDateString('pt-BR') : 'N/D'}
                     </div>
                     <div>
                       <span style={{ fontWeight: 'bold' }}>Vencimento:</span> {doc.dataVencimento ? new Date(doc.dataVencimento).toLocaleDateString('pt-BR') : 'N/D'}
@@ -132,7 +134,7 @@ export default function ArquivoMorto() {
                   <td style={{ padding: '1rem' }}>
                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                       <a href={`/api/download?empresa=${user?.empresaId}&categoria=${doc.categoria}&file=${doc.arquivoUrl}`} target="_blank" rel="noreferrer" style={{ padding: '0.4rem 0.8rem', textDecoration: 'none', backgroundColor: 'var(--primary)', color: 'white', fontWeight: 'bold', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}>
-                        Visualizar Histórico
+                        Visualizar HistÃ³rico
                       </a>
                     </div>
                   </td>
@@ -145,3 +147,4 @@ export default function ArquivoMorto() {
     </div>
   );
 }
+

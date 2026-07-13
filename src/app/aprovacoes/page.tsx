@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -18,7 +18,7 @@ export default function Aprovacoes() {
     } else {
       const parsedUser = JSON.parse(savedUser);
       setUser(parsedUser);
-      // Simulação: Só Gestores, Diretores ou Administradores podem acessar a caixa de entrada
+      // SimulaÃ§Ã£o: SÃ³ Gestores, Diretores ou Administradores podem acessar a caixa de entrada
       if (!['Diretor', 'Gestor da Qualidade', 'Administrador'].includes(parsedUser.funcao)) {
         router.push('/');
       } else {
@@ -29,7 +29,7 @@ export default function Aprovacoes() {
 
   const carregarDocumentos = async (empresaId: string) => {
     try {
-      const res = await fetch(`/api/documentos?status=Aguardando Aprovação&empresaId=${empresaId}`);
+      const res = await fetch(`/api/documentos?status=Aguardando AprovaÃ§Ã£o&empresaId=${empresaId}`);
       const data = await res.json();
       if (res.ok) {
         const sortedData = data.sort((a: any, b: any) => new Date(a.dataEnvio).getTime() - new Date(b.dataEnvio).getTime());
@@ -46,10 +46,10 @@ export default function Aprovacoes() {
     let motivoReprovacao = undefined;
 
     if (status === 'Reprovado') {
-      const motivo = window.prompt('Qual o motivo da reprovação? (Isso será mostrado ao autor)');
+      const motivo = window.prompt('Qual o motivo da reprovaÃ§Ã£o? (Isso serÃ¡ mostrado ao autor)');
       if (motivo === null) return; // Clicou em cancelar
       if (motivo.trim() === '') {
-        alert('O motivo é obrigatório para devolver um documento.');
+        alert('O motivo Ã© obrigatÃ³rio para devolver um documento.');
         return;
       }
       motivoReprovacao = motivo;
@@ -70,12 +70,12 @@ export default function Aprovacoes() {
         alert(`NOVO ERRO AVALIACAO: ${errData.details || errData.error || 'Erro desconhecido'}`);
       }
     } catch (err) {
-      alert('Erro de conexão.');
+      alert('Erro de conexÃ£o.');
     }
   };
 
   const excluirDocumento = async (id: string) => {
-    if (!window.confirm('Tem certeza que deseja excluir este documento permanentemente? Esta ação não pode ser desfeita.')) {
+    if (!window.confirm('Tem certeza que deseja excluir este documento permanentemente? Esta aÃ§Ã£o nÃ£o pode ser desfeita.')) {
       return;
     }
     try {
@@ -86,23 +86,25 @@ export default function Aprovacoes() {
         alert('Falha ao excluir documento.');
       }
     } catch (err) {
-      alert('Erro de conexão ao excluir.');
+      alert('Erro de conexÃ£o ao excluir.');
     }
   };
 
-  if (!user || loading) return <div style={{ padding: '2rem' }}>Carregando fila de aprovações...</div>;
+  if (!user || loading) return <div style={{ padding: '2rem' }}>Carregando fila de aprovaÃ§Ãµes...</div>;
 
   return (
     <div className="animate-fade-in">
-      <h1 className="text-3xl font-bold" style={{ marginBottom: '0.5rem' }}>Caixa de Entrada (Aprovações)</h1>
+    <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>← Voltar ao Dashboard</button>
+
+      <h1 className="text-3xl font-bold" style={{ marginBottom: '0.5rem' }}>Caixa de Entrada (AprovaÃ§Ãµes)</h1>
       <p className="text-muted" style={{ marginBottom: '2rem' }}>
-        Analise os documentos enviados pela equipe e defina se estão prontos para a Lista Mestra.
+        Analise os documentos enviados pela equipe e defina se estÃ£o prontos para a Lista Mestra.
       </p>
 
       {documentos.length === 0 ? (
         <div className="card" style={{ textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Tudo limpo! 🎉</h2>
-          <p>Não há nenhum documento aguardando sua aprovação no momento.</p>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Tudo limpo! ðŸŽ‰</h2>
+          <p>NÃ£o hÃ¡ nenhum documento aguardando sua aprovaÃ§Ã£o no momento.</p>
         </div>
       ) : (
         <div style={{ display: 'grid', gap: '1rem' }}>
@@ -134,19 +136,19 @@ export default function Aprovacoes() {
                   onClick={() => avaliarDocumento(doc.id, 'Vigente')}
                   style={{ padding: '0.5rem 1rem', backgroundColor: '#16a34a', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}
                 >
-                  ✅ Aprovar e Publicar
+                  âœ… Aprovar e Publicar
                 </button>
                 <button 
                   onClick={() => avaliarDocumento(doc.id, 'Reprovado')}
                   style={{ padding: '0.5rem 1rem', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}
                 >
-                  ❌ Reprovar (Devolver)
+                  âŒ Reprovar (Devolver)
                 </button>
                 <button 
                   onClick={() => excluirDocumento(doc.id)}
                   style={{ padding: '0.5rem 1rem', backgroundColor: '#dc2626', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}
                 >
-                  🗑️ Excluir
+                  ðŸ—‘ï¸ Excluir
                 </button>
               </div>
             </div>
@@ -156,3 +158,4 @@ export default function Aprovacoes() {
     </div>
   );
 }
+
