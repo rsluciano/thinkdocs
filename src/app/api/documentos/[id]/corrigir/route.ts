@@ -24,7 +24,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         codigo: codigo || undefined,
         titulo: titulo || undefined,
         categoria: categoria || undefined,
-        setor: setor || undefined,
+        setor: setor ? (Array.isArray(setor) ? setor.join(', ') : setor) : undefined,
         arquivoUrl: arquivo || undefined,
         dataAtualizacao: dataAtualizacao ? new Date(dataAtualizacao) : undefined,
         dataVencimento: dataProximaAtualizacao ? new Date(dataProximaAtualizacao) : undefined,
@@ -42,6 +42,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     }, { status: 200 });
 
   } catch (error: any) {
-    return NextResponse.json({ error: 'Erro interno ao atualizar documento' }, { status: 500 });
+    console.error("ERRO NO CORRIGIR:", error);
+    return NextResponse.json({ error: 'Erro interno ao atualizar documento', details: error.message || error.toString() }, { status: 500 });
   }
 }
