@@ -64,7 +64,8 @@ export default function Aprovacoes() {
         // Remove da lista atual
         setDocumentos((prev) => prev.filter((d) => d.id !== id));
       } else {
-        alert('Falha ao processar avaliação.');
+        const errData = await res.json().catch(() => ({}));
+        alert(`Falha ao processar avaliação. Detalhes: ${errData.details || errData.error || 'Erro desconhecido'}`);
       }
     } catch (err) {
       alert('Erro de conexão.');
