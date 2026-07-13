@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -25,33 +24,17 @@ export async function GET(req: NextRequest) {
   else if (catString === 'Procedimentos (POP)') folderCategoria = 'Procedimentos_POP';
   else if (catString === 'Manuais') folderCategoria = 'Manuais';
 
-  const filePath = path.join(process.cwd(), 'uploads', empresa, folderCategoria, fileName);
+  const filePath = `${empresa}/${folderCategoria}/${fileName}`;
 
   try {
-    const fileBuffer = await fs.readFile(filePath);
+    const { data } = supabase.storage.from('documentos').getPublicUrl(filePath);
     
-    // Inferência básica de Content-Type baseada na extensão
-    let contentType = 'application/octet-stream';
-    if (fileName.endsWith('.pdf')) contentType = 'application/pdf';
-    else if (fileName.endsWith('.docx')) contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-    else if (fileName.endsWith('.xlsx')) contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    else if (fileName.endsWith('.doc')) contentType = 'application/msword';
-    else if (fileName.endsWith('.xls')) contentType = 'application/vnd.ms-excel';
-
-    // Para forçar o download no navegador e usar o nome original
-    const originalName = fileName.substring(fileName.indexOf('-') + 1);
-
-    // Define se o arquivo será visualizado no navegador ou baixado
-    const action = searchParams.get('action') || 'view';
-    const disposition = action === 'download' ? 'attachment' : 'inline';
-
-    return new NextResponse(fileBuffer, {
-      headers: {
-        'Content-Type': contentType,
-        'Content-Disposition': `${disposition}; filename="${originalName}"`,
-      },
-    });
+    if (data && data.publicUrl) {
+      return NextResponse.redirect(data.publicUrl);
+    }
+    
+    return new NextResponse('Arquivo não encontrado no storage', { status: 404 });
   } catch (error) {
-    return new NextResponse('Arquivo não encontrado no servidor', { status: 404 });
+    return new NextResponse('Erro ao buscar o arquivo', { status: 500 });
   }
 }
