@@ -32,6 +32,20 @@ export default function Dashboard() {
   const docsVigentes = documentos.filter(d => d.status === 'Vigente');
   const docsAguardando = documentos.filter(d => d.status === 'Aguardando Aprovação');
   const docsEmElaboracao = documentos.filter(d => d.status === 'Rascunho' || d.status === 'Elaboração');
+  const docsDevolvidos = documentos.filter(d => d.status === 'Reprovado');
+
+  // Lógica de Categorias para o Gráfico
+  const categoriasCount = documentos.reduce((acc, doc) => {
+    const cat = doc.categoria || 'Sem Categoria';
+    acc[cat] = (acc[cat] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const categoriasChart = Object.keys(categoriasCount).map(cat => ({
+    categoria: cat,
+    count: categoriasCount[cat],
+    percent: totalDocs > 0 ? ((categoriasCount[cat] / totalDocs) * 100).toFixed(1) : '0.0'
+  })).sort((a, b) => b.count - a.count);
 
   // Lógica de Categorização (Apenas para os Vigentes)
   const hoje = new Date();
@@ -97,22 +111,75 @@ export default function Dashboard() {
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
-        <div className="card" style={{ flex: 1, minWidth: '200px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+        <div className="card hover-scale" style={{ flex: 1, minWidth: '180px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
           <span style={{ color: '#64748b', fontWeight: 'bold' }}>Total de Documentos</span>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0f172a' }}>{totalDocs}</p>
         </div>
-        <div className="card" style={{ flex: 1, minWidth: '200px', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+        <div 
+          className="card hover-scale" 
+          onClick={() => router.push('/lista-mestra')}
+          style={{ flex: 1, minWidth: '180px', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', cursor: 'pointer' }}
+        >
           <span style={{ color: '#166534', fontWeight: 'bold' }}>Aprovados (Vigentes)</span>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#15803d' }}>{docsVigentes.length}</p>
         </div>
-        <div className="card" style={{ flex: 1, minWidth: '200px', backgroundColor: '#fffbeb', border: '1px solid #fde68a' }}>
+        <div 
+          className="card hover-scale" 
+          onClick={() => router.push('/aprovacoes')}
+          style={{ flex: 1, minWidth: '180px', backgroundColor: '#fffbeb', border: '1px solid #fde68a', cursor: 'pointer' }}
+        >
           <span style={{ color: '#b45309', fontWeight: 'bold' }}>Aguardando Aprovação</span>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#d97706' }}>{docsAguardando.length}</p>
         </div>
-        <div className="card" style={{ flex: 1, minWidth: '200px', backgroundColor: '#eff6ff', border: '1px solid #bfdbfe' }}>
+        <div 
+          className="card hover-scale" 
+          onClick={() => router.push('/devolvidos')}
+          style={{ flex: 1, minWidth: '180px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', cursor: 'pointer' }}
+        >
+          <span style={{ color: '#991b1b', fontWeight: 'bold' }}>Devolvidos</span>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#dc2626' }}>{docsDevolvidos.length}</p>
+        </div>
+        <div className="card hover-scale" style={{ flex: 1, minWidth: '180px', backgroundColor: '#eff6ff', border: '1px solid #bfdbfe' }}>
           <span style={{ color: '#1d4ed8', fontWeight: 'bold' }}>Em Elaboração</span>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2563eb' }}>{docsEmElaboracao.length}</p>
         </div>
+      </div>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        .hover-scale {
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hover-scale:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+      `}} />
+
+      <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>Distribuição por Categoria</h2>
+      <div className="card" style={{ marginBottom: '3rem' }}>
+        {categoriasChart.length === 0 ? (
+          <p style={{ color: 'var(--muted)', textAlign: 'center' }}>Nenhum documento encontrado.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {categoriasChart.map((cat, idx) => (
+              <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                  <span>{cat.categoria}</span>
+                  <span style={{ color: 'var(--muted)' }}>{cat.count} docs ({cat.percent}%)</span>
+                </div>
+                <div style={{ width: '100%', backgroundColor: '#e2e8f0', borderRadius: '999px', height: '12px', overflow: 'hidden' }}>
+                  <div style={{ 
+                    height: '100%', 
+                    width: `${cat.percent}%`, 
+                    backgroundColor: 'var(--primary)',
+                    borderRadius: '999px',
+                    transition: 'width 1s ease-in-out'
+                  }}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>Controle de Vencimentos (Vigentes)</h2>
