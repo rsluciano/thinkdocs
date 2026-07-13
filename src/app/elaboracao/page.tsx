@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function Elaboracao() {
+function ElaboracaoContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const revisaoId = searchParams.get('revisao');
@@ -399,5 +399,13 @@ export default function Elaboracao() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function Elaboracao() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <ElaboracaoContent />
+    </Suspense>
   );
 }

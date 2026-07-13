@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 
-export default function NovaSenha() {
+function NovaSenhaContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -142,5 +142,13 @@ export default function NovaSenha() {
 
       </div>
     </div>
+  );
+}
+
+export default function NovaSenha() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <NovaSenhaContent />
+    </Suspense>
   );
 }
