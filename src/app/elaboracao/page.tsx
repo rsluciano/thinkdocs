@@ -128,7 +128,7 @@ function ElaboracaoContent() {
 
       // 2. Registrar no banco com status de workflow
       const endpoint = devolvidoId 
-        ? `/api/documentos/${devolvidoId}/corrigir`
+        ? `/api/documentos/${devolvidoId}/reenviar`
         : (revisaoId ? `/api/documentos/${revisaoId}` : '/api/documentos');
         
       const method = (revisaoId || devolvidoId) ? 'PUT' : 'POST';
@@ -174,7 +174,7 @@ function ElaboracaoContent() {
 
         setFileKey(Date.now());
       } else {
-        setError(docData.error || 'Erro ao registrar documento no fluxo.');
+        setError(`Erro: ${docData.error}. Detalhes: ${docData.details || 'Sem detalhes técnicos'}`);
       }
     } catch (err: any) {
       setError(err.message || 'Erro de conexão.');
