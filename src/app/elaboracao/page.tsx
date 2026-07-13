@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -32,23 +32,23 @@ function ElaboracaoContent() {
     } else {
       const parsedUser = JSON.parse(savedUser);
       
-      const isLeadership = ['Diretor', 'Gestor da Qualidade', 'Administrador', 'ResponsÃ¡vel TÃ©cnico', 'LÃ­der de Setor'].includes(parsedUser.funcao);
+      const isLeadership = ['Diretor', 'Gestor da Qualidade', 'Administrador', 'Responsável Técnico', 'Líder de Setor'].includes(parsedUser.funcao);
       if (!isLeadership) {
         router.push('/');
         return;
       }
       
       const OPTIONS_ALL = [
-        "RecepÃ§Ã£o e Atendimento", "Coleta", "Triagem", "BioquÃ­mica", 
+        "Recepção e Atendimento", "Coleta", "Triagem", "Bioquímica", 
         "Hematologia", "Imunologia", "Microbiologia", 
-        "UrinÃ¡lise", "Parasitologia",
-        "Qualidade", "Faturamento", "TI e Infraestrutura", "Ãrea TÃ©cnica", 
+        "Urinálise", "Parasitologia",
+        "Qualidade", "Faturamento", "TI e Infraestrutura", "Área Técnica", 
         "Administrativo", "Diretoria", "Limpeza", "Geral"
       ];
       
       setUser(parsedUser);
       
-      // Se for modo de revisÃ£o ou correÃ§Ã£o de devolvido, carrega o documento original
+      // Se for modo de revisão ou correção de devolvido, carrega o documento original
       if (revisaoId || devolvidoId) {
         fetch(`/api/documentos?empresaId=${parsedUser.empresaId}&status=${devolvidoId ? 'Reprovado' : 'Vigente'}`)
           .then(res => res.json())
@@ -69,14 +69,14 @@ function ElaboracaoContent() {
               if (doc.dataVencimento) setDataProximaAtualizacao(doc.dataVencimento.split('T')[0]);
               
               if (devolvidoId && doc.motivoReprovacao) {
-                setMessage(`âš ï¸ Motivo da DevoluÃ§Ã£o: ${doc.motivoReprovacao}`);
+                setMessage(`⚠️ Motivo da Devolução: ${doc.motivoReprovacao}`);
               }
             }
           });
       } else {
-        // Novo documento: por padrÃ£o, deixa todos os setores visÃ­veis selecionados
+        // Novo documento: por padrão, deixa todos os setores visíveis selecionados
         const userSetores = parsedUser?.setor?.split(',').map((s: string) => s.trim()) || [];
-        const isLider = parsedUser?.funcao === 'LÃ­der de Setor';
+        const isLider = parsedUser?.funcao === 'Líder de Setor';
         const allowed = OPTIONS_ALL.filter(o => !isLider || o === 'Geral' || userSetores.includes(o));
         setSetoresSelecionados(allowed);
       }
@@ -88,19 +88,19 @@ function ElaboracaoContent() {
     setError('');
     setMessage('');
 
-    // ValidaÃ§Ã£o customizada
+    // Validação customizada
     let missingFields = [];
-    if (!codigo) missingFields.push('CÃ³digo do Documento');
-    if (!titulo) missingFields.push('TÃ­tulo');
-    if (setoresSelecionados.length === 0) missingFields.push('Setores AplicÃ¡veis (selecione pelo menos um)');
-    if (!dataAtualizacao) missingFields.push('Data de AtualizaÃ§Ã£o (VigÃªncia)');
-    if (!dataProximaAtualizacao) missingFields.push('PrÃ³xima AtualizaÃ§Ã£o (Vencimento)');
+    if (!codigo) missingFields.push('Código do Documento');
+    if (!titulo) missingFields.push('Título');
+    if (setoresSelecionados.length === 0) missingFields.push('Setores Aplicáveis (selecione pelo menos um)');
+    if (!dataAtualizacao) missingFields.push('Data de Atualização (Vigência)');
+    if (!dataProximaAtualizacao) missingFields.push('Próxima Atualização (Vencimento)');
     if (!file) missingFields.push('Arquivo do Documento (anexo)');
 
     if (missingFields.length > 0) {
-      const errorMsg = `Preenchimento Incompleto!\n\nPor favor, preencha os seguintes campos obrigatÃ³rios antes de enviar:\n\n- ${missingFields.join('\n- ')}`;
-      alert(errorMsg); // Pop-up nativo solicitado pelo usuÃ¡rio
-      setError('Verifique os campos obrigatÃ³rios e tente novamente.');
+      const errorMsg = `Preenchimento Incompleto!\n\nPor favor, preencha os seguintes campos obrigatórios antes de enviar:\n\n- ${missingFields.join('\n- ')}`;
+      alert(errorMsg); // Pop-up nativo solicitado pelo usuário
+      setError('Verifique os campos obrigatórios e tente novamente.');
       return;
     }
 
@@ -152,32 +152,32 @@ function ElaboracaoContent() {
       const docData = await docRes.json();
 
       if (docRes.ok) {
-        setMessage('Documento enviado para aprovaÃ§Ã£o com sucesso! Nossos gestores jÃ¡ foram notificados.');
+        setMessage('Documento enviado para aprovação com sucesso! Nossos gestores já foram notificados.');
         setCodigo('');
         setTitulo('');
         setFile(null);
         setDataAtualizacao('');
         setDataProximaAtualizacao('');
         
-        // Reseta deixando todos os setores aplicÃ¡veis selecionados
+        // Reseta deixando todos os setores aplicáveis selecionados
         const OPTIONS_ALL = [
-          "RecepÃ§Ã£o e Atendimento", "Coleta", "Triagem", "BioquÃ­mica", 
+          "Recepção e Atendimento", "Coleta", "Triagem", "Bioquímica", 
           "Hematologia", "Imunologia", "Microbiologia", 
-          "UrinÃ¡lise", "Parasitologia",
-          "Qualidade", "Faturamento", "TI e Infraestrutura", "Ãrea TÃ©cnica", 
+          "Urinálise", "Parasitologia",
+          "Qualidade", "Faturamento", "TI e Infraestrutura", "Área Técnica", 
           "Administrativo", "Diretoria", "Limpeza", "Geral"
         ];
         const userSetores = user?.setor?.split(',').map((s: string) => s.trim()) || [];
-        const isLider = user?.funcao === 'LÃ­der de Setor';
+        const isLider = user?.funcao === 'Líder de Setor';
         const allowed = OPTIONS_ALL.filter(o => !isLider || o === 'Geral' || userSetores.includes(o));
         setSetoresSelecionados(allowed);
 
         setFileKey(Date.now());
       } else {
-        setError(`Erro: ${docData.error}. Detalhes: ${docData.details || 'Sem detalhes tÃ©cnicos'}`);
+        setError(`Erro: ${docData.error}. Detalhes: ${docData.details || 'Sem detalhes técnicos'}`);
       }
     } catch (err: any) {
-      setError(err.message || 'Erro de conexÃ£o.');
+      setError(err.message || 'Erro de conexão.');
     } finally {
       setIsSubmitting(false);
     }
@@ -187,27 +187,25 @@ function ElaboracaoContent() {
 
   return (
     <div className="animate-fade-in">
-    <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>← Voltar ao Dashboard</button>
-
       <h1 className="text-3xl font-bold" style={{ marginBottom: '0.5rem' }}>
-        {devolvidoId ? 'CorreÃ§Ã£o de Documento Devolvido' : (revisaoId ? 'RevisÃ£o de Documento' : 'ElaboraÃ§Ã£o de Documentos')}
+        {devolvidoId ? 'Correção de Documento Devolvido' : (revisaoId ? 'Revisão de Documento' : 'Elaboração de Documentos')}
       </h1>
       <p className="text-muted" style={{ marginBottom: '2rem' }}>
         {devolvidoId
-          ? 'Corrija os apontamentos do gestor e reenvie para aprovaÃ§Ã£o.'
+          ? 'Corrija os apontamentos do gestor e reenvie para aprovação.'
           : (revisaoId 
-            ? 'Atualize o arquivo e envie para aprovaÃ§Ã£o de uma nova versÃ£o.' 
-            : 'Inicie um novo rascunho. O documento passarÃ¡ por avaliaÃ§Ã£o antes de ir para a Lista Mestra.')}
+            ? 'Atualize o arquivo e envie para aprovação de uma nova versão.' 
+            : 'Inicie um novo rascunho. O documento passará por avaliação antes de ir para a Lista Mestra.')}
       </p>
 
       <div className="card" style={{ maxWidth: '600px' }}>
         <h2 className="text-xl font-bold" style={{ marginBottom: '1.5rem', color: 'var(--primary)' }}>
-          {devolvidoId ? 'Reenviar Documento' : (revisaoId ? 'Enviar Nova VersÃ£o' : 'Enviar Novo Rascunho')}
+          {devolvidoId ? 'Reenviar Documento' : (revisaoId ? 'Enviar Nova Versão' : 'Enviar Novo Rascunho')}
         </h2>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>CÃ³digo do Documento</label>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Código do Documento</label>
             <input 
               type="text" 
               value={codigo}
@@ -219,7 +217,7 @@ function ElaboracaoContent() {
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>TÃ­tulo</label>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Título</label>
             <input 
               type="text" 
               value={titulo}
@@ -237,15 +235,15 @@ function ElaboracaoContent() {
               onChange={(e) => setCategoria(e.target.value)}
               style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid var(--border)', backgroundColor: 'white' }}
             >
-              <option value="BulÃ¡rio">BulÃ¡rio</option>
+              <option value="Bulário">Bulário</option>
               <option value="Documentos Mestres">Documentos Mestres</option>
               <option value="FISPQs">FISPQs</option>
-              <option value="FormulÃ¡rios">FormulÃ¡rios</option>
-              <option value="FormulÃ¡rios Preenchidos">FormulÃ¡rios Preenchidos</option>
+              <option value="Formulários">Formulários</option>
+              <option value="Formulários Preenchidos">Formulários Preenchidos</option>
               <option value="Geral">Geral</option>
-              <option value="InstruÃ§Ã£o de trabalho de Equipamentos">InstruÃ§Ã£o de trabalho de Equipamentos</option>
-              <option value="InstruÃ§Ã£o de trabalho de Exames">InstruÃ§Ã£o de trabalho de Exames</option>
-              <option value="InstruÃ§Ã£o de trabalho de ServiÃ§o">InstruÃ§Ã£o de trabalho de ServiÃ§o</option>
+              <option value="Instrução de trabalho de Equipamentos">Instrução de trabalho de Equipamentos</option>
+              <option value="Instrução de trabalho de Exames">Instrução de trabalho de Exames</option>
+              <option value="Instrução de trabalho de Serviço">Instrução de trabalho de Serviço</option>
               <option value="Listas">Listas</option>
               <option value="Manuais">Manuais</option>
               <option value="Procedimentos da qualidade">Procedimentos da qualidade</option>
@@ -253,27 +251,27 @@ function ElaboracaoContent() {
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Setores AplicÃ¡veis</label>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Setores Aplicáveis</label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: '4px', backgroundColor: 'white' }}>
               {[
-                "RecepÃ§Ã£o e Atendimento", "Coleta", "Triagem", "BioquÃ­mica", 
+                "Recepção e Atendimento", "Coleta", "Triagem", "Bioquímica", 
                 "Hematologia", "Imunologia", "Microbiologia", 
-                "UrinÃ¡lise", "Parasitologia",
-                "Qualidade", "Faturamento", "TI e Infraestrutura", "Ãrea TÃ©cnica", 
+                "Urinálise", "Parasitologia",
+                "Qualidade", "Faturamento", "TI e Infraestrutura", "Área Técnica", 
                 "Administrativo", "Diretoria", "Limpeza", "Geral"
               ].map(opcao => {
                 const OPTIONS_ALL = [
-                  "RecepÃ§Ã£o e Atendimento", "Coleta", "Triagem", "BioquÃ­mica", 
+                  "Recepção e Atendimento", "Coleta", "Triagem", "Bioquímica", 
                   "Hematologia", "Imunologia", "Microbiologia", 
-                  "UrinÃ¡lise", "Parasitologia",
-                  "Qualidade", "Faturamento", "TI e Infraestrutura", "Ãrea TÃ©cnica", 
+                  "Urinálise", "Parasitologia",
+                  "Qualidade", "Faturamento", "TI e Infraestrutura", "Área Técnica", 
                   "Administrativo", "Diretoria", "Limpeza", "Geral"
                 ];
                 const userSetores = user?.setor?.split(',').map((s: string) => s.trim()) || [];
-                const isLider = user?.funcao === 'LÃ­der de Setor';
+                const isLider = user?.funcao === 'Líder de Setor';
                 const hasAccess = !isLider || opcao === 'Geral' || userSetores.includes(opcao);
                 
-                if (!hasAccess) return null; // Oculta opÃ§Ãµes que o lÃ­der nÃ£o controla
+                if (!hasAccess) return null; // Oculta opções que o líder não controla
 
                 return (
                   <label key={opcao} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
@@ -285,8 +283,8 @@ function ElaboracaoContent() {
                           if (opcao === 'Geral') {
                             const allowed = OPTIONS_ALL.filter(o => !isLider || o === 'Geral' || userSetores.includes(o));
                             setSetoresSelecionados(allowed);
-                          } else if (opcao === 'Ãrea TÃ©cnica') {
-                            const toAdd = ['Ãrea TÃ©cnica', 'BioquÃ­mica', 'Hematologia', 'Microbiologia', 'UrinÃ¡lise', 'Imunologia', 'Parasitologia'];
+                          } else if (opcao === 'Área Técnica') {
+                            const toAdd = ['Área Técnica', 'Bioquímica', 'Hematologia', 'Microbiologia', 'Urinálise', 'Imunologia', 'Parasitologia'];
                             setSetoresSelecionados(prev => Array.from(new Set([...prev, ...toAdd])));
                           } else {
                             setSetoresSelecionados(prev => [...prev, opcao]);
@@ -309,7 +307,7 @@ function ElaboracaoContent() {
 
           <div style={{ display: 'flex', gap: '1rem' }}>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Data de AtualizaÃ§Ã£o (VigÃªncia)</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Data de Atualização (Vigência)</label>
               <input 
                 type="date" 
                 value={dataAtualizacao}
@@ -326,7 +324,7 @@ function ElaboracaoContent() {
               />
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>PrÃ³xima AtualizaÃ§Ã£o (Vencimento)</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Próxima Atualização (Vencimento)</label>
               <input 
                 type="date" 
                 value={dataProximaAtualizacao}
@@ -346,13 +344,13 @@ function ElaboracaoContent() {
                 setFile(selectedFile);
                 if (selectedFile) {
                   const nameWithoutExt = selectedFile.name.replace(/\.[^/.]+$/, "");
-                  // Regex para pegar hÃ­fens normais (-), meia-risca (â€“) e travessÃ£o (â€”) cercados por espaÃ§os
-                  const separatorRegex = /\s+[-â€“â€”]\s+/;
+                  // Regex para pegar hífens normais (-), meia-risca (–) e travessão (—) cercados por espaços
+                  const separatorRegex = /\s+[-–—]\s+/;
                   
                   if (separatorRegex.test(nameWithoutExt)) {
                     const parts = nameWithoutExt.split(separatorRegex);
                     const extractedCodigo = parts[0].trim();
-                    // Junta o resto com hÃ­fen normal caso tenha mais de um separador no tÃ­tulo
+                    // Junta o resto com hífen normal caso tenha mais de um separador no título
                     const extractedTitulo = parts.slice(1).join(" - ").trim();
                     
                     if (extractedCodigo && extractedTitulo) {
@@ -371,14 +369,14 @@ function ElaboracaoContent() {
           
           {message && (
             <div style={{ 
-              color: devolvidoId && message.includes('Motivo da DevoluÃ§Ã£o') ? '#991b1b' : 'green', 
+              color: devolvidoId && message.includes('Motivo da Devolução') ? '#991b1b' : 'green', 
               fontWeight: 'bold', 
               padding: '1rem', 
-              backgroundColor: devolvidoId && message.includes('Motivo da DevoluÃ§Ã£o') ? '#fef2f2' : '#dcfce7', 
+              backgroundColor: devolvidoId && message.includes('Motivo da Devolução') ? '#fef2f2' : '#dcfce7', 
               borderRadius: '4px',
-              borderLeft: devolvidoId && message.includes('Motivo da DevoluÃ§Ã£o') ? '4px solid #dc2626' : 'none'
+              borderLeft: devolvidoId && message.includes('Motivo da Devolução') ? '4px solid #dc2626' : 'none'
             }}>
-              {!message.includes('Motivo da DevoluÃ§Ã£o') && 'âœ… '}
+              {!message.includes('Motivo da Devolução') && '✅ '}
               {message}
             </div>
           )}
@@ -396,7 +394,7 @@ function ElaboracaoContent() {
               cursor: isSubmitting ? 'not-allowed' : 'pointer'
             }}
           >
-            {isSubmitting ? 'Enviando...' : 'Enviar para AprovaÃ§Ã£o'}
+            {isSubmitting ? 'Enviando...' : 'Enviar para Aprovação'}
           </button>
         </form>
       </div>
@@ -411,4 +409,3 @@ export default function Elaboracao() {
     </Suspense>
   );
 }
-

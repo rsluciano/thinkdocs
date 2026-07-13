@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -10,7 +10,7 @@ export default function Devolvidos() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
 
-  // Auth Check Simples (ProtÃ³tipo)
+  // Auth Check Simples (Protótipo)
   useEffect(() => {
     const savedUser = localStorage.getItem('thinkdocs_user');
     if (!savedUser) {
@@ -18,7 +18,7 @@ export default function Devolvidos() {
     } else {
       const parsedUser = JSON.parse(savedUser);
       
-      const isLeadership = ['Diretor', 'Gestor da Qualidade', 'Administrador', 'ResponsÃ¡vel TÃ©cnico', 'LÃ­der de Setor'].includes(parsedUser.funcao);
+      const isLeadership = ['Diretor', 'Gestor da Qualidade', 'Administrador', 'Responsável Técnico', 'Líder de Setor'].includes(parsedUser.funcao);
       if (!isLeadership) {
         router.push('/');
         return;
@@ -44,7 +44,7 @@ export default function Devolvidos() {
   };
 
   const excluirDocumento = async (id: string) => {
-    if (!window.confirm('Tem certeza que deseja excluir este documento permanentemente? Esta aÃ§Ã£o nÃ£o pode ser desfeita.')) {
+    if (!window.confirm('Tem certeza que deseja excluir este documento permanentemente? Esta ação não pode ser desfeita.')) {
       return;
     }
     try {
@@ -55,11 +55,11 @@ export default function Devolvidos() {
         alert('Falha ao excluir documento.');
       }
     } catch (err) {
-      alert('Erro de conexÃ£o ao excluir.');
+      alert('Erro de conexão ao excluir.');
     }
   };
 
-  // FunÃ§Ã£o para calcular o status e a cor com base na data de validade
+  // Função para calcular o status e a cor com base na data de validade
   const getStatusInfo = (validadeStr: string | null) => {
     if (!validadeStr) return { label: 'Sem Validade', bg: '#f1f5f9', text: '#475569' };
 
@@ -90,12 +90,10 @@ export default function Devolvidos() {
 
   return (
     <div className="animate-fade-in">
-    <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>← Voltar ao Dashboard</button>
-
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
           <h1 className="text-3xl font-bold">Documentos Devolvidos</h1>
-          <p className="text-muted" style={{ marginTop: '0.5rem' }}>Documentos reprovados aguardando correÃ§Ã£o tÃ©cnica.</p>
+          <p className="text-muted" style={{ marginTop: '0.5rem' }}>Documentos reprovados aguardando correção técnica.</p>
         </div>
         <Link 
           href="/elaboracao"
@@ -114,13 +112,13 @@ export default function Devolvidos() {
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid var(--border)' }}>
-                <th style={{ padding: '1rem' }}>CÃ³digo</th>
-                <th style={{ padding: '1rem' }}>TÃ­tulo</th>
+                <th style={{ padding: '1rem' }}>Código</th>
+                <th style={{ padding: '1rem' }}>Título</th>
                 <th style={{ padding: '1rem' }}>Categoria</th>
-                <th style={{ padding: '1rem' }}>RevisÃ£o</th>
+                <th style={{ padding: '1rem' }}>Revisão</th>
                 <th style={{ padding: '1rem' }}>Datas</th>
-                <th style={{ padding: '1rem' }}>Motivo da ReprovaÃ§Ã£o</th>
-                <th style={{ padding: '1rem' }}>AÃ§Ãµes</th>
+                <th style={{ padding: '1rem' }}>Motivo da Reprovação</th>
+                <th style={{ padding: '1rem' }}>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -132,7 +130,7 @@ export default function Devolvidos() {
                   <td style={{ padding: '1rem', textAlign: 'center' }}>v{doc.revisao}</td>
                   <td style={{ padding: '1rem', fontSize: '0.85rem' }}>
                     <div style={{ marginBottom: '0.2rem' }}>
-                      <span style={{ fontWeight: 'bold' }}>VigÃªncia:</span> {doc.dataAtualizacao ? new Date(doc.dataAtualizacao).toLocaleDateString('pt-BR') : 'N/D'}
+                      <span style={{ fontWeight: 'bold' }}>Vigência:</span> {doc.dataAtualizacao ? new Date(doc.dataAtualizacao).toLocaleDateString('pt-BR') : 'N/D'}
                     </div>
                     <div>
                       <span style={{ fontWeight: 'bold' }}>Vencimento:</span> {doc.dataVencimento ? new Date(doc.dataVencimento).toLocaleDateString('pt-BR') : 'N/D'}
@@ -158,7 +156,7 @@ export default function Devolvidos() {
                         href={`/elaboracao?devolvidoId=${doc.id}`}
                         style={{ padding: '0.4rem 0.8rem', textDecoration: 'none', backgroundColor: 'var(--primary)', color: 'white', fontWeight: 'bold', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}
                       >
-                        âœï¸ Corrigir
+                        ✏️ Corrigir
                       </Link>
                       <button 
                         onClick={() => excluirDocumento(doc.id)} 
@@ -177,4 +175,3 @@ export default function Devolvidos() {
     </div>
   );
 }
-

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
@@ -51,11 +51,9 @@ export default function CategoriasPage() {
 
   return (
     <div className="animate-fade-in">
-    <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>← Voltar ao Dashboard</button>
-
       <div style={{ marginBottom: '2rem' }}>
         <h1 className="text-3xl font-bold">Categoria de Docs</h1>
-        <p className="text-muted" style={{ marginTop: '0.5rem' }}>Navegue pelos documentos do sistema atravÃ©s de suas categorias.</p>
+        <p className="text-muted" style={{ marginTop: '0.5rem' }}>Navegue pelos documentos do sistema através de suas categorias.</p>
       </div>
 
       {loading ? (
@@ -81,7 +79,7 @@ export default function CategoriasPage() {
                   transition: 'all 0.2s ease'
                 }}
               >
-                <div style={{ fontSize: '2.5rem' }}>ðŸ“</div>
+                <div style={{ fontSize: '2.5rem' }}>📁</div>
                 <div>
                   <h3 style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{cat.name}</h3>
                   <p style={{ opacity: 0.8, fontSize: '0.9rem' }}>{cat.count} documento(s)</p>
@@ -96,18 +94,18 @@ export default function CategoriasPage() {
           {selectedFolder && (
             <div className="card animate-fade-in" style={{ overflowX: 'auto' }}>
               <h2 className="text-xl font-bold" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                ðŸ“‚ Documentos em: {selectedFolder}
+                📂 Documentos em: {selectedFolder}
               </h2>
               {filteredDocs.length > 0 ? (
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                   <thead>
                     <tr style={{ borderBottom: '2px solid var(--border)' }}>
-                      <th style={{ padding: '1rem' }}>CÃ³digo</th>
-                      <th style={{ padding: '1rem' }}>TÃ­tulo</th>
+                      <th style={{ padding: '1rem' }}>Código</th>
+                      <th style={{ padding: '1rem' }}>Título</th>
                       <th style={{ padding: '1rem' }}>Setor</th>
-                      <th style={{ padding: '1rem' }}>RevisÃ£o</th>
+                      <th style={{ padding: '1rem' }}>Revisão</th>
                       <th style={{ padding: '1rem' }}>Status</th>
-                      <th style={{ padding: '1rem' }}>AÃ§Ãµes</th>
+                      <th style={{ padding: '1rem' }}>Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -137,4 +135,3 @@ export default function CategoriasPage() {
     </div>
   );
 }
-

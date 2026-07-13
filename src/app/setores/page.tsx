@@ -1,13 +1,13 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
 const TODOS_SETORES = [
-  "RecepÃ§Ã£o e Atendimento", "Coleta", "Triagem", "BioquÃ­mica", 
+  "Recepção e Atendimento", "Coleta", "Triagem", "Bioquímica", 
   "Hematologia", "Imunologia", "Microbiologia", 
-  "UrinÃ¡lise", "Parasitologia",
-  "Qualidade", "Faturamento", "TI e Infraestrutura", "Ãrea TÃ©cnica", 
+  "Urinálise", "Parasitologia",
+  "Qualidade", "Faturamento", "TI e Infraestrutura", "Área Técnica", 
   "Administrativo", "Diretoria", "Limpeza"
 ];
 
@@ -46,12 +46,12 @@ export default function SetoresPage() {
 
   const setores = useMemo(() => {
     const counts: Record<string, number> = {};
-    const isFullAccess = user && ['Diretor', 'Gestor da Qualidade', 'Administrador', 'ResponsÃ¡vel TÃ©cnico'].includes(user.funcao);
+    const isFullAccess = user && ['Diretor', 'Gestor da Qualidade', 'Administrador', 'Responsável Técnico'].includes(user.funcao);
     const userSetoresList = user ? (user.setor || '').split(',').map((s: string) => s.trim()) : [];
     
     const hasGeralAccess = userSetoresList.includes('Geral');
     
-    // As pastas que o usuÃ¡rio pode ver
+    // As pastas que o usuário pode ver
     const allowedSectors = (isFullAccess || hasGeralAccess) ? TODOS_SETORES : userSetoresList;
 
     documentos.forEach(doc => {
@@ -63,13 +63,13 @@ export default function SetoresPage() {
       }
       
       if (setoresList.includes('Geral')) {
-        // Documentos "Geral" entram em todas as pastas que o usuÃ¡rio tem acesso
+        // Documentos "Geral" entram em todas as pastas que o usuário tem acesso
         allowedSectors.forEach((setorNome: string) => {
-          if (setorNome === 'Geral') return; // nÃ£o cria uma pasta com nome Geral
+          if (setorNome === 'Geral') return; // não cria uma pasta com nome Geral
           counts[setorNome] = (counts[setorNome] || 0) + 1;
         });
       } else {
-        // Documentos especÃ­ficos entram apenas nas pastas correspondentes
+        // Documentos específicos entram apenas nas pastas correspondentes
         setoresList.forEach(setorNome => {
           if (allowedSectors.includes(setorNome)) {
             counts[setorNome] = (counts[setorNome] || 0) + 1;
@@ -110,11 +110,9 @@ export default function SetoresPage() {
 
   return (
     <div className="animate-fade-in">
-    <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>← Voltar ao Dashboard</button>
-
       <div style={{ marginBottom: '2rem' }}>
         <h1 className="text-3xl font-bold">Setores</h1>
-        <p className="text-muted" style={{ marginTop: '0.5rem' }}>Navegue pelos documentos do sistema separados por Ã¡rea/setor de aplicaÃ§Ã£o.</p>
+        <p className="text-muted" style={{ marginTop: '0.5rem' }}>Navegue pelos documentos do sistema separados por área/setor de aplicação.</p>
       </div>
 
       {loading ? (
@@ -140,7 +138,7 @@ export default function SetoresPage() {
                   transition: 'all 0.2s ease'
                 }}
               >
-                <div style={{ fontSize: '2.5rem' }}>ðŸ¢</div>
+                <div style={{ fontSize: '2.5rem' }}>🏢</div>
                 <div>
                   <h3 style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{setor.name}</h3>
                   <p style={{ opacity: 0.8, fontSize: '0.9rem' }}>{setor.count} documento(s)</p>
@@ -156,11 +154,11 @@ export default function SetoresPage() {
             <div className="card animate-fade-in" style={{ overflowX: 'auto' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <h2 className="text-xl font-bold" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  ðŸ¢ Documentos em: {selectedFolder}
+                  🏢 Documentos em: {selectedFolder}
                 </h2>
                 <input 
                   type="text" 
-                  placeholder="ðŸ” Pesquisar por cÃ³digo, tÃ­tulo ou categoria..." 
+                  placeholder="🔍 Pesquisar por código, título ou categoria..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   style={{ 
@@ -177,12 +175,12 @@ export default function SetoresPage() {
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                   <thead>
                     <tr style={{ borderBottom: '2px solid var(--border)' }}>
-                      <th style={{ padding: '1rem' }}>CÃ³digo</th>
-                      <th style={{ padding: '1rem' }}>TÃ­tulo</th>
+                      <th style={{ padding: '1rem' }}>Código</th>
+                      <th style={{ padding: '1rem' }}>Título</th>
                       <th style={{ padding: '1rem' }}>Categoria</th>
-                      <th style={{ padding: '1rem' }}>RevisÃ£o</th>
+                      <th style={{ padding: '1rem' }}>Revisão</th>
                       <th style={{ padding: '1rem' }}>Status</th>
-                      <th style={{ padding: '1rem' }}>AÃ§Ãµes</th>
+                      <th style={{ padding: '1rem' }}>Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -212,4 +210,3 @@ export default function SetoresPage() {
     </div>
   );
 }
-
