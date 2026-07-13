@@ -76,7 +76,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       }
 
       // Notificar todos os colaboradores afetados (Broadcast)
-      let publicoAlvo = await prisma.usuario.findMany({ where: { empresaId: doc.empresaId, NOT: { status: "Bloqueado" } } });
+      let publicoAlvo = await prisma.usuario.findMany({ where: { empresaId: doc.empresaId } });
       
       const docSetorArr = Array.isArray(doc.setor) ? doc.setor : [doc.setor || "Geral"];
       if (!docSetorArr.includes("Geral")) {
