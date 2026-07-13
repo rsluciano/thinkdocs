@@ -64,7 +64,7 @@ export default function SetoresPage() {
       
       if (setoresList.includes('Geral')) {
         // Documentos "Geral" entram em todas as pastas que o usuário tem acesso
-        allowedSectors.forEach(setorNome => {
+        allowedSectors.forEach((setorNome: string) => {
           if (setorNome === 'Geral') return; // não cria uma pasta com nome Geral
           counts[setorNome] = (counts[setorNome] || 0) + 1;
         });
