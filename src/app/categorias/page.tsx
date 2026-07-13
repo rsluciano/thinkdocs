@@ -3,6 +3,21 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
+
+const ICONES_CATEGORIAS: Record<string, string> = {
+  "Formulários": "📝",
+  "Bulário": "💊",
+  "FISPQs": "☣️",
+  "Instruções de Trabalho de serviço": "📋",
+  "Instruções de Trabalho de equipamento": "⚙️",
+  "Instruções de Trabalho de exames": "🔬",
+  "Manuais": "📖",
+  "Documentos Mestres": "👑",
+  "Procedimentos da Qualidade": "🛡️",
+  "Listas": "🧾",
+  "Geral": "📁"
+};
+
 export default function CategoriasPage() {
   const router = useRouter();
   const [documentos, setDocumentos] = useState<any[]>([]);
@@ -81,7 +96,7 @@ export default function CategoriasPage() {
                   transition: 'all 0.2s ease'
                 }}
               >
-                <div style={{ fontSize: '2.5rem' }}>📁</div>
+                <div style={{ fontSize: '2.5rem' }}>{ICONES_CATEGORIAS[cat.name] || '📁'}</div>
                 <div>
                   <h3 style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{cat.name}</h3>
                   <p style={{ opacity: 0.8, fontSize: '0.9rem' }}>{cat.count} documento(s)</p>
@@ -96,7 +111,7 @@ export default function CategoriasPage() {
           {selectedFolder && (
             <div className="card animate-fade-in" style={{ overflowX: 'auto' }}>
               <h2 className="text-xl font-bold" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                📂 Documentos em: {selectedFolder}
+                {ICONES_CATEGORIAS[selectedFolder] || '📂'} Documentos em: {selectedFolder}
               </h2>
               {filteredDocs.length > 0 ? (
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
