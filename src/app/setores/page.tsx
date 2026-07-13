@@ -31,6 +31,7 @@ const ICONES_SETORES: Record<string, string> = {
   "Geral": "🏢"
 };
 
+
 export default function SetoresPage() {
   const router = useRouter();
   const [documentos, setDocumentos] = useState<any[]>([]);
@@ -131,6 +132,58 @@ export default function SetoresPage() {
   return (
     <div className="animate-fade-in">
     <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>← Voltar ao Dashboard</button>
+
+      <div style={{ marginBottom: '2rem' }}>
+        <h1 className="text-3xl font-bold">Setores</h1>
+        <p className="text-muted" style={{ marginTop: '0.5rem' }}>Navegue pelos documentos do sistema separados por área/setor de aplicação.</p>
+      </div>
+
+      {loading ? (
+        <div style={{ padding: '2rem', textAlign: 'center' }}>Carregando Pastas...</div>
+      ) : (
+        <>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+            {setores.map(setor => (
+              <div 
+                key={setor.name} 
+                onClick={() => setSelectedFolder(selectedFolder === setor.name ? null : setor.name)}
+                style={{ 
+                  backgroundColor: selectedFolder === setor.name ? 'var(--primary)' : 'var(--card)',
+                  color: selectedFolder === setor.name ? 'white' : 'inherit',
+                  padding: '1.5rem', 
+                  borderRadius: 'var(--radius)', 
+                  border: '1px solid var(--border)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  boxShadow: selectedFolder === setor.name ? '0 10px 15px -3px rgba(37, 99, 235, 0.3)' : '0 1px 3px rgba(0,0,0,0.1)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <div style={{ fontSize: '2.5rem' }}>{ICONES_SETORES[setor.name] || '🏢'}</div>
+                <div>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{setor.name}</h3>
+                  <p style={{ opacity: 0.8, fontSize: '0.9rem' }}>{setor.count} documento(s)</p>
+                </div>
+              </div>
+            ))}
+            {setores.length === 0 && (
+              <div style={{ padding: '2rem', color: 'var(--muted)', gridColumn: '1 / -1' }}>Nenhum setor com documentos vigentes no momento.</div>
+            )}
+          </div>
+
+          {selectedFolder && (
+            <div className="card animate-fade-in" style={{ overflowX: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h2 className="text-xl font-bold" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  {ICONES_SETORES[selectedFolder] || '🏢'} Documentos em: {selectedFolder}
+                </h2>
+                <input 
+                  type="text" 
+                  placeholder="🔍 Pesquisar por código, título ou categoria..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   style={{ 
                     padding: '0.5rem 1rem', 
                     borderRadius: 'var(--radius)', 
