@@ -61,7 +61,7 @@ function ElaboracaoContent() {
               if (Array.isArray(doc.setor)) {
                 setSetoresSelecionados(doc.setor);
               } else if (doc.setor) {
-                setSetoresSelecionados([doc.setor]);
+                setSetoresSelecionados(doc.setor.split(',').map((s: string) => s.trim()));
               } else {
                 setSetoresSelecionados(['Geral']);
               }
