@@ -112,7 +112,7 @@ export default function Dashboard() {
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
         <div className="card hover-scale" style={{ flex: 1, minWidth: '180px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-          <span style={{ color: '#64748b', fontWeight: 'bold' }}>Total de Documentos</span>
+          <span style={{ color: '#64748b', fontWeight: 'bold' }}>📚 Total de Documentos</span>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0f172a' }}>{totalDocs}</p>
         </div>
         <div 
@@ -120,7 +120,7 @@ export default function Dashboard() {
           onClick={() => router.push('/lista-mestra')}
           style={{ flex: 1, minWidth: '180px', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', cursor: 'pointer' }}
         >
-          <span style={{ color: '#166534', fontWeight: 'bold' }}>Aprovados (Vigentes)</span>
+          <span style={{ color: '#166534', fontWeight: 'bold' }}>✅ Aprovados (Vigentes)</span>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#15803d' }}>{docsVigentes.length}</p>
         </div>
         <div 
@@ -128,7 +128,7 @@ export default function Dashboard() {
           onClick={() => router.push('/aprovacoes')}
           style={{ flex: 1, minWidth: '180px', backgroundColor: '#fffbeb', border: '1px solid #fde68a', cursor: 'pointer' }}
         >
-          <span style={{ color: '#b45309', fontWeight: 'bold' }}>Aguardando Aprovação</span>
+          <span style={{ color: '#b45309', fontWeight: 'bold' }}>⏳ Aguardando Aprovação</span>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#d97706' }}>{docsAguardando.length}</p>
         </div>
         <div 
@@ -136,11 +136,11 @@ export default function Dashboard() {
           onClick={() => router.push('/devolvidos')}
           style={{ flex: 1, minWidth: '180px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', cursor: 'pointer' }}
         >
-          <span style={{ color: '#991b1b', fontWeight: 'bold' }}>Devolvidos</span>
+          <span style={{ color: '#991b1b', fontWeight: 'bold' }}>↩️ Devolvidos</span>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#dc2626' }}>{docsDevolvidos.length}</p>
         </div>
         <div className="card hover-scale" style={{ flex: 1, minWidth: '180px', backgroundColor: '#eff6ff', border: '1px solid #bfdbfe' }}>
-          <span style={{ color: '#1d4ed8', fontWeight: 'bold' }}>Em Elaboração</span>
+          <span style={{ color: '#1d4ed8', fontWeight: 'bold' }}>✍️ Em Elaboração</span>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2563eb' }}>{docsEmElaboracao.length}</p>
         </div>
       </div>
