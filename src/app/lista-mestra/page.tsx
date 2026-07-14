@@ -106,6 +106,12 @@ export default function ListaMestra() {
       case 'Instrução de trabalho de Equipamentos': return '#e0f2fe'; // Azul claro
       case 'Instrução de trabalho de Exames': return '#dcfce7'; // Verde claro
       case 'Procedimentos da qualidade': return '#fee2e2'; // Vermelho claro
+      case 'Bulário': return '#f3e8ff'; // Roxo claro
+      case 'Documentos Mestres': return '#ffedd5'; // Laranja claro
+      case 'Listas': return '#ccfbf1'; // Verde água (Teal) claro
+      case 'FISPQs': return '#e2e8f0'; // Cinza claro
+      case 'Formulários Preenchidos': return '#e0e7ff'; // Indigo claro
+      case 'Manuais': return '#fae8ff'; // Fúcsia claro
       default: return 'transparent'; // Cor padrão
     }
   };
