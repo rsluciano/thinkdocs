@@ -52,14 +52,21 @@ export default function Dashboard() {
   })).sort((a, b) => b.count - a.count);
 
   // Lógica de Setores para o Gráfico
+  const setoresPermitidos = {
+    'Geral': 0, 'Limpeza': 0, 'Área Técnica': 0, 'Coleta': 0, 'Administração': 0, 
+    'Triagem': 0, 'Diretoria': 0, 'Qualidade': 0, 'TI e infraestrutura': 0, 'Recepção': 0
+  };
+
   const setoresCount = documentos.reduce((acc, doc) => {
     // Um documento pode estar em múltiplos setores, então contamos cada um
-    const docSetores = Array.isArray(doc.setor) ? doc.setor : [doc.setor || 'Sem Setor'];
+    const docSetores = Array.isArray(doc.setor) ? doc.setor : [doc.setor || 'Geral'];
     docSetores.forEach((s: string) => {
-      acc[s] = (acc[s] || 0) + 1;
+      if (acc[s] !== undefined) {
+        acc[s] += 1;
+      }
     });
     return acc;
-  }, {} as Record<string, number>);
+  }, { ...setoresPermitidos } as Record<string, number>);
 
   const setoresChart = Object.keys(setoresCount).map(setor => ({
     setor: setor,
