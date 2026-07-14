@@ -51,6 +51,23 @@ export default function Dashboard() {
     percent: totalDocs > 0 ? ((categoriasCount[cat] / totalDocs) * 100).toFixed(1) : '0.0'
   })).sort((a, b) => b.count - a.count);
 
+  // Lógica de Setores para o Gráfico
+  const setoresCount = documentos.reduce((acc, doc) => {
+    // Um documento pode estar em múltiplos setores, então contamos cada um
+    const docSetores = Array.isArray(doc.setor) ? doc.setor : [doc.setor || 'Sem Setor'];
+    docSetores.forEach((s: string) => {
+      acc[s] = (acc[s] || 0) + 1;
+    });
+    return acc;
+  }, {} as Record<string, number>);
+
+  const setoresChart = Object.keys(setoresCount).map(setor => ({
+    setor: setor,
+    count: setoresCount[setor],
+    percent: totalDocs > 0 ? ((setoresCount[setor] / totalDocs) * 100).toFixed(1) : '0.0'
+  })).sort((a, b) => b.count - a.count);
+
+
   // Lógica de Categorização (Apenas para os Vigentes)
   const hoje = new Date();
   
@@ -159,31 +176,68 @@ export default function Dashboard() {
         }
       `}} />
 
-      <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>📊 Distribuição por Categoria</h2>
-      <div className="card" style={{ marginBottom: '3rem' }}>
-        {categoriasChart.length === 0 ? (
-          <p style={{ color: 'var(--muted)', textAlign: 'center' }}>Nenhum documento encontrado.</p>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {categoriasChart.map((cat, idx) => (
-              <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                  <span>{cat.categoria}</span>
-                  <span style={{ color: 'var(--muted)' }}>{cat.count} docs ({cat.percent}%)</span>
-                </div>
-                <div style={{ width: '100%', backgroundColor: '#e2e8f0', borderRadius: '999px', height: '12px', overflow: 'hidden' }}>
-                  <div style={{ 
-                    height: '100%', 
-                    width: `${cat.percent}%`, 
-                    backgroundColor: 'var(--primary)',
-                    borderRadius: '999px',
-                    transition: 'width 1s ease-in-out'
-                  }}></div>
-                </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+        
+        {/* Gráfico de Categorias */}
+        <div>
+          <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>📊 Distribuição por Categoria</h2>
+          <div className="card" style={{ height: '100%' }}>
+            {categoriasChart.length === 0 ? (
+              <p style={{ color: 'var(--muted)', textAlign: 'center' }}>Nenhum documento encontrado.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {categoriasChart.map((cat, idx) => (
+                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                      <span>{cat.categoria}</span>
+                      <span style={{ color: 'var(--muted)' }}>{cat.count} docs ({cat.percent}%)</span>
+                    </div>
+                    <div style={{ width: '100%', backgroundColor: '#e2e8f0', borderRadius: '999px', height: '12px', overflow: 'hidden' }}>
+                      <div style={{ 
+                        height: '100%', 
+                        width: `${cat.percent}%`, 
+                        backgroundColor: 'var(--primary)',
+                        borderRadius: '999px',
+                        transition: 'width 1s ease-in-out'
+                      }}></div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
-        )}
+        </div>
+
+        {/* Gráfico de Setores */}
+        <div>
+          <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>🏢 Distribuição por Setores</h2>
+          <div className="card" style={{ height: '100%' }}>
+            {setoresChart.length === 0 ? (
+              <p style={{ color: 'var(--muted)', textAlign: 'center' }}>Nenhum setor encontrado.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {setoresChart.map((setor, idx) => (
+                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                      <span>{setor.setor}</span>
+                      <span style={{ color: 'var(--muted)' }}>{setor.count} docs ({setor.percent}%)</span>
+                    </div>
+                    <div style={{ width: '100%', backgroundColor: '#e2e8f0', borderRadius: '999px', height: '12px', overflow: 'hidden' }}>
+                      <div style={{ 
+                        height: '100%', 
+                        width: `${setor.percent}%`, 
+                        backgroundColor: '#16a34a', // Usando um verde para diferenciar do gráfico de categorias
+                        borderRadius: '999px',
+                        transition: 'width 1s ease-in-out'
+                      }}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
       </div>
 
       <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>⏱️ Controle de Vencimentos (Vigentes)</h2>
