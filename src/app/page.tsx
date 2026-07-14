@@ -182,7 +182,7 @@ export default function Dashboard() {
         )}
       </div>
 
-      <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>Controle de Vencimentos (Vigentes)</h2>
+      <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>⏱️ Controle de Vencimentos (Vigentes)</h2>
 
       {docsCriticos.length > 0 && (
         <div className="alert-banner" style={{ borderLeftColor: countVermelho > 0 ? '#ef4444' : countLaranja > 0 ? '#f97316' : '#eab308' }}>
@@ -226,7 +226,7 @@ export default function Dashboard() {
 
       </div>
 
-      <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>Documentos Próximos do Vencimento</h2>
+      <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>🚨 Documentos Próximos do Vencimento</h2>
       <div className="card" style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
