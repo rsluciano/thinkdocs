@@ -126,11 +126,11 @@ export default function ListaMestra() {
             <thead>
               <tr style={{ borderBottom: '2px solid var(--border)' }}>
                 <th style={{ padding: '1rem' }}>Código</th>
-                <th style={{ padding: '1rem' }}>Título</th>
-                <th style={{ padding: '1rem' }}>Categoria</th>
-                <th style={{ padding: '1rem' }}>Revisão</th>
-                <th style={{ padding: '1rem' }}>Datas</th>
-                <th style={{ padding: '1rem' }}>Autor/Aprovador</th>
+                <th style={{ padding: '1rem' }}>Nome do Documento</th>
+                <th style={{ padding: '1rem' }}>Setor Aplicado</th>
+                <th style={{ padding: '1rem' }}>Vigência</th>
+                <th style={{ padding: '1rem' }}>Validade</th>
+                <th style={{ padding: '1rem' }}>Autor / Aprovador</th>
                 <th style={{ padding: '1rem' }}>Status</th>
                 <th style={{ padding: '1rem' }}>Ações</th>
               </tr>
@@ -138,21 +138,23 @@ export default function ListaMestra() {
             <tbody>
               {documentos.map(doc => (
                 <tr key={doc.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                  <td style={{ padding: '1rem', fontWeight: 'bold' }}>{doc.codigo}</td>
-                  <td style={{ padding: '1rem' }}>{doc.titulo}</td>
-                  <td style={{ padding: '1rem' }}>{doc.categoria}</td>
-                  <td style={{ padding: '1rem', textAlign: 'center' }}>v{doc.revisao}</td>
-                  <td style={{ padding: '1rem', fontSize: '0.85rem' }}>
-                    <div style={{ marginBottom: '0.2rem' }}>
-                      <span style={{ fontWeight: 'bold' }}>Vigência:</span> {doc.dataAtualizacao ? new Date(doc.dataAtualizacao).toLocaleDateString('pt-BR') : 'N/D'}
-                    </div>
-                    <div>
-                      <span style={{ fontWeight: 'bold' }}>Vencimento:</span> {doc.dataVencimento ? new Date(doc.dataVencimento).toLocaleDateString('pt-BR') : 'N/D'}
-                    </div>
+                  <td style={{ padding: '1rem', fontWeight: 'bold' }}>
+                    {doc.codigo}
+                    <div style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.2rem' }}>v{doc.revisao}</div>
                   </td>
-                  <td style={{ padding: '1rem', fontSize: '0.9rem' }}>
-                    <div>Por: {doc.autor}</div>
-                    <div style={{ color: 'var(--muted)' }}>Apr: {doc.aprovadoPor}</div>
+                  <td style={{ padding: '1rem' }}>{doc.titulo}</td>
+                  <td style={{ padding: '1rem', fontSize: '0.85rem' }}>
+                    {Array.isArray(doc.setor) ? doc.setor.join(', ') : doc.setor}
+                  </td>
+                  <td style={{ padding: '1rem', fontSize: '0.85rem' }}>
+                    {doc.dataAtualizacao ? new Date(doc.dataAtualizacao).toLocaleDateString('pt-BR') : 'N/D'}
+                  </td>
+                  <td style={{ padding: '1rem', fontSize: '0.85rem' }}>
+                    {doc.dataVencimento ? new Date(doc.dataVencimento).toLocaleDateString('pt-BR') : 'N/D'}
+                  </td>
+                  <td style={{ padding: '1rem', fontSize: '0.85rem' }}>
+                    <div><span style={{ color: 'var(--muted)' }}>Autor:</span> {doc.autor || 'N/D'}</div>
+                    <div><span style={{ color: 'var(--muted)' }}>Apr:</span> {doc.aprovadoPor || 'N/D'}</div>
                   </td>
                   <td style={{ padding: '1rem' }}>
                     {(() => {
@@ -164,7 +166,8 @@ export default function ListaMestra() {
                           fontSize: '0.85rem',
                           fontWeight: 'bold',
                           backgroundColor: statusInfo.bg,
-                          color: statusInfo.text
+                          color: statusInfo.text,
+                          whiteSpace: 'nowrap'
                         }}>
                           {statusInfo.label}
                         </span>
