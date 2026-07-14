@@ -19,6 +19,16 @@ export async function GET(req: NextRequest) {
       orderBy: { dataEnvio: 'desc' }
     });
 
+    // Regra de Negócio: TODO documento pertence à Qualidade.
+    docs = docs.map((d: any) => {
+      const docSetorStr = Array.isArray(d.setor) ? d.setor.join(',') : (d.setor || 'Geral');
+      const docSetoresList = docSetorStr.split(',').map((s: string) => s.trim());
+      if (!docSetoresList.includes('Qualidade')) {
+        docSetoresList.push('Qualidade');
+      }
+      return { ...d, setor: docSetoresList };
+    });
+
     if (userFuncao && userSetor) {
       const isFullAccess = ['Diretor', 'Gestor da Qualidade', 'Administrador', 'Responsável Técnico'].includes(userFuncao);
       if (!isFullAccess) {
@@ -28,15 +38,8 @@ export async function GET(req: NextRequest) {
         
         if (!hasGeralAccess) {
           docs = docs.filter((d: any) => {
-            const docSetorStr = Array.isArray(d.setor) ? d.setor.join(',') : (d.setor || 'Geral');
-            const docSetoresList = docSetorStr.split(',').map((s: string) => s.trim());
-            
-            // Regra de Negócio: Todo documento pertence à Qualidade implicitamente
-            if (!docSetoresList.includes('Qualidade')) {
-              docSetoresList.push('Qualidade');
-            }
-
-            return docSetoresList.includes('Geral') || docSetoresList.some((s: string) => userSetoresList.includes(s));
+            // d.setor agora já é um array com Qualidade garantida (pelo map acima)
+            return d.setor.includes('Geral') || d.setor.some((s: string) => userSetoresList.includes(s));
           });
         }
       }
@@ -57,13 +60,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Dados incompletos do documento. Verifique o tenant.' }, { status: 400 });
     }
 
+    const parsedSetores = Array.isArray(setor) ? setor : (setor || 'Geral').split(',').map((s:string)=>s.trim());
+    if (!parsedSetores.includes('Qualidade')) {
+      parsedSetores.push('Qualidade');
+    }
+
     const novoDocumento = await prisma.documento.create({
       data: {
         empresaId,
         codigo,
         titulo,
         categoria,
-        setor: Array.isArray(setor) ? setor.join(',') : (setor || 'Geral'),
+        setor: parsedSetores.join(','),
         autor: autorNome || 'Desconhecido',
         dataAtualizacao: dataAtualizacao ? new Date(dataAtualizacao) : null,
         dataVencimento: dataProximaAtualizacao ? new Date(dataProximaAtualizacao) : null,

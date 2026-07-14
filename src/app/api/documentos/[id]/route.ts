@@ -18,6 +18,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const revisaoAtual = doc.revisao || 1;
     const novaRevisao = revisaoAtual + 1;
     
+    const parsedSetores = Array.isArray(setor) ? setor : (setor || doc.setor || 'Geral').split(',').map((s:string)=>s.trim());
+    if (!parsedSetores.includes('Qualidade')) {
+      parsedSetores.push('Qualidade');
+    }
+
     // Cria o clone (novo registro)
     const novoDoc = await prisma.documento.create({
       data: {
@@ -25,7 +30,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         codigo: codigo || doc.codigo,
         titulo: titulo || doc.titulo,
         categoria: categoria || doc.categoria,
-        setor: Array.isArray(setor) ? setor.join(',') : (setor || doc.setor),
+        setor: parsedSetores.join(','),
         autor: autorNome || doc.autor,
         dataAtualizacao: dataAtualizacao ? new Date(dataAtualizacao) : null,
         dataVencimento: dataProximaAtualizacao ? new Date(dataProximaAtualizacao) : null,

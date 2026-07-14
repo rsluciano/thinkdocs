@@ -42,7 +42,7 @@ function ElaboracaoContent() {
         "Recepção e Atendimento", "Coleta", "Triagem", "Bioquímica", 
         "Hematologia", "Imunologia", "Microbiologia", 
         "Urinálise", "Parasitologia",
-        "Qualidade", "Faturamento", "TI e Infraestrutura", "Área Técnica", 
+        "Faturamento", "TI e Infraestrutura", "Área Técnica", 
         "Administrativo", "Diretoria", "Limpeza", "Geral"
       ];
       
@@ -187,7 +187,7 @@ function ElaboracaoContent() {
           "Recepção e Atendimento", "Coleta", "Triagem", "Bioquímica", 
           "Hematologia", "Imunologia", "Microbiologia", 
           "Urinálise", "Parasitologia",
-          "Qualidade", "Faturamento", "TI e Infraestrutura", "Área Técnica", 
+          "Faturamento", "TI e Infraestrutura", "Área Técnica", 
           "Administrativo", "Diretoria", "Limpeza", "Geral"
         ];
         const userSetores = user?.setor?.split(',').map((s: string) => s.trim()) || [];
@@ -282,14 +282,14 @@ function ElaboracaoContent() {
                 "Recepção e Atendimento", "Coleta", "Triagem", "Bioquímica", 
                 "Hematologia", "Imunologia", "Microbiologia", 
                 "Urinálise", "Parasitologia",
-                "Qualidade", "Faturamento", "TI e Infraestrutura", "Área Técnica", 
+                "Faturamento", "TI e Infraestrutura", "Área Técnica", 
                 "Administrativo", "Diretoria", "Limpeza", "Geral"
               ].map(opcao => {
                 const OPTIONS_ALL = [
                   "Recepção e Atendimento", "Coleta", "Triagem", "Bioquímica", 
                   "Hematologia", "Imunologia", "Microbiologia", 
                   "Urinálise", "Parasitologia",
-                  "Qualidade", "Faturamento", "TI e Infraestrutura", "Área Técnica", 
+                  "Faturamento", "TI e Infraestrutura", "Área Técnica", 
                   "Administrativo", "Diretoria", "Limpeza", "Geral"
                 ];
                 const userSetores = user?.setor?.split(',').map((s: string) => s.trim()) || [];
