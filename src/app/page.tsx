@@ -16,7 +16,7 @@ export default function Dashboard() {
       router.push('/login');
     } else {
       const user = JSON.parse(userStr);
-      setEmpresaInfo({ nome: user.empresaNome || '', logo: user.empresaLogo || '/thinkdocs.png' });
+      setEmpresaInfo({ nome: user.empresaNome || '', logo: user.empresaLogo || '' });
       fetch(`/api/documentos?empresaId=${user.empresaId}&userFuncao=${encodeURIComponent(user.funcao)}&userSetor=${encodeURIComponent(user.setor)}`)
         .then(res => res.json())
         .then(data => {
@@ -102,7 +102,7 @@ export default function Dashboard() {
     <div className="animate-fade-in">
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
         {empresaInfo.logo && (
-          <img src={empresaInfo.logo} alt="Logo" style={{ maxHeight: '60px', objectFit: 'contain' }} />
+          <img src={empresaInfo.logo} alt="Logo" style={{ maxHeight: '60px', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
         )}
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>

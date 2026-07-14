@@ -152,7 +152,7 @@ export default function MeusLaboratorios() {
                 ) : (
                   <button 
                     onClick={() => {
-                      const updatedUser = { ...user, empresaId: emp.id, empresaNome: emp.nome, empresaLogo: emp.logoUrl || '/thinkdocs.png' };
+                      const updatedUser = { ...user, empresaId: emp.id, empresaNome: emp.nome, empresaLogo: emp.logoUrl || '' };
                       localStorage.setItem('thinkdocs_user', JSON.stringify(updatedUser));
                       window.location.href = '/';
                     }}

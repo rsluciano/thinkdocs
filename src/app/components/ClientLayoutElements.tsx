@@ -3,19 +3,7 @@
 import React, { useEffect, useState } from 'react';
 
 export function CompanyLogo() {
-  const [logoUrl, setLogoUrl] = useState('/thinkdocs.png');
-  
-  useEffect(() => {
-    const userStr = localStorage.getItem('thinkdocs_user');
-    if (userStr) {
-      const user = JSON.parse(userStr);
-      if (user.empresaLogo && user.empresaLogo.trim() !== '') {
-        setLogoUrl(user.empresaLogo);
-      }
-    }
-  }, []);
-
-  return <img src={logoUrl} alt="Company Logo" style={{ maxWidth: '100%', height: 'auto', maxHeight: '100px', objectFit: 'contain' }} />;
+  return <img src="/thinkdocs.png" alt="ThinkDocs Logo" style={{ maxWidth: '100%', height: 'auto', maxHeight: '100px', objectFit: 'contain' }} />;
 }
 
 export function HeaderClient() {
@@ -46,7 +34,7 @@ export function HeaderClient() {
         userObj.empresaNome = novaEmpresa.nome;
         // Pega a logo da empresa se existir na api, ou mantém a anterior por enquanto
         // Idealmente a API que busca a lista deveria trazer a logo também, mas para o protótipo:
-        userObj.empresaLogo = novaEmpresa.logoUrl || '/thinkdocs.png';
+        userObj.empresaLogo = novaEmpresa.logoUrl || '';
         localStorage.setItem('thinkdocs_user', JSON.stringify(userObj));
         window.location.reload(); // Recarrega para aplicar a todos os componentes
       }
