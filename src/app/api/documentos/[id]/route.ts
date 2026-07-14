@@ -6,7 +6,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const data = await req.json();
-    const { codigo, titulo, categoria, arquivo } = data;
+    const { codigo, titulo, categoria, arquivo, setor, autorNome, dataAtualizacao, dataProximaAtualizacao } = data;
 
     const doc = await prisma.documento.findUnique({ where: { id } });
 
@@ -25,8 +25,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         codigo: codigo || doc.codigo,
         titulo: titulo || doc.titulo,
         categoria: categoria || doc.categoria,
-        setor: doc.setor,
-        autor: doc.autor,
+        setor: Array.isArray(setor) ? setor.join(',') : (setor || doc.setor),
+        autor: autorNome || doc.autor,
+        dataAtualizacao: dataAtualizacao ? new Date(dataAtualizacao) : null,
+        dataVencimento: dataProximaAtualizacao ? new Date(dataProximaAtualizacao) : null,
         dataEnvio: new Date(),
         arquivoUrl: arquivo || doc.arquivoUrl,
         status: 'Aguardando Aprovação',

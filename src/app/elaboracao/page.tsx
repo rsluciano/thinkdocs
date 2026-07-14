@@ -106,6 +106,29 @@ function ElaboracaoContent() {
 
     setIsSubmitting(true);
 
+    let targetId = devolvidoId || revisaoId;
+
+    // Duplicate Check
+    if (!targetId) {
+      try {
+        const checkRes = await fetch(`/api/documentos?empresaId=${user?.empresaId}`);
+        if (checkRes.ok) {
+          const allDocs = await checkRes.json();
+          const existingDoc = allDocs.find((d: any) => d.codigo.trim().toUpperCase() === codigo.trim().toUpperCase());
+          if (existingDoc) {
+            const wantsToReplace = window.confirm(`ATENÇÃO: O documento com o código "${codigo}" já existe no sistema (${existingDoc.titulo}).\n\nDeseja enviar esta nova versão para SUBSTITUIR o documento existente?`);
+            if (!wantsToReplace) {
+              setIsSubmitting(false);
+              return;
+            }
+            targetId = existingDoc.id;
+          }
+        }
+      } catch (err) {
+        console.error("Erro ao verificar duplicidade", err);
+      }
+    }
+
     try {
       // 1. Fazer upload do arquivo real (reaproveitando a API de upload)
       const formData = new FormData();
@@ -129,9 +152,9 @@ function ElaboracaoContent() {
       // 2. Registrar no banco com status de workflow
       const endpoint = devolvidoId 
         ? `/api/documentos/${devolvidoId}/reenviar`
-        : (revisaoId ? `/api/documentos/${revisaoId}` : '/api/documentos');
+        : (targetId ? `/api/documentos/${targetId}` : '/api/documentos');
         
-      const method = (revisaoId || devolvidoId) ? 'PUT' : 'POST';
+      const method = targetId ? 'PUT' : 'POST';
 
       const docRes = await fetch(endpoint, {
         method: method,
