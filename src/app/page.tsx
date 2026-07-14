@@ -155,7 +155,7 @@ export default function Dashboard() {
         }
       `}} />
 
-      <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>Distribuição por Categoria</h2>
+      <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>📊 Distribuição por Categoria</h2>
       <div className="card" style={{ marginBottom: '3rem' }}>
         {categoriasChart.length === 0 ? (
           <p style={{ color: 'var(--muted)', textAlign: 'center' }}>Nenhum documento encontrado.</p>
