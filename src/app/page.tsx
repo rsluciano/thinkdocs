@@ -60,11 +60,23 @@ export default function Dashboard() {
   const setoresCount = documentos.reduce((acc, doc) => {
     // Um documento pode estar em múltiplos setores, então contamos cada um
     const docSetores = Array.isArray(doc.setor) ? doc.setor : [doc.setor || 'Geral'];
-    docSetores.forEach((s: string) => {
-      if (acc[s] !== undefined) {
-        acc[s] += 1;
-      }
-    });
+    
+    if (docSetores.includes('Geral')) {
+      // Se for "Geral", o documento pertence a TODOS os setores
+      Object.keys(setoresPermitidos).forEach(s => {
+        if (acc[s] !== undefined) {
+          acc[s] += 1;
+        }
+      });
+    } else {
+      // Caso contrário, apenas nos setores específicos marcados
+      docSetores.forEach((s: string) => {
+        if (acc[s] !== undefined) {
+          acc[s] += 1;
+        }
+      });
+    }
+    
     return acc;
   }, { ...setoresPermitidos } as Record<string, number>);
 
