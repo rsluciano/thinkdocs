@@ -6,14 +6,14 @@ import { useRouter } from 'next/navigation';
 
 const ICONES_CATEGORIAS: Record<string, string> = {
   "Formulários": "📝",
-  "Bulário": "💊",
+  "Bulário": "🧪",
   "FISPQs": "☣️",
-  "Instruções de Trabalho de serviço": "📋",
-  "Instruções de Trabalho de equipamento": "⚙️",
-  "Instruções de Trabalho de exames": "🔬",
+  "Instrução de trabalho de Serviço": "📋",
+  "Instrução de trabalho de Equipamentos": "⚙️",
+  "Instrução de trabalho de Exames": "🔬",
   "Manuais": "📖",
   "Documentos Mestres": "👑",
-  "Procedimentos da Qualidade": "🛡️",
+  "Procedimentos da qualidade": "🛡️",
   "Listas": "🧾",
   "Geral": "📁"
 };
