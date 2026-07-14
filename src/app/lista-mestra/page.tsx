@@ -99,6 +99,17 @@ export default function ListaMestra() {
     return { label: 'Vencido', bg: '#fee2e2', text: '#991b1b' }; // Vermelho (Vencido)
   };
 
+  const getRowColor = (categoria: string) => {
+    switch (categoria) {
+      case 'Formulários': return '#fce7f3'; // Rosa claro
+      case 'Instrução de trabalho de Serviço': return '#fef9c3'; // Amarelo claro
+      case 'Instrução de trabalho de Equipamentos': return '#e0f2fe'; // Azul claro
+      case 'Instrução de trabalho de Exames': return '#dcfce7'; // Verde claro
+      case 'Procedimentos da qualidade': return '#fee2e2'; // Vermelho claro
+      default: return 'transparent'; // Cor padrão
+    }
+  };
+
   return (
     <div className="animate-fade-in">
     <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>← Voltar ao Dashboard</button>
@@ -137,7 +148,7 @@ export default function ListaMestra() {
             </thead>
             <tbody>
               {documentos.map(doc => (
-                <tr key={doc.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                <tr key={doc.id} style={{ borderBottom: '1px solid var(--border)', backgroundColor: getRowColor(doc.categoria) }}>
                   <td style={{ padding: '1rem', fontWeight: 'bold' }}>
                     {doc.codigo}
                     <div style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.2rem' }}>v{doc.revisao}</div>
