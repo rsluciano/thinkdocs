@@ -35,11 +35,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Este e-mail já está em uso no sistema.' }, { status: 400 });
     }
 
+    let defaultLogo = '/thinkdocs.png';
+    if (empresaNome.toLowerCase().includes('souza')) {
+      defaultLogo = '/logo-souza-areas.png';
+    }
+
     // Criar a Empresa
     const novaEmpresa = {
       id: `emp_${Date.now()}`,
       nome: empresaNome,
-      logoUrl: empresaLogo || '/thinkdocs.png' // Fallback para logo padrão
+      logoUrl: empresaLogo || defaultLogo
     };
     db.empresas.push(novaEmpresa);
 

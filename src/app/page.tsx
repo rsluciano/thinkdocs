@@ -16,7 +16,11 @@ export default function Dashboard() {
       router.push('/login');
     } else {
       const user = JSON.parse(userStr);
-      setEmpresaInfo({ nome: user.empresaNome || '', logo: user.empresaLogo || '' });
+      let finalLogo = user.empresaLogo || '';
+      if (user.empresaNome && user.empresaNome.toLowerCase().includes('souza')) {
+        finalLogo = '/logo-souza-areas.png';
+      }
+      setEmpresaInfo({ nome: user.empresaNome || '', logo: finalLogo });
       fetch(`/api/documentos?empresaId=${user.empresaId}&userFuncao=${encodeURIComponent(user.funcao)}&userSetor=${encodeURIComponent(user.setor)}`)
         .then(res => res.json())
         .then(data => {
