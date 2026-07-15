@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { fetchAPI } from '@/lib/api';
 
 export default function Dashboard() {
   const router = useRouter();
