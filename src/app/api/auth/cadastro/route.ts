@@ -1,23 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const dbPath = path.join(process.cwd(), 'local-db.json');
-
-function getDb() {
-  if (!fs.existsSync(dbPath)) {
-    fs.writeFileSync(dbPath, JSON.stringify({ empresas: [], usuarios: [], documentos: [] }));
-  }
-  const data = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-  if (!data.empresas) data.empresas = [];
-  if (!data.usuarios) data.usuarios = [];
-  if (!data.documentos) data.documentos = [];
-  return data;
-}
-
-function saveDb(data: any) {
-  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
-}
+import prisma from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
+import { signToken } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,54 +12,58 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Dados incompletos. Nome da empresa é obrigatório.' }, { status: 400 });
     }
 
-    const db = getDb();
-    
-    // Verifica e-mail duplicado
-    if (db.usuarios.some((u: any) => u.email === email)) {
+    // Verifica e-mail duplicado no banco de dados real
+    const usuarioExistente = await prisma.usuario.findUnique({
+      where: { email }
+    });
+
+    if (usuarioExistente) {
       return NextResponse.json({ error: 'Este e-mail já está em uso no sistema.' }, { status: 400 });
     }
+
+    // Hash the password securely using bcrypt
+    const salt = await bcrypt.genSalt(10);
+    const senhaHash = await bcrypt.hash(senha, salt);
 
     let defaultLogo = '/thinkdocs.png';
     if (empresaNome.toLowerCase().includes('souza')) {
       defaultLogo = '/logo-souza-areas.png';
     }
 
-    // Criar a Empresa
-    const novaEmpresa = {
-      id: `emp_${Date.now()}`,
-      nome: empresaNome,
-      logoUrl: empresaLogo || defaultLogo
-    };
-    db.empresas.push(novaEmpresa);
+    // Em uma implementação full Prisma, teríamos uma tabela Empresa.
+    // Como o schema atual usa empresaId como String no próprio usuário, geramos um ID:
+    const novaEmpresaId = `emp_${Date.now()}`;
 
-    const novoUsuario = {
-      id: Date.now().toString(),
-      empresaId: novaEmpresa.id,
-      empresaNome: novaEmpresa.nome,
-      empresaLogo: novaEmpresa.logoUrl,
-      nome,
-      email,
-      senha, // Plain text in prototype
-      funcao: 'Administrador', // Auto-promove como Admin master no auto-cadastro
-      setor: 'Geral',
-      empresasPermitidas: [{ id: novaEmpresa.id, nome: novaEmpresa.nome }],
-      status: 'Ativo', // Ativa diretamente sem e-mail pendente
-      activationToken: null,
-      resetToken: null
-    };
+    const novoUsuario = await prisma.usuario.create({
+      data: {
+        nome,
+        email,
+        senha: senhaHash,
+        funcao: 'Administrador', // Auto-promove como Admin master no auto-cadastro
+        setor: 'Geral',
+        empresaId: novaEmpresaId
+      }
+    });
 
-    db.usuarios.push(novoUsuario);
-    saveDb(db);
-
-    // Retorna os dados seguros (sem a senha)
     const { senha: _, ...safeUser } = novoUsuario;
+
+    const token = await signToken({
+      userId: novoUsuario.id,
+      empresaId: novoUsuario.empresaId,
+      funcao: novoUsuario.funcao,
+      nome: novoUsuario.nome,
+      email: novoUsuario.email,
+      setor: novoUsuario.setor
+    });
 
     return NextResponse.json({
       message: 'Cadastro realizado com sucesso',
-      usuario: safeUser
+      usuario: { ...safeUser, empresaNome, empresaLogo: empresaLogo || defaultLogo },
+      token
     }, { status: 201 });
 
   } catch (error: any) {
+    console.error('Erro no cadastro:', error);
     return NextResponse.json({ error: 'Erro interno ao salvar usuário' }, { status: 500 });
   }
 }

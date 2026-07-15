@@ -1,17 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { emailService } from '@/lib/emailService';
 import prisma from '@/lib/prisma';
+import { verifyToken } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+    }
+    const token = authHeader.split(' ')[1];
+    const session = await verifyToken(token);
+    if (!session) {
+      return NextResponse.json({ error: 'Sessão inválida' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
-    const empresaId = searchParams.get('empresaId');
-    const userFuncao = searchParams.get('userFuncao');
-    const userSetor = searchParams.get('userSetor');
+    
+    // Agora o empresaId vem única e exclusivamente do token autenticado
+    const empresaId = session.empresaId;
+    const userFuncao = session.funcao;
+    const userSetor = session.setor;
 
-    const whereClause: any = {};
-    if (empresaId) whereClause.empresaId = empresaId;
+    const whereClause: any = { empresaId };
     if (status) whereClause.status = status;
 
     let docs = await prisma.documento.findMany({
@@ -38,7 +50,6 @@ export async function GET(req: NextRequest) {
         
         if (!hasGeralAccess) {
           docs = docs.filter((d: any) => {
-            // d.setor agora já é um array com Qualidade garantida (pelo map acima)
             return d.setor.includes('Geral') || d.setor.some((s: string) => userSetoresList.includes(s));
           });
         }
@@ -53,11 +64,26 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const data = await req.json();
-    const { titulo, codigo, categoria, arquivo, autorNome, setor, empresaId, dataAtualizacao, dataProximaAtualizacao } = data;
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+    }
+    const token = authHeader.split(' ')[1];
+    const session = await verifyToken(token);
+    if (!session) {
+      return NextResponse.json({ error: 'Sessão inválida' }, { status: 401 });
+    }
 
-    if (!titulo || !codigo || !categoria || !arquivo || !empresaId) {
-      return NextResponse.json({ error: 'Dados incompletos do documento. Verifique o tenant.' }, { status: 400 });
+    const data = await req.json();
+    const { titulo, codigo, categoria, arquivo, dataAtualizacao, dataProximaAtualizacao } = data;
+    // Pega o setor enviado no JSON, mas o autor e empresaId vêm 100% do TOKEN!
+    let { setor } = data; 
+    
+    const empresaId = session.empresaId;
+    const autorNome = session.nome;
+
+    if (!titulo || !codigo || !categoria || !arquivo) {
+      return NextResponse.json({ error: 'Dados incompletos do documento.' }, { status: 400 });
     }
 
     const parsedSetores = Array.isArray(setor) ? setor : (setor || 'Geral').split(',').map((s:string)=>s.trim());
@@ -99,9 +125,13 @@ export async function POST(req: NextRequest) {
       false
     );
 
-    return NextResponse.json({ message: 'Documento enviado para aprovação com sucesso.', documento: novoDocumento }, { status: 201 });
+    return NextResponse.json({
+      message: 'Documento enviado para aprovação com sucesso',
+      documento: novoDocumento
+    }, { status: 201 });
 
   } catch (error: any) {
-    return NextResponse.json({ error: 'Erro interno ao salvar documento' }, { status: 500 });
+    console.error('Erro na API de documentos:', error);
+    return NextResponse.json({ error: 'Erro interno no servidor' }, { status: 500 });
   }
 }

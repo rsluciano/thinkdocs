@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { emailService } from '@/lib/emailService';
 import prisma from '@/lib/prisma';
+import { verifyToken } from '@/lib/auth';
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+    }
+    const token = authHeader.split(' ')[1];
+    const session = await verifyToken(token);
+    if (!session) {
+      return NextResponse.json({ error: 'Sessão inválida' }, { status: 401 });
+    }
+
     const { id } = await params;
     const data = await req.json();
-    const { codigo, titulo, categoria, arquivo, setor, autorNome, dataAtualizacao, dataProximaAtualizacao } = data;
+    const { codigo, titulo, categoria, arquivo, setor, dataAtualizacao, dataProximaAtualizacao } = data;
 
     const doc = await prisma.documento.findUnique({ where: { id } });
 
@@ -14,7 +25,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Documento não encontrado' }, { status: 404 });
     }
     
-    // Calcula nova versão/revisão
+    // Verificação de IDOR
+    if (doc.empresaId !== session.empresaId) {
+      return NextResponse.json({ error: 'Acesso negado. Documento pertence a outra empresa.' }, { status: 403 });
+    }
+
     const revisaoAtual = doc.revisao || 1;
     const novaRevisao = revisaoAtual + 1;
     
@@ -23,15 +38,14 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       parsedSetores.push('Qualidade');
     }
 
-    // Cria o clone (novo registro)
     const novoDoc = await prisma.documento.create({
       data: {
-        empresaId: doc.empresaId,
+        empresaId: session.empresaId,
         codigo: codigo || doc.codigo,
         titulo: titulo || doc.titulo,
         categoria: categoria || doc.categoria,
         setor: parsedSetores.join(','),
-        autor: autorNome || doc.autor,
+        autor: session.nome || doc.autor,
         dataAtualizacao: dataAtualizacao ? new Date(dataAtualizacao) : null,
         dataVencimento: dataProximaAtualizacao ? new Date(dataProximaAtualizacao) : null,
         dataEnvio: new Date(),
@@ -41,29 +55,17 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       }
     });
 
-    // ============================================================
-    // SIMULAÇÃO DE ENVIO DE E-MAIL
-    // ============================================================
     const diretores = await prisma.usuario.findMany({
       where: {
-        empresaId: novoDoc.empresaId,
+        empresaId: session.empresaId,
         funcao: { in: ['Diretor', 'Administrador', 'Gestor da Qualidade'] }
       }
     });
     const emails = diretores.map((d: any) => d.email);
 
-    await emailService.notificarAprovacaoPendente(
-      emails,
-      novoDoc.autor,
-      novoDoc.codigo,
-      novoDoc.titulo,
-      true
-    );
+    await emailService.notificarAprovacaoPendente(emails, novoDoc.autor, novoDoc.codigo, novoDoc.titulo, true);
 
-    return NextResponse.json({
-      message: 'Revisão enviada com sucesso',
-      documento: novoDoc
-    }, { status: 200 });
+    return NextResponse.json({ message: 'Revisão enviada com sucesso', documento: novoDoc }, { status: 200 });
 
   } catch (error: any) {
     return NextResponse.json({ error: 'Erro interno ao atualizar documento' }, { status: 500 });
@@ -72,6 +74,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+    }
+    const token = authHeader.split(' ')[1];
+    const session = await verifyToken(token);
+    if (!session) {
+      return NextResponse.json({ error: 'Sessão inválida' }, { status: 401 });
+    }
+
     const { id } = await params;
     const excluidoDoc = await prisma.documento.findUnique({ where: { id } });
 
@@ -79,14 +91,16 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       return NextResponse.json({ error: 'Documento não encontrado' }, { status: 404 });
     }
 
+    // Verificação de IDOR
+    if (excluidoDoc.empresaId !== session.empresaId) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    }
+
     await prisma.documento.delete({ where: { id } });
 
-    // ============================================================
-    // SIMULAÇÃO DE ENVIO DE E-MAIL DE EXCLUSÃO
-    // ============================================================
     const diretores = await prisma.usuario.findMany({
       where: {
-        empresaId: excluidoDoc.empresaId,
+        empresaId: session.empresaId,
         OR: [
           { funcao: { in: ['Diretor', 'Administrador', 'Gestor da Qualidade'] } },
           { nome: excluidoDoc.autor }
@@ -95,15 +109,10 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     });
     const emails = [...new Set(diretores.map((d: any) => d.email))] as string[];
 
-    await emailService.notificarExclusao(
-      emails,
-      excluidoDoc.codigo,
-      excluidoDoc.titulo
-    );
+    await emailService.notificarExclusao(emails, excluidoDoc.codigo, excluidoDoc.titulo, excluidoDoc.autor);
 
-    return NextResponse.json({ message: 'Documento excluído com sucesso' }, { status: 200 });
-
+    return NextResponse.json({ message: 'Documento excluído' }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ error: 'Erro interno ao excluir documento' }, { status: 500 });
+    return NextResponse.json({ error: 'Erro ao excluir documento' }, { status: 500 });
   }
 }

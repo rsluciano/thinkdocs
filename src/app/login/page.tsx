@@ -28,6 +28,7 @@ export default function Login() {
 
       if (res.ok) {
         localStorage.setItem('thinkdocs_user', JSON.stringify(data.usuario));
+        localStorage.setItem('thinkdocs_token', data.token);
         window.location.href = '/'; 
       } else {
         setError(data.error || 'Falha ao realizar login');

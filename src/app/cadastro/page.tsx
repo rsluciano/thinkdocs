@@ -50,6 +50,7 @@ export default function Cadastro() {
       if (res.ok) {
         // Loga o usuário automaticamente
         localStorage.setItem('thinkdocs_user', JSON.stringify(data.usuario));
+        localStorage.setItem('thinkdocs_token', data.token);
         window.location.href = '/'; // Força o reload para montar a Sidebar no Layout
       } else {
         setError(data.error || 'Falha ao realizar cadastro');
