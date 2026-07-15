@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -41,7 +41,7 @@ export default function MeusLaboratorios() {
         formData.append('empresa', nomeEmpresa);
         formData.append('categoria', 'Logos');
 
-        const uploadRes = await fetch('/api/upload', {
+        const uploadRes = await fetchAPI('/api/upload', {
           method: 'POST',
           body: formData
         });
@@ -51,7 +51,7 @@ export default function MeusLaboratorios() {
         }
       }
 
-      const res = await fetch('/api/empresas', {
+      const res = await fetchAPI('/api/empresas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

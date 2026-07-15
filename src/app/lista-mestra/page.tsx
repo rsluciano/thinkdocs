@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -24,7 +24,7 @@ export default function ListaMestra() {
 
   const carregarDocumentos = async (userData: any) => {
     try {
-      const res = await fetch(`/api/documentos?status=Vigente&empresaId=${userData.empresaId}&userFuncao=${encodeURIComponent(userData.funcao)}&userSetor=${encodeURIComponent(userData.setor)}`);
+      const res = await fetchAPI(`/api/documentos?status=Vigente&empresaId=${userData.empresaId}&userFuncao=${encodeURIComponent(userData.funcao)}&userSetor=${encodeURIComponent(userData.setor)}`);
       const data = await res.json();
       if (res.ok) {
         const sortedData = data.sort((a: any, b: any) => a.codigo.localeCompare(b.codigo));
@@ -42,7 +42,7 @@ export default function ListaMestra() {
       return;
     }
     try {
-      const res = await fetch(`/api/documentos/${id}`, { method: 'DELETE' });
+      const res = await fetchAPI(`/api/documentos/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setDocumentos((prev) => prev.filter((d) => d.id !== id));
       } else {
@@ -58,7 +58,7 @@ export default function ListaMestra() {
       return;
     }
     try {
-      const res = await fetch(`/api/documentos/${id}/obsoleto`, { method: 'PUT' });
+      const res = await fetchAPI(`/api/documentos/${id}/obsoleto`, { method: 'PUT' });
       if (res.ok) {
         setDocumentos((prev) => prev.filter((d) => d.id !== id));
         alert('Documento movido para Arquivo Morto com sucesso!');

@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -31,10 +31,10 @@ export default function Devolvidos() {
 
   const carregarDocumentos = async (empresaId: string) => {
     try {
-      const res = await fetch(`/api/documentos?status=Reprovado&empresaId=${empresaId}`);
+      const res = await fetchAPI(`/api/documentos?status=Reprovado&empresaId=${empresaId}`);
       const data = await res.json();
       if (res.ok) {
-        setDocumentos(data);
+        if (Array.isArray(data)) setDocumentos(data); else setDocumentos([]);
       }
     } catch (err) {
       console.error('Erro ao buscar Documentos Devolvidos');
@@ -48,7 +48,7 @@ export default function Devolvidos() {
       return;
     }
     try {
-      const res = await fetch(`/api/documentos/${id}`, { method: 'DELETE' });
+      const res = await fetchAPI(`/api/documentos/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setDocumentos((prev) => prev.filter((d) => d.id !== id));
       } else {

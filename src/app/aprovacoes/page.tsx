@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -29,7 +29,7 @@ export default function Aprovacoes() {
 
   const carregarDocumentos = async (empresaId: string) => {
     try {
-      const res = await fetch(`/api/documentos?status=Aguardando Aprovação&empresaId=${empresaId}`);
+      const res = await fetchAPI(`/api/documentos?status=Aguardando Aprovação&empresaId=${empresaId}`);
       const data = await res.json();
       if (res.ok) {
         const sortedData = data.sort((a: any, b: any) => new Date(a.dataEnvio).getTime() - new Date(b.dataEnvio).getTime());
@@ -56,7 +56,7 @@ export default function Aprovacoes() {
     }
 
     try {
-      const res = await fetch(`/api/documentos/${id}/avaliar`, {
+      const res = await fetchAPI(`/api/documentos/${id}/avaliar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status, aprovadorNome: user.nome, motivoReprovacao })
@@ -79,7 +79,7 @@ export default function Aprovacoes() {
       return;
     }
     try {
-      const res = await fetch(`/api/documentos/${id}`, { method: 'DELETE' });
+      const res = await fetchAPI(`/api/documentos/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setDocumentos((prev) => prev.filter((d) => d.id !== id));
       } else {

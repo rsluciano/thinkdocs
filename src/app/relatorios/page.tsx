@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -28,7 +28,7 @@ export default function Relatorios() {
 
   const carregarLeituras = async (empresaId: string) => {
     try {
-      const res = await fetch(`/api/leituras?empresaId=${empresaId}`);
+      const res = await fetchAPI(`/api/leituras?empresaId=${empresaId}`);
       const data = await res.json();
       if (res.ok) {
         // Ordena da mais recente para a mais antiga

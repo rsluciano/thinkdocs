@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -50,7 +50,7 @@ function ElaboracaoContent() {
       
       // Se for modo de revisão ou correção de devolvido, carrega o documento original
       if (revisaoId || devolvidoId) {
-        fetch(`/api/documentos?empresaId=${parsedUser.empresaId}&status=${devolvidoId ? 'Reprovado' : 'Vigente'}`)
+        fetchAPI(`/api/documentos?empresaId=${parsedUser.empresaId}&status=${devolvidoId ? 'Reprovado' : 'Vigente'}`)
           .then(res => res.json())
           .then(data => {
             const doc = data.find((d: any) => d.id === (revisaoId || devolvidoId));
@@ -111,7 +111,7 @@ function ElaboracaoContent() {
     // Duplicate Check
     if (!targetId) {
       try {
-        const checkRes = await fetch(`/api/documentos?empresaId=${user?.empresaId}`);
+        const checkRes = await fetchAPI(`/api/documentos?empresaId=${user?.empresaId}`);
         if (checkRes.ok) {
           const allDocs = await checkRes.json();
           const existingDoc = allDocs.find((d: any) => d.codigo.trim().toUpperCase() === codigo.trim().toUpperCase());
@@ -138,7 +138,7 @@ function ElaboracaoContent() {
       formData.append('empresa', user?.empresaId || 'ThinkDocs');
       formData.append('categoria', categoria);
       
-      const uploadRes = await fetch('/api/upload', {
+      const uploadRes = await fetchAPI('/api/upload', {
         method: 'POST',
         body: formData
       });
@@ -156,7 +156,7 @@ function ElaboracaoContent() {
         
       const method = targetId ? 'PUT' : 'POST';
 
-      const docRes = await fetch(endpoint, {
+      const docRes = await fetchAPI(endpoint, {
         method: method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

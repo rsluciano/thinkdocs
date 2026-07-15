@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -17,7 +17,7 @@ export default function Usuarios() {
         router.push('/');
         return;
       }
-      fetch(`/api/usuarios?empresaId=${user.empresaId}`)
+      fetchAPI(`/api/usuarios?empresaId=${user.empresaId}`)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {
@@ -65,7 +65,7 @@ export default function Usuarios() {
     try {
       if (editingUser) {
         // Atualizar
-        const response = await fetch(`/api/usuarios/${editingUser.id}`, {
+        const response = await fetchAPI(`/api/usuarios/${editingUser.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -85,7 +85,7 @@ export default function Usuarios() {
         }
       } else {
         // Cadastrar
-        const response = await fetch('/api/usuarios', {
+        const response = await fetchAPI('/api/usuarios', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
@@ -120,7 +120,7 @@ export default function Usuarios() {
     if (!window.confirm(`ATENÇÃO: Tem certeza que deseja EXCLUIR definitivamente o usuário ${user.nome}? Esta ação não pode ser desfeita.`)) return;
 
     try {
-      const response = await fetch(`/api/usuarios/${user.id}`, {
+      const response = await fetchAPI(`/api/usuarios/${user.id}`, {
         method: 'DELETE'
       });
       if (response.ok) {
@@ -137,7 +137,7 @@ export default function Usuarios() {
     if (!window.confirm(`Deseja ativar manualmente a conta de ${user.nome}?`)) return;
 
     try {
-      const response = await fetch(`/api/usuarios/${user.id}`, {
+      const response = await fetchAPI(`/api/usuarios/${user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'Ativo' })

@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -53,10 +53,10 @@ export default function SetoresPage() {
 
   const carregarDocumentos = async (userData: any) => {
     try {
-      const res = await fetch(`/api/documentos?status=Vigente&empresaId=${userData.empresaId}&userFuncao=${encodeURIComponent(userData.funcao)}&userSetor=${encodeURIComponent(userData.setor)}`);
+      const res = await fetchAPI(`/api/documentos?status=Vigente&empresaId=${userData.empresaId}&userFuncao=${encodeURIComponent(userData.funcao)}&userSetor=${encodeURIComponent(userData.setor)}`);
       const data = await res.json();
       if (res.ok) {
-        setDocumentos(data);
+        if (Array.isArray(data)) setDocumentos(data); else setDocumentos([]);
       }
     } catch (err) {
       console.error('Erro ao buscar documentos');

@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -24,10 +24,10 @@ export default function ArquivoMorto() {
 
   const carregarDocumentos = async (userData: any) => {
     try {
-      const res = await fetch(`/api/documentos?status=Obsoleto&empresaId=${userData.empresaId}&userFuncao=${encodeURIComponent(userData.funcao)}&userSetor=${encodeURIComponent(userData.setor)}`);
+      const res = await fetchAPI(`/api/documentos?status=Obsoleto&empresaId=${userData.empresaId}&userFuncao=${encodeURIComponent(userData.funcao)}&userSetor=${encodeURIComponent(userData.setor)}`);
       const data = await res.json();
       if (res.ok) {
-        setDocumentos(data);
+        if (Array.isArray(data)) setDocumentos(data); else setDocumentos([]);
       }
     } catch (err) {
       console.error('Erro ao buscar Arquivo Morto');

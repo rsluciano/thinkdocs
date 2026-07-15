@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 
@@ -31,7 +31,7 @@ export default function LerDocumento() {
   const carregarDocumento = async (empresaId: string, usuarioId: string) => {
     try {
       // Puxa todos os docs (na falta de um endpoint de doc unico simplificado)
-      const res = await fetch(`/api/documentos?empresaId=${empresaId}`);
+      const res = await fetchAPI(`/api/documentos?empresaId=${empresaId}`);
       const docs = await res.json();
       const currentDoc = docs.find((d: any) => d.id === docId);
       
@@ -51,7 +51,7 @@ export default function LerDocumento() {
 
   const verificarLeitura = async (empresaId: string, usuarioId: string, documentoId: string, versao: string) => {
     try {
-      const res = await fetch(`/api/leituras?empresaId=${empresaId}`);
+      const res = await fetchAPI(`/api/leituras?empresaId=${empresaId}`);
       const leituras = await res.json();
       const jaLeu = leituras.find((l: any) => 
         l.usuarioId === usuarioId && 
@@ -70,7 +70,7 @@ export default function LerDocumento() {
     if (!leuDocumento) return;
     setIsSubmitting(true);
     try {
-      const res = await fetch('/api/leituras', {
+      const res = await fetchAPI('/api/leituras', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -18,7 +18,7 @@ export default function RecuperarSenha() {
     setSimulatedLink('');
 
     try {
-      const res = await fetch('/api/auth/recuperar-senha', {
+      const res = await fetchAPI('/api/auth/recuperar-senha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })

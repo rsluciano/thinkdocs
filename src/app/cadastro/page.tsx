@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -29,7 +29,7 @@ export default function Cadastro() {
         formData.append('empresa', empresaNome);
         formData.append('categoria', 'Logos');
 
-        const uploadRes = await fetch('/api/upload', {
+        const uploadRes = await fetchAPI('/api/upload', {
           method: 'POST',
           body: formData
         });
@@ -39,7 +39,7 @@ export default function Cadastro() {
         }
       }
 
-      const res = await fetch('/api/auth/cadastro', {
+      const res = await fetchAPI('/api/auth/cadastro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nome, email, senha, empresaNome, empresaLogo: finalLogoUrl })

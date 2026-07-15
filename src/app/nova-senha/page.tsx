@@ -1,5 +1,5 @@
 "use client";
-
+import { fetchAPI } from '@/lib/api';
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
@@ -38,7 +38,7 @@ function NovaSenhaContent() {
     }
 
     try {
-      const res = await fetch('/api/auth/nova-senha', {
+      const res = await fetchAPI('/api/auth/nova-senha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, novaSenha: senha })

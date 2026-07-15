@@ -21,10 +21,11 @@ export default function Dashboard() {
         finalLogo = '/logo-souza-areas.png';
       }
       setEmpresaInfo({ nome: user.empresaNome || '', logo: finalLogo });
-      fetch(`/api/documentos?empresaId=${user.empresaId}&userFuncao=${encodeURIComponent(user.funcao)}&userSetor=${encodeURIComponent(user.setor)}`)
+      fetchAPI(`/api/documentos?empresaId=${user.empresaId}&userFuncao=${encodeURIComponent(user.funcao)}&userSetor=${encodeURIComponent(user.setor)}`)
         .then(res => res.json())
         .then(data => {
-          setDocumentos(data);
+          if (Array.isArray(data)) setDocumentos(data);
+          else setDocumentos([]);
           setLoading(false);
         })
         .catch(() => setLoading(false));
