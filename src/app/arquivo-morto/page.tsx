@@ -115,21 +115,16 @@ export default function ArquivoMorto() {
                     <div style={{ color: 'var(--muted)' }}>Apr: {doc.aprovadoPor}</div>
                   </td>
                   <td style={{ padding: '1rem' }}>
-                    {(() => {
-                      const statusInfo = getStatusInfo(doc.dataVencimento);
-                      return (
-                        <span style={{
-                          padding: '0.25rem 0.75rem',
-                          borderRadius: '999px',
-                          fontSize: '0.85rem',
-                          fontWeight: 'bold',
-                          backgroundColor: statusInfo.bg,
-                          color: statusInfo.text
-                        }}>
-                          {statusInfo.label}
-                        </span>
-                      );
-                    })()}
+                    <span style={{
+                      padding: '0.25rem 0.75rem',
+                      borderRadius: '999px',
+                      fontSize: '0.85rem',
+                      fontWeight: 'bold',
+                      backgroundColor: doc.status === 'Substituído' ? '#dbeafe' : '#fee2e2',
+                      color: doc.status === 'Substituído' ? '#1e40af' : '#991b1b'
+                    }}>
+                      {doc.status}
+                    </span>
                   </td>
                   <td style={{ padding: '1rem' }}>
                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
