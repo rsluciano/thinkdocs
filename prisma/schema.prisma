@@ -38,3 +38,16 @@ model Documento {
   dataAprovacao      DateTime?
   dataObsoletado     DateTime?
 }
+
+model Leitura {
+  id              String   @id @default(cuid())
+  empresaId       String
+  usuarioId       String
+  usuarioNome     String
+  usuarioSetor    String
+  documentoId     String
+  documentoCodigo String
+  documentoTitulo String
+  documentoVersao String
+  dataHoraLeitura DateTime @default(now())
+}
