@@ -58,6 +58,36 @@ export async function POST(req: NextRequest) {
       }
     });
 
+    // --- DISPARO DE NOTIFICAÇÕES NO SISTEMA PARA GESTORES ---
+    const gestores = await prisma.usuario.findMany({
+      where: {
+        empresaId,
+        funcao: { in: ['Gestor da Qualidade', 'Diretor', 'Administrador'] }
+      }
+    });
+
+    const doc = await prisma.documento.findUnique({ where: { id: documentoId } });
+    if (doc) {
+      const autor = await prisma.usuario.findFirst({ where: { empresaId, nome: doc.autor } });
+      if (autor && !gestores.find(g => g.id === autor.id)) {
+        gestores.push(autor);
+      }
+    }
+
+    const notificacoesLeitura = gestores.map((g: any) => ({
+      empresaId,
+      usuarioId: g.id,
+      titulo: 'Nova Leitura Registrada',
+      mensagem: `${usuarioNome} registrou a leitura do documento ${documentoCodigo}.`,
+      linkUrl: `/relatorios` // ou uma página específica da leitura
+    }));
+
+    if (notificacoesLeitura.length > 0) {
+      await prisma.notificacao.createMany({
+        data: notificacoesLeitura
+      });
+    }
+
     return NextResponse.json({ message: 'Ciente registrado com sucesso', leitura: novaLeitura }, { status: 201 });
 
   } catch (error: any) {

@@ -51,3 +51,14 @@ model Leitura {
   documentoVersao String
   dataHoraLeitura DateTime @default(now())
 }
+
+model Notificacao {
+  id        String   @id @default(cuid())
+  empresaId String
+  usuarioId String   // ID do usuário que recebe
+  titulo    String
+  mensagem  String
+  lida      Boolean  @default(false)
+  linkUrl   String?
+  criadoEm  DateTime @default(now())
+}

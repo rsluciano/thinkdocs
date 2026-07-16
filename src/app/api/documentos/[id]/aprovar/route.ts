@@ -96,6 +96,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         doc.titulo,
         updatedDoc.aprovadoPor || "Admin"
       );
+
+      // --- DISPARO DE NOTIFICAÇÕES NO SISTEMA ---
+      const notificacoes = publicoAlvo.map((u: any) => ({
+        empresaId: doc.empresaId,
+        usuarioId: u.id,
+        titulo: `Novo Documento: ${doc.codigo}`,
+        mensagem: `O documento "${doc.titulo}" foi publicado e está disponível para leitura.`,
+        linkUrl: `/documentos/ler/${doc.id}`
+      }));
+      
+      if (notificacoes.length > 0) {
+        await prisma.notificacao.createMany({
+          data: notificacoes
+        });
+      }
     }
 
     return NextResponse.json({ message: `Documento marcado como ${status}`, documento: updatedDoc }, { status: 200 });
