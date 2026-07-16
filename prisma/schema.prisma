@@ -37,6 +37,8 @@ model Documento {
   aprovadoPor        String?
   dataAprovacao      DateTime?
   dataObsoletado     DateTime?
+  
+  requisitos         DocumentoRequisito[]
 }
 
 model Leitura {
@@ -61,4 +63,26 @@ model Notificacao {
   lida      Boolean  @default(false)
   linkUrl   String?
   criadoEm  DateTime @default(now())
+}
+
+model RequisitoVigilancia {
+  id          String   @id @default(cuid())
+  empresaId   String
+  norma       String   @default("RDC 978/2025")
+  artigo      String
+  descricao   String
+  criadoEm    DateTime @default(now())
+  
+  documentos  DocumentoRequisito[]
+}
+
+model DocumentoRequisito {
+  id            String   @id @default(cuid())
+  requisitoId   String
+  documentoId   String
+  
+  requisito     RequisitoVigilancia @relation(fields: [requisitoId], references: [id], onDelete: Cascade)
+  documento     Documento           @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+  
+  @@unique([requisitoId, documentoId])
 }

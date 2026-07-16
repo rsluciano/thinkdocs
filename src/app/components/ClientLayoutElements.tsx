@@ -226,6 +226,10 @@ export function SidebarNav() {
         <a href="/relatorios" className="nav-item" style={{ marginTop: 'auto', borderTop: '1px solid var(--border)' }}>📈 Relatório de Leituras</a>
       )}
       
+      {['Diretor', 'Gestor da Qualidade', 'Administrador'].includes(user.funcao) && (
+        <a href="/vigilancia" className="nav-item">🛡️ Vigilância Sanitária</a>
+      )}
+
       <a href="/pesquisar" className="nav-item">🔍 Pesquisar</a>
 
       {['Administrador', 'Diretor', 'Gestor da Qualidade'].includes(user.funcao) && (
