@@ -100,20 +100,22 @@ export default function ListaMestra() {
   };
 
   const getRowColor = (categoria: string) => {
-    switch (categoria) {
-      case 'Formulários': return '#fce7f3'; // Rosa claro
-      case 'Instrução de trabalho de Serviço': return '#fef9c3'; // Amarelo claro
-      case 'Instrução de trabalho de Equipamentos': return '#e0f2fe'; // Azul claro
-      case 'Instrução de trabalho de Exames': return '#dcfce7'; // Verde claro
-      case 'Procedimentos da qualidade': return '#fee2e2'; // Vermelho claro
-      case 'Bulário': return '#f3e8ff'; // Roxo claro
-      case 'Documentos Mestres': return '#ffedd5'; // Laranja claro
-      case 'Listas': return '#ccfbf1'; // Verde água (Teal) claro
-      case 'FISPQs': return '#e2e8f0'; // Cinza claro
-      case 'Formulários Preenchidos': return '#e0e7ff'; // Indigo claro
-      case 'Manuais': return '#fae8ff'; // Fúcsia claro
-      default: return 'transparent'; // Cor padrão
-    }
+    if (!categoria) return 'transparent';
+    const c = categoria.toLowerCase();
+    
+    if (c.includes('preenchido')) return '#e0e7ff'; // Formulários preenchidos - Indigo claro
+    if (c.includes('formulário') || c.includes('formulario')) return '#fce7f3'; // Formulários - Rosa claro
+    if (c.includes('serviço') || c.includes('servico')) return '#fef9c3'; // Instruções de trabalho de serviço - Amarelo claro
+    if (c.includes('equipamento')) return '#e0f2fe'; // Instruções de equipamentos - Azul claro
+    if (c.includes('exame')) return '#dcfce7'; // Instruções de exames - Verde claro
+    if (c.includes('qualidade') || c.includes('pop')) return '#fee2e2'; // Procedimentos da qualidade - Vermelho claro
+    if (c.includes('bulário') || c.includes('bulario')) return '#f3e8ff'; // Bulário - Roxo claro
+    if (c.includes('mestre')) return '#ffedd5'; // Documentos mestres - Laranja claro
+    if (c.includes('lista')) return '#ccfbf1'; // Listas - Verde água claro
+    if (c.includes('fispq')) return '#e2e8f0'; // FISPQ - Cinza claro
+    if (c.includes('manual') || c.includes('manuais')) return '#fae8ff'; // Manuais - Fúcsia claro
+    
+    return 'transparent'; // Cor padrão
   };
 
   return (
