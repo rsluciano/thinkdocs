@@ -30,7 +30,25 @@ export async function GET(req: NextRequest) {
     const { data } = supabase.storage.from('documentos').getPublicUrl(filePath);
     
     if (data && data.publicUrl) {
-      return NextResponse.redirect(data.publicUrl);
+      // Verifica se o arquivo realmente existe na nuvem antes de redirecionar
+      const headRes = await fetch(data.publicUrl, { method: 'HEAD' });
+      
+      if (headRes.ok) {
+        return NextResponse.redirect(data.publicUrl);
+      } else {
+        return new NextResponse(`
+          <html>
+            <body style="background:#f8fafc; color:#334155; font-family:sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0;">
+              <h2 style="color:#ef4444; margin-bottom:10px;">Arquivo não localizado ⚠️</h2>
+              <p>O arquivo físico deste documento não foi encontrado no servidor.</p>
+              <p style="font-size:0.8rem; color:#64748b;">Isso pode ocorrer se o documento foi registrado sem upload ou ocorreu uma falha de sincronização.</p>
+            </body>
+          </html>
+        `, { 
+          status: 404, 
+          headers: { 'Content-Type': 'text/html; charset=utf-8' } 
+        });
+      }
     }
     
     return new NextResponse('Arquivo não encontrado no storage', { status: 404 });
