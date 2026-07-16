@@ -9,6 +9,7 @@ export default function ListaMestra() {
   const [documentos, setDocumentos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [modalRevalidar, setModalRevalidar] = useState({ isOpen: false, docId: '', novaData: '' });
 
   // Auth Check Simples (Protótipo)
   useEffect(() => {
@@ -67,6 +68,28 @@ export default function ListaMestra() {
       }
     } catch (err) {
       alert('Erro de conexão ao atualizar status.');
+    }
+  };
+
+  const confirmarRevalidacao = async () => {
+    if (!modalRevalidar.novaData) {
+      alert('Selecione a nova data de validade.');
+      return;
+    }
+    try {
+      const res = await fetchAPI(`/api/documentos/${modalRevalidar.docId}/revalidar`, {
+        method: 'PUT',
+        body: JSON.stringify({ dataVencimento: modalRevalidar.novaData })
+      });
+      if (res.ok) {
+        alert('Documento revalidado com sucesso!');
+        setModalRevalidar({ isOpen: false, docId: '', novaData: '' });
+        carregarDocumentos(user); // Recarrega a lista
+      } else {
+        alert('Falha ao revalidar documento.');
+      }
+    } catch (err) {
+      alert('Erro de conexão.');
     }
   };
 
@@ -201,6 +224,16 @@ export default function ListaMestra() {
                       {user && ['Diretor', 'Gestor da Qualidade', 'Administrador', 'Responsável Técnico'].includes(user.funcao) && (
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                           <button 
+                            onClick={() => {
+                              const hoje = new Date();
+                              hoje.setFullYear(hoje.getFullYear() + 1);
+                              setModalRevalidar({ isOpen: true, docId: doc.id, novaData: hoje.toISOString().split('T')[0] });
+                            }} 
+                            style={{ padding: '0.4rem 0.8rem', backgroundColor: '#dcfce7', color: '#166534', border: '1px solid #166534', fontWeight: 'bold', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}
+                          >
+                            Revalidar
+                          </button>
+                          <button 
                             onClick={() => tornarObsoleto(doc.id)} 
                             style={{ padding: '0.4rem 0.8rem', backgroundColor: '#fef3c7', color: '#b45309', border: '1px solid #b45309', fontWeight: 'bold', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}
                           >
@@ -222,6 +255,44 @@ export default function ListaMestra() {
           </table>
         )}
       </div>
+
+      {modalRevalidar.isOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: 'var(--radius)', width: '400px', maxWidth: '90%' }}>
+            <h3 style={{ marginTop: 0, fontSize: '1.25rem', fontWeight: 'bold' }}>Revalidação Rápida</h3>
+            <p style={{ fontSize: '0.9rem', color: 'var(--muted)', marginBottom: '1.5rem' }}>
+              Atualize a data de vencimento deste documento sem alterar sua versão ou conteúdo.
+            </p>
+            
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                Nova Data de Validade
+              </label>
+              <input 
+                type="date" 
+                value={modalRevalidar.novaData}
+                onChange={(e) => setModalRevalidar({...modalRevalidar, novaData: e.target.value})}
+                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => setModalRevalidar({ isOpen: false, docId: '', novaData: '' })}
+                style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border)', borderRadius: '4px', cursor: 'pointer' }}
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={confirmarRevalidacao}
+                style={{ padding: '0.5rem 1rem', backgroundColor: 'var(--primary)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
