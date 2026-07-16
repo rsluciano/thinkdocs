@@ -9,6 +9,24 @@ export default function Dashboard() {
   const [documentos, setDocumentos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [empresaInfo, setEmpresaInfo] = useState({ nome: '', logo: '' });
+  
+  // Estado dos Filtros Cruzados
+  const [filtros, setFiltros] = useState({
+    status: null as string | null,
+    categoria: null as string | null,
+    setor: null as string | null
+  });
+
+  const handleToggleFilter = (tipo: 'status' | 'categoria' | 'setor', valor: string) => {
+    setFiltros(prev => ({
+      ...prev,
+      [tipo]: prev[tipo] === valor ? null : valor
+    }));
+  };
+
+  const clearFilters = () => {
+    setFiltros({ status: null, categoria: null, setor: null });
+  };
 
   // Auth Check Simples
   useEffect(() => {
@@ -33,66 +51,93 @@ export default function Dashboard() {
     }
   }, [router]);
 
-  // Agrupamento Geral
-  const totalDocs = documentos.length;
-  const docsVigentes = documentos.filter(d => d.status === 'Vigente');
-  const docsAguardando = documentos.filter(d => d.status === 'Aguardando Aprovação');
-  const docsEmElaboracao = documentos.filter(d => d.status === 'Rascunho' || d.status === 'Elaboração');
-  const docsDevolvidos = documentos.filter(d => d.status === 'Reprovado');
+  // Função auxiliar para mapear status interno para chave do filtro
+  const getFiltroStatus = (statusOriginal: string) => {
+    if (statusOriginal === 'Vigente') return 'Vigentes';
+    if (statusOriginal === 'Aguardando Aprovação') return 'Aguardando';
+    if (statusOriginal === 'Reprovado') return 'Devolvidos';
+    if (statusOriginal === 'Rascunho' || statusOriginal === 'Elaboração') return 'Elaboracao';
+    return 'Outros';
+  };
 
-  // Lógica de Categorias para o Gráfico
-  const categoriasCount = documentos.reduce((acc, doc) => {
+  // Listas Semi-Filtradas (Cross-Filtering)
+  const docsForStatus = documentos.filter(d => 
+    (!filtros.categoria || d.categoria === filtros.categoria) &&
+    (!filtros.setor || (Array.isArray(d.setor) ? d.setor : [d.setor || 'Geral']).includes('Geral') || (Array.isArray(d.setor) ? d.setor : [d.setor || 'Geral']).includes(filtros.setor))
+  );
+
+  const docsForCategoria = documentos.filter(d => 
+    (!filtros.status || getFiltroStatus(d.status) === filtros.status) &&
+    (!filtros.setor || (Array.isArray(d.setor) ? d.setor : [d.setor || 'Geral']).includes('Geral') || (Array.isArray(d.setor) ? d.setor : [d.setor || 'Geral']).includes(filtros.setor))
+  );
+
+  const docsForSetor = documentos.filter(d => 
+    (!filtros.status || getFiltroStatus(d.status) === filtros.status) &&
+    (!filtros.categoria || d.categoria === filtros.categoria)
+  );
+
+  const fullyFilteredDocs = documentos.filter(d => 
+    (!filtros.status || getFiltroStatus(d.status) === filtros.status) &&
+    (!filtros.categoria || d.categoria === filtros.categoria) &&
+    (!filtros.setor || (Array.isArray(d.setor) ? d.setor : [d.setor || 'Geral']).includes('Geral') || (Array.isArray(d.setor) ? d.setor : [d.setor || 'Geral']).includes(filtros.setor))
+  );
+
+  // Totais dos Cards Baseados em docsForStatus (permite clicar entre status sem eles zerarem)
+  const totalDocs = docsForStatus.length;
+  const countVigentes = docsForStatus.filter(d => getFiltroStatus(d.status) === 'Vigentes').length;
+  const countAguardando = docsForStatus.filter(d => getFiltroStatus(d.status) === 'Aguardando').length;
+  const countDevolvidos = docsForStatus.filter(d => getFiltroStatus(d.status) === 'Devolvidos').length;
+  const countElaboracao = docsForStatus.filter(d => getFiltroStatus(d.status) === 'Elaboracao').length;
+
+  // Lógica de Categorias para o Gráfico (usando docsForCategoria)
+  const categoriasCount = docsForCategoria.reduce((acc, doc) => {
     const cat = doc.categoria || 'Sem Categoria';
     acc[cat] = (acc[cat] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
+  const totalParaCat = docsForCategoria.length;
   const categoriasChart = Object.keys(categoriasCount).map(cat => ({
     categoria: cat,
     count: categoriasCount[cat],
-    percent: totalDocs > 0 ? ((categoriasCount[cat] / totalDocs) * 100).toFixed(1) : '0.0'
+    percent: totalParaCat > 0 ? ((categoriasCount[cat] / totalParaCat) * 100).toFixed(1) : '0.0'
   })).sort((a, b) => b.count - a.count);
 
-  // Lógica de Setores para o Gráfico
+  // Lógica de Setores para o Gráfico (usando docsForSetor)
   const setoresPermitidos = {
     'Geral': 0, 'Limpeza': 0, 'Área Técnica': 0, 'Coleta': 0, 'Administração': 0, 
     'Triagem': 0, 'Diretoria': 0, 'Qualidade': 0, 'TI e infraestrutura': 0, 'Recepção': 0
   };
 
-  const setoresCount = documentos.reduce((acc, doc) => {
-    // Um documento pode estar em múltiplos setores, então contamos cada um
+  const setoresCount = docsForSetor.reduce((acc, doc) => {
     const docSetores = Array.isArray(doc.setor) ? doc.setor : [doc.setor || 'Geral'];
-    
     if (docSetores.includes('Geral')) {
-      // Se for "Geral", o documento pertence a TODOS os setores
       Object.keys(setoresPermitidos).forEach(s => {
-        if (acc[s] !== undefined) {
-          acc[s] += 1;
-        }
+        if (acc[s] !== undefined) acc[s] += 1;
       });
     } else {
-      // Caso contrário, apenas nos setores específicos marcados
       docSetores.forEach((s: string) => {
-        if (acc[s] !== undefined) {
-          acc[s] += 1;
-        }
+        if (acc[s] !== undefined) acc[s] += 1;
       });
     }
-    
     return acc;
   }, { ...setoresPermitidos } as Record<string, number>);
+
+  // Recalcular total real de entradas de setores para porcentagem
+  const totalParaSetor = Object.values(setoresCount).reduce((a: number, b: number) => a + b, 0) as number;
 
   const setoresChart = Object.keys(setoresCount).map(setor => ({
     setor: setor,
     count: setoresCount[setor],
-    percent: totalDocs > 0 ? ((setoresCount[setor] / totalDocs) * 100).toFixed(1) : '0.0'
-  })).sort((a, b) => b.count - a.count);
+    percent: totalParaSetor > 0 ? ((setoresCount[setor] / totalParaSetor) * 100).toFixed(1) : '0.0'
+  })).sort((a: any, b: any) => b.count - a.count);
 
 
-  // Lógica de Categorização (Apenas para os Vigentes)
+  // Lógica de Vencimentos (Baseado no fullyFilteredDocs que são Vigentes)
+  const docsVigentesFiltrados = fullyFilteredDocs.filter(d => getFiltroStatus(d.status) === 'Vigentes');
   const hoje = new Date();
   
-  const docsComDias = docsVigentes.map(doc => {
+  const docsComDias = docsVigentesFiltrados.map(doc => {
     let diasParaVencer = 999;
     if (doc.dataVencimento) {
       const venc = new Date(doc.dataVencimento);
@@ -105,22 +150,22 @@ export default function Dashboard() {
     let statusTexto = 'No Prazo';
 
     if (diasParaVencer <= 0) {
-      cor = '#ef4444'; // Vermelho
+      cor = '#ef4444';
       corNome = 'red';
       statusTexto = diasParaVencer < 0 ? 'Vencido' : 'Vence Hoje';
     }
     else if (diasParaVencer <= 7) {
-      cor = '#f97316'; // Laranja
+      cor = '#f97316';
       corNome = 'orange';
       statusTexto = 'Crítico';
     }
     else if (diasParaVencer <= 15) {
-      cor = '#eab308'; // Amarelo
+      cor = '#eab308';
       corNome = 'yellow';
       statusTexto = 'Alerta';
     }
     else if (diasParaVencer <= 30) {
-      cor = '#3b82f6'; // Azul
+      cor = '#3b82f6';
       corNome = 'blue';
       statusTexto = 'Atenção';
     }
@@ -138,62 +183,82 @@ export default function Dashboard() {
     .filter(d => d.corNome !== 'green')
     .sort((a, b) => a.diasParaVencer - b.diasParaVencer);
 
+  const hasFilters = filtros.status || filtros.categoria || filtros.setor;
+
   if (loading) return <div>Carregando dashboard...</div>;
 
   return (
     <div className="animate-fade-in">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
-        {empresaInfo.logo && (
-          <img src={empresaInfo.logo} alt="Logo" style={{ maxHeight: '60px', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-        )}
-        <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          {empresaInfo.nome && <span style={{ color: 'var(--muted)', fontSize: '1.1rem' }}>{empresaInfo.nome}</span>}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          {empresaInfo.logo && (
+            <img src={empresaInfo.logo} alt="Logo" style={{ maxHeight: '60px', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+          )}
+          <div>
+            <h1 className="text-3xl font-bold">Dashboard Interativo</h1>
+            {empresaInfo.nome && <span style={{ color: 'var(--muted)', fontSize: '1.1rem' }}>{empresaInfo.nome}</span>}
+          </div>
         </div>
+        {hasFilters && (
+          <button 
+            onClick={clearFilters}
+            style={{ padding: '0.5rem 1rem', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            ❌ Limpar Filtros
+          </button>
+        )}
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
-        <div className="card hover-scale" style={{ flex: 1, minWidth: '180px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-          <span style={{ color: '#64748b', fontWeight: 'bold' }}>📚 Total de Documentos</span>
+        <div className="card hover-scale" style={{ flex: 1, minWidth: '180px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', opacity: hasFilters && !filtros.status ? 0.7 : 1 }}>
+          <span style={{ color: '#64748b', fontWeight: 'bold' }}>📚 Total Geral (Filtros)</span>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0f172a' }}>{totalDocs}</p>
         </div>
         <div 
           className="card hover-scale" 
-          onClick={() => router.push('/lista-mestra')}
-          style={{ flex: 1, minWidth: '180px', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', cursor: 'pointer' }}
+          onClick={() => handleToggleFilter('status', 'Vigentes')}
+          style={{ flex: 1, minWidth: '180px', backgroundColor: '#f0fdf4', border: '1px solid', borderColor: filtros.status === 'Vigentes' ? '#166534' : '#bbf7d0', cursor: 'pointer', opacity: filtros.status && filtros.status !== 'Vigentes' ? 0.4 : 1, transform: filtros.status === 'Vigentes' ? 'scale(1.02)' : 'scale(1)', boxShadow: filtros.status === 'Vigentes' ? '0 0 0 2px #22c55e' : 'none' }}
         >
           <span style={{ color: '#166534', fontWeight: 'bold' }}>✅ Aprovados (Vigentes)</span>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#15803d' }}>{docsVigentes.length}</p>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#15803d' }}>{countVigentes}</p>
         </div>
         <div 
           className="card hover-scale" 
-          onClick={() => router.push('/aprovacoes')}
-          style={{ flex: 1, minWidth: '180px', backgroundColor: '#fffbeb', border: '1px solid #fde68a', cursor: 'pointer' }}
+          onClick={() => handleToggleFilter('status', 'Aguardando')}
+          style={{ flex: 1, minWidth: '180px', backgroundColor: '#fffbeb', border: '1px solid', borderColor: filtros.status === 'Aguardando' ? '#b45309' : '#fde68a', cursor: 'pointer', opacity: filtros.status && filtros.status !== 'Aguardando' ? 0.4 : 1, transform: filtros.status === 'Aguardando' ? 'scale(1.02)' : 'scale(1)', boxShadow: filtros.status === 'Aguardando' ? '0 0 0 2px #eab308' : 'none' }}
         >
-          <span style={{ color: '#b45309', fontWeight: 'bold' }}>⏳ Aguardando Aprovação</span>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#d97706' }}>{docsAguardando.length}</p>
+          <span style={{ color: '#b45309', fontWeight: 'bold' }}>⏳ Aguardando</span>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#d97706' }}>{countAguardando}</p>
         </div>
         <div 
           className="card hover-scale" 
-          onClick={() => router.push('/devolvidos')}
-          style={{ flex: 1, minWidth: '180px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', cursor: 'pointer' }}
+          onClick={() => handleToggleFilter('status', 'Devolvidos')}
+          style={{ flex: 1, minWidth: '180px', backgroundColor: '#fef2f2', border: '1px solid', borderColor: filtros.status === 'Devolvidos' ? '#991b1b' : '#fecaca', cursor: 'pointer', opacity: filtros.status && filtros.status !== 'Devolvidos' ? 0.4 : 1, transform: filtros.status === 'Devolvidos' ? 'scale(1.02)' : 'scale(1)', boxShadow: filtros.status === 'Devolvidos' ? '0 0 0 2px #ef4444' : 'none' }}
         >
           <span style={{ color: '#991b1b', fontWeight: 'bold' }}>↩️ Devolvidos</span>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#dc2626' }}>{docsDevolvidos.length}</p>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#dc2626' }}>{countDevolvidos}</p>
         </div>
-        <div className="card hover-scale" style={{ flex: 1, minWidth: '180px', backgroundColor: '#eff6ff', border: '1px solid #bfdbfe' }}>
+        <div 
+          className="card hover-scale" 
+          onClick={() => handleToggleFilter('status', 'Elaboracao')}
+          style={{ flex: 1, minWidth: '180px', backgroundColor: '#eff6ff', border: '1px solid', borderColor: filtros.status === 'Elaboracao' ? '#1d4ed8' : '#bfdbfe', cursor: 'pointer', opacity: filtros.status && filtros.status !== 'Elaboracao' ? 0.4 : 1, transform: filtros.status === 'Elaboracao' ? 'scale(1.02)' : 'scale(1)', boxShadow: filtros.status === 'Elaboracao' ? '0 0 0 2px #3b82f6' : 'none' }}
+        >
           <span style={{ color: '#1d4ed8', fontWeight: 'bold' }}>✍️ Em Elaboração</span>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2563eb' }}>{docsEmElaboracao.length}</p>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2563eb' }}>{countElaboracao}</p>
         </div>
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `
         .hover-scale {
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
         }
         .hover-scale:hover {
           transform: translateY(-5px);
           box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .chart-bar:hover {
+          opacity: 0.8;
+          transform: scale(1.01);
         }
       `}} />
 
@@ -204,13 +269,13 @@ export default function Dashboard() {
           <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>📊 Distribuição por Categoria</h2>
           <div className="card" style={{ height: '100%' }}>
             {categoriasChart.length === 0 ? (
-              <p style={{ color: 'var(--muted)', textAlign: 'center' }}>Nenhum documento encontrado.</p>
+              <p style={{ color: 'var(--muted)', textAlign: 'center' }}>Nenhum documento atende aos filtros.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {categoriasChart.map((cat, idx) => (
-                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                  <div key={idx} className="chart-bar" onClick={() => handleToggleFilter('categoria', cat.categoria)} style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', cursor: 'pointer', opacity: filtros.categoria && filtros.categoria !== cat.categoria ? 0.3 : 1, transition: 'all 0.2s', padding: '0.2rem', borderRadius: '4px', backgroundColor: filtros.categoria === cat.categoria ? '#f1f5f9' : 'transparent' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                      <span>{cat.categoria}</span>
+                      <span>{cat.categoria} {filtros.categoria === cat.categoria && '🔍'}</span>
                       <span style={{ color: 'var(--muted)' }}>{cat.count} docs ({cat.percent}%)</span>
                     </div>
                     <div style={{ width: '100%', backgroundColor: '#e2e8f0', borderRadius: '999px', height: '12px', overflow: 'hidden' }}>
@@ -219,7 +284,7 @@ export default function Dashboard() {
                         width: `${cat.percent}%`, 
                         backgroundColor: 'var(--primary)',
                         borderRadius: '999px',
-                        transition: 'width 1s ease-in-out'
+                        transition: 'width 0.5s ease-in-out'
                       }}></div>
                     </div>
                   </div>
@@ -234,22 +299,22 @@ export default function Dashboard() {
           <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>🏢 Distribuição por Setores</h2>
           <div className="card" style={{ height: '100%' }}>
             {setoresChart.length === 0 ? (
-              <p style={{ color: 'var(--muted)', textAlign: 'center' }}>Nenhum setor encontrado.</p>
+              <p style={{ color: 'var(--muted)', textAlign: 'center' }}>Nenhum documento atende aos filtros.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {setoresChart.map((setor, idx) => (
-                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                  <div key={idx} className="chart-bar" onClick={() => handleToggleFilter('setor', setor.setor)} style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', cursor: 'pointer', opacity: filtros.setor && filtros.setor !== setor.setor ? 0.3 : 1, transition: 'all 0.2s', padding: '0.2rem', borderRadius: '4px', backgroundColor: filtros.setor === setor.setor ? '#f0fdf4' : 'transparent' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                      <span>{setor.setor}</span>
+                      <span>{setor.setor} {filtros.setor === setor.setor && '🔍'}</span>
                       <span style={{ color: 'var(--muted)' }}>{setor.count} docs ({setor.percent}%)</span>
                     </div>
                     <div style={{ width: '100%', backgroundColor: '#e2e8f0', borderRadius: '999px', height: '12px', overflow: 'hidden' }}>
                       <div style={{ 
                         height: '100%', 
                         width: `${setor.percent}%`, 
-                        backgroundColor: '#16a34a', // Usando um verde para diferenciar do gráfico de categorias
+                        backgroundColor: '#16a34a', // Verde
                         borderRadius: '999px',
-                        transition: 'width 1s ease-in-out'
+                        transition: 'width 0.5s ease-in-out'
                       }}></div>
                     </div>
                   </div>
@@ -261,12 +326,12 @@ export default function Dashboard() {
 
       </div>
 
-      <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>⏱️ Controle de Vencimentos (Vigentes)</h2>
+      <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>⏱️ Controle de Vencimentos (Dos itens filtrados)</h2>
 
       {docsCriticos.length > 0 && (
         <div className="alert-banner" style={{ borderLeftColor: countVermelho > 0 ? '#ef4444' : countLaranja > 0 ? '#f97316' : '#eab308' }}>
           <h3>⚠️ Atenção Necessária</h3>
-          <p>Você possui <strong>{docsCriticos.length} documento(s)</strong> saindo da zona segura de validade.</p>
+          <p>Você possui <strong>{docsCriticos.length} documento(s)</strong> no recorte atual saindo da zona segura de validade.</p>
           {countVermelho > 0 && <p style={{ color: '#dc2626', fontWeight: 'bold' }}>Existem {countVermelho} documentos VENCIDOS!</p>}
         </div>
       )}
@@ -305,39 +370,28 @@ export default function Dashboard() {
 
       </div>
 
-      <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>🚨 Documentos Próximos do Vencimento</h2>
+      <h2 className="text-2xl font-semibold" style={{ marginBottom: '1.5rem' }}>🚨 Lista de Vencimentos Críticos</h2>
       <div className="card" style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ borderBottom: '2px solid var(--border)' }}>
               <th style={{ padding: '1rem' }}>Código</th>
               <th style={{ padding: '1rem' }}>Título</th>
+              <th style={{ padding: '1rem' }}>Setor</th>
               <th style={{ padding: '1rem' }}>Dias Restantes</th>
-              <th style={{ padding: '1rem' }}>Status</th>
               <th style={{ padding: '1rem' }}>Ação Recomendada</th>
             </tr>
           </thead>
           <tbody>
             {docsCriticos.length === 0 ? (
-              <tr><td colSpan={5} style={{ padding: '1rem', textAlign: 'center', color: '#166534', fontWeight: 'bold' }}>Nenhum documento crítico no momento. Parabéns!</td></tr>
+              <tr><td colSpan={5} style={{ padding: '1rem', textAlign: 'center', color: '#166534', fontWeight: 'bold' }}>Nenhum documento crítico atende aos filtros atuais.</td></tr>
             ) : docsCriticos.map(doc => (
               <tr key={doc.id} style={{ borderBottom: '1px solid var(--border)', backgroundColor: doc.corNome === 'red' ? '#fef2f2' : 'transparent' }}>
                 <td style={{ padding: '1rem', fontWeight: 'bold' }}>{doc.codigo}</td>
                 <td style={{ padding: '1rem' }}>{doc.titulo}</td>
+                <td style={{ padding: '1rem', fontSize: '0.9rem', color: '#64748b' }}>{Array.isArray(doc.setor) ? doc.setor.join(', ') : doc.setor}</td>
                 <td style={{ padding: '1rem', fontWeight: 'bold', color: doc.cor }}>
                   {doc.diasParaVencer < 0 ? `Vencido há ${Math.abs(doc.diasParaVencer)} dias` : `${doc.diasParaVencer} dias`}
-                </td>
-                <td style={{ padding: '1rem' }}>
-                  <span style={{
-                    padding: '0.25rem 0.75rem',
-                    borderRadius: '999px',
-                    fontSize: '0.85rem',
-                    fontWeight: 'bold',
-                    backgroundColor: `${doc.cor}20`,
-                    color: doc.cor
-                  }}>
-                    {doc.statusTexto}
-                  </span>
                 </td>
                 <td style={{ padding: '1rem' }}>
                   <button 
