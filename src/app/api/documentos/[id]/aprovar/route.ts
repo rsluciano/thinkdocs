@@ -36,7 +36,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           status: "Vigente"
         },
         data: {
-          status: "Obsoleto",
+          status: "Substituído",
           dataObsoletado: new Date()
         }
       });

@@ -24,7 +24,13 @@ export async function GET(req: NextRequest) {
     const userSetor = session.setor;
 
     const whereClause: any = { empresaId };
-    if (status) whereClause.status = status;
+    if (status) {
+      if (status.includes(',')) {
+        whereClause.status = { in: status.split(',') };
+      } else {
+        whereClause.status = status;
+      }
+    }
 
     let docs = await prisma.documento.findMany({
       where: whereClause,

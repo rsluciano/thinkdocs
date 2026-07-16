@@ -24,7 +24,7 @@ export default function ArquivoMorto() {
 
   const carregarDocumentos = async (userData: any) => {
     try {
-      const res = await fetchAPI(`/api/documentos?status=Obsoleto&empresaId=${userData.empresaId}&userFuncao=${encodeURIComponent(userData.funcao)}&userSetor=${encodeURIComponent(userData.setor)}`);
+      const res = await fetchAPI(`/api/documentos?status=Obsoleto,Substituído&empresaId=${userData.empresaId}&userFuncao=${encodeURIComponent(userData.funcao)}&userSetor=${encodeURIComponent(userData.setor)}`);
       const data = await res.json();
       if (res.ok) {
         if (Array.isArray(data)) setDocumentos(data); else setDocumentos([]);
