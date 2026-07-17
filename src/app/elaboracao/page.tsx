@@ -24,6 +24,9 @@ function ElaboracaoContent() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
+  const [drafts, setDrafts] = useState<any[]>([]);
+  const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
+
   // Auth Check
   useEffect(() => {
     const savedUser = localStorage.getItem('thinkdocs_user');
@@ -80,33 +83,72 @@ function ElaboracaoContent() {
         const allowed = OPTIONS_ALL.filter(o => !isLider || o === 'Geral' || userSetores.includes(o));
         setSetoresSelecionados(allowed);
       }
+      
+      carregarRascunhos(parsedUser);
     }
   }, [router, revisaoId, devolvidoId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const carregarRascunhos = async (u: any) => {
+    try {
+      const res = await fetchAPI(`/api/documentos?empresaId=${u.empresaId}&status=Rascunho`);
+      if (res.ok) {
+        setDrafts(await res.json());
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const carregarRascunhoParaForm = (doc: any) => {
+    setSelectedDraftId(doc.id);
+    setCodigo(doc.codigo || '');
+    setTitulo(doc.titulo || '');
+    setCategoria(doc.categoria || 'Geral');
+    if (Array.isArray(doc.setor)) {
+      setSetoresSelecionados(doc.setor);
+    } else if (doc.setor) {
+      setSetoresSelecionados(doc.setor.split(',').map((s: string) => s.trim()));
+    } else {
+      setSetoresSelecionados(['Geral']);
+    }
+    if (doc.dataAtualizacao) setDataAtualizacao(doc.dataAtualizacao.split('T')[0]);
+    else setDataAtualizacao('');
+    
+    if (doc.dataVencimento) setDataProximaAtualizacao(doc.dataVencimento.split('T')[0]);
+    else setDataProximaAtualizacao('');
+
+    setMessage('Rascunho carregado.');
+    setError('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent, isDraft = false) => {
+    if (e) e.preventDefault();
     setError('');
     setMessage('');
 
     // Validação customizada
     let missingFields = [];
-    if (!codigo) missingFields.push('Código do Documento');
-    if (!titulo) missingFields.push('Título');
-    if (setoresSelecionados.length === 0) missingFields.push('Setores Aplicáveis (selecione pelo menos um)');
-    if (!dataAtualizacao) missingFields.push('Data de Atualização (Vigência)');
-    if (!dataProximaAtualizacao) missingFields.push('Próxima Atualização (Vencimento)');
-    if (!file) missingFields.push('Arquivo do Documento (anexo)');
+    if (!isDraft) {
+      if (!codigo) missingFields.push('Código do Documento');
+      if (!titulo) missingFields.push('Título');
+      if (setoresSelecionados.length === 0) missingFields.push('Setores Aplicáveis (selecione pelo menos um)');
+      if (!dataAtualizacao) missingFields.push('Data de Atualização (Vigência)');
+      if (!dataProximaAtualizacao) missingFields.push('Próxima Atualização (Vencimento)');
+      if (!file && !selectedDraftId) missingFields.push('Arquivo do Documento (anexo)');
+    } else {
+      if (!codigo && !titulo) missingFields.push('Informe pelo menos o Título ou Código para salvar o rascunho.');
+    }
 
     if (missingFields.length > 0) {
-      const errorMsg = `Preenchimento Incompleto!\n\nPor favor, preencha os seguintes campos obrigatórios antes de enviar:\n\n- ${missingFields.join('\n- ')}`;
-      alert(errorMsg); // Pop-up nativo solicitado pelo usuário
-      setError('Verifique os campos obrigatórios e tente novamente.');
+      const errorMsg = `Preenchimento Incompleto!\n\nPor favor, preencha os seguintes campos:\n\n- ${missingFields.join('\n- ')}`;
+      alert(errorMsg); 
+      setError('Verifique os campos e tente novamente.');
       return;
     }
 
     setIsSubmitting(true);
 
-    let targetId = devolvidoId || revisaoId;
+    let targetId = devolvidoId || revisaoId || selectedDraftId;
 
     // Duplicate Check
     if (!targetId) {
@@ -131,22 +173,23 @@ function ElaboracaoContent() {
 
     try {
       // 1. Fazer upload do arquivo real (reaproveitando a API de upload)
-      const formData = new FormData();
+      let uploadData = null;
       if (file) {
+        const formData = new FormData();
         formData.append('file', file);
-      }
-      formData.append('empresa', user?.empresaId || 'ThinkDocs');
-      formData.append('categoria', categoria);
-      
-      const uploadRes = await fetchAPI('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-      
-      const uploadData = await uploadRes.json();
-      
-      if (!uploadRes.ok) {
-        throw new Error(uploadData.error || 'Falha ao fazer upload do arquivo');
+        formData.append('empresa', user?.empresaId || 'ThinkDocs');
+        formData.append('categoria', categoria);
+        
+        const uploadRes = await fetchAPI('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        
+        uploadData = await uploadRes.json();
+        
+        if (!uploadRes.ok) {
+          throw new Error(uploadData.error || 'Falha ao fazer upload do arquivo');
+        }
       }
 
       // 2. Registrar no banco com status de workflow
@@ -167,20 +210,22 @@ function ElaboracaoContent() {
           dataAtualizacao: dataAtualizacao || undefined,
           dataProximaAtualizacao: dataProximaAtualizacao || undefined,
           autorNome: user?.nome,
-          arquivo: uploadData.filename, // Nome ou URL salvo
-          empresaId: user?.empresaId
+          arquivo: uploadData?.filename || '', // Nome ou URL salvo
+          empresaId: user?.empresaId,
+          isDraft
         })
       });
 
       const docData = await docRes.json();
 
       if (docRes.ok) {
-        setMessage('Documento enviado para aprovação com sucesso! Nossos gestores já foram notificados.');
+        setMessage(isDraft ? 'Rascunho salvo com sucesso!' : 'Documento enviado para aprovação com sucesso!');
         setCodigo('');
         setTitulo('');
         setFile(null);
         setDataAtualizacao('');
         setDataProximaAtualizacao('');
+        setSelectedDraftId(null);
         
         // Reseta deixando todos os setores aplicáveis selecionados
         const OPTIONS_ALL = [
@@ -196,6 +241,7 @@ function ElaboracaoContent() {
         setSetoresSelecionados(allowed);
 
         setFileKey(Date.now());
+        carregarRascunhos(user);
       } else {
         setError(`Erro: ${docData.error}. Detalhes: ${docData.details || 'Sem detalhes técnicos'}`);
       }
@@ -223,35 +269,34 @@ function ElaboracaoContent() {
             : 'Inicie um novo rascunho. O documento passará por avaliação antes de ir para a Lista Mestra.')}
       </p>
 
-      <div className="card" style={{ maxWidth: '600px' }}>
-        <h2 className="text-xl font-bold" style={{ marginBottom: '1.5rem', color: 'var(--primary)' }}>
-          {devolvidoId ? 'Reenviar Documento' : (revisaoId ? 'Enviar Nova Versão' : 'Enviar Novo Rascunho')}
-        </h2>
+      <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
+        <div className="card" style={{ flex: '1', maxWidth: '600px' }}>
+          <h2 className="text-xl font-bold" style={{ marginBottom: '1.5rem', color: 'var(--primary)' }}>
+            {devolvidoId ? 'Reenviar Documento' : (revisaoId ? 'Enviar Nova Versão' : (selectedDraftId ? 'Continuar Rascunho' : 'Enviar Novo Rascunho'))}
+          </h2>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Código do Documento</label>
-            <input 
-              type="text" 
-              value={codigo}
-              onChange={(e) => setCodigo(e.target.value)}
-              placeholder="Ex: POP-001" 
-              required 
-              style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid var(--border)' }}
-            />
-          </div>
+          <form onSubmit={(e) => handleSubmit(e, false)} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Código do Documento</label>
+              <input 
+                type="text" 
+                value={codigo}
+                onChange={(e) => setCodigo(e.target.value)}
+                placeholder="Ex: POP-001" 
+                style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid var(--border)' }}
+              />
+            </div>
 
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Título</label>
-            <input 
-              type="text" 
-              value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
-              placeholder="Ex: Procedimento de Limpeza" 
-              required 
-              style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid var(--border)' }}
-            />
-          </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Título</label>
+              <input 
+                type="text" 
+                value={titulo}
+                onChange={(e) => setTitulo(e.target.value)}
+                placeholder="Ex: Procedimento de Limpeza" 
+                style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid var(--border)' }}
+              />
+            </div>
 
           <div>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Categoria</label>
@@ -385,7 +430,6 @@ function ElaboracaoContent() {
                   }
                 }
               }}
-              required 
               style={{ width: '100%', padding: '0.5rem', border: '1px dashed var(--primary)', borderRadius: '4px' }}
             />
           </div>
@@ -406,22 +450,76 @@ function ElaboracaoContent() {
             </div>
           )}
 
-          <button 
-            type="submit" 
-            disabled={isSubmitting}
-            style={{ 
-              padding: '0.75rem', 
-              backgroundColor: 'var(--primary)', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: 'var(--radius)', 
-              fontWeight: 'bold', 
-              cursor: isSubmitting ? 'not-allowed' : 'pointer'
-            }}
-          >
-            {isSubmitting ? 'Enviando...' : 'Enviar para Aprovação'}
-          </button>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+            <button 
+              type="button" 
+              onClick={(e) => handleSubmit(e, true)}
+              disabled={isSubmitting}
+              style={{ 
+                flex: 1,
+                padding: '0.75rem', 
+                backgroundColor: 'white', 
+                color: 'var(--primary)', 
+                border: '1px solid var(--primary)', 
+                borderRadius: 'var(--radius)', 
+                fontWeight: 'bold', 
+                cursor: isSubmitting ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {isSubmitting ? 'Salvando...' : 'Salvar Rascunho'}
+            </button>
+            <button 
+              type="submit" 
+              disabled={isSubmitting}
+              style={{ 
+                flex: 1,
+                padding: '0.75rem', 
+                backgroundColor: 'var(--primary)', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: 'var(--radius)', 
+                fontWeight: 'bold', 
+                cursor: isSubmitting ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {isSubmitting ? 'Enviando...' : 'Enviar para Aprovação'}
+            </button>
+          </div>
         </form>
+      </div>
+
+      {/* Lista de Rascunhos Salvos */}
+      {!devolvidoId && !revisaoId && (
+        <div style={{ flex: '1', maxWidth: '400px' }}>
+          <div className="card" style={{ backgroundColor: '#f8fafc' }}>
+            <h3 style={{ margin: '0 0 1rem 0', color: 'var(--primary)' }}>Meus Rascunhos Salvos</h3>
+            {drafts.length === 0 ? (
+              <p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>Você não tem rascunhos em andamento.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {drafts.map((d: any) => (
+                  <div 
+                    key={d.id} 
+                    style={{ 
+                      padding: '1rem', 
+                      backgroundColor: 'white', 
+                      border: '1px solid var(--border)', 
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      borderLeft: selectedDraftId === d.id ? '4px solid var(--primary)' : '1px solid var(--border)'
+                    }}
+                    onClick={() => carregarRascunhoParaForm(d)}
+                  >
+                    <div style={{ fontWeight: 'bold' }}>{d.codigo || 'Sem Código'}</div>
+                    <div style={{ fontSize: '0.9rem', color: 'var(--foreground)' }}>{d.titulo || 'Sem Título'}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.2rem' }}>Salvo em {new Date(d.dataEnvio).toLocaleDateString()}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );

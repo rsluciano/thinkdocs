@@ -5,7 +5,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const data = await req.json();
-    const { codigo, titulo, categoria, arquivo, setor, dataAtualizacao, dataProximaAtualizacao } = data;
+    const { codigo, titulo, categoria, arquivo, setor, dataAtualizacao, dataProximaAtualizacao, isDraft } = data;
 
     const doc = await prisma.documento.findUnique({ where: { id } });
 
@@ -17,7 +17,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Apenas documentos reprovados podem ser corrigidos dessa forma.' }, { status: 400 });
     }
 
-    // Atualiza os dados que vieram do form e remove motivoReprovacao (seta null)
+    // Se isDraft for true, ele mantém o status como Reprovado? 
+    // Não, melhor deixar como "Rascunho", pois ele já começou a edição.
+    // Mas a gente perde o histórico de que ele foi reprovado?
+    // A melhor opção é alterar o status para 'Rascunho' para cair na aba de rascunhos.
+    // O motivoReprovacao vai sumir ao salvar o rascunho de um devolvido? Não, vamos manter se for rascunho.
     const updatedDoc = await prisma.documento.update({
       where: { id },
       data: {
@@ -28,8 +32,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         arquivoUrl: arquivo || undefined,
         dataAtualizacao: dataAtualizacao ? new Date(dataAtualizacao) : undefined,
         dataVencimento: dataProximaAtualizacao ? new Date(dataProximaAtualizacao) : undefined,
-        motivoReprovacao: null,
-        status: 'Aguardando Aprovação',
+        motivoReprovacao: isDraft ? doc.motivoReprovacao : null,
+        status: isDraft ? 'Rascunho' : 'Aguardando Aprovação',
         dataEnvio: new Date(),
         aprovadoPor: null,
         dataAprovacao: null
@@ -37,7 +41,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     });
 
     return NextResponse.json({
-      message: 'Documento corrigido e enviado para aprovação',
+      message: isDraft ? 'Rascunho salvo' : 'Documento corrigido e enviado para aprovação',
       documento: updatedDoc
     }, { status: 200 });
 

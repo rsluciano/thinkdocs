@@ -81,14 +81,14 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await req.json();
-    const { titulo, codigo, categoria, arquivo, dataAtualizacao, dataProximaAtualizacao } = data;
+    const { titulo, codigo, categoria, arquivo, dataAtualizacao, dataProximaAtualizacao, isDraft } = data;
     // Pega o setor enviado no JSON, mas o autor e empresaId vêm 100% do TOKEN!
     let { setor } = data; 
     
     const empresaId = session.empresaId;
     const autorNome = session.nome;
 
-    if (!titulo || !codigo || !categoria || !arquivo) {
+    if (!isDraft && (!titulo || !codigo || !categoria || !arquivo)) {
       return NextResponse.json({ error: 'Dados incompletos do documento.' }, { status: 400 });
     }
 
@@ -100,39 +100,41 @@ export async function POST(req: NextRequest) {
     const novoDocumento = await prisma.documento.create({
       data: {
         empresaId,
-        codigo,
-        titulo,
-        categoria,
+        codigo: codigo || '',
+        titulo: titulo || '',
+        categoria: categoria || 'Geral',
         setor: parsedSetores.join(','),
         autor: autorNome || 'Desconhecido',
         dataAtualizacao: dataAtualizacao ? new Date(dataAtualizacao) : null,
         dataVencimento: dataProximaAtualizacao ? new Date(dataProximaAtualizacao) : null,
-        arquivoUrl: arquivo,
-        status: 'Aguardando Aprovação',
+        arquivoUrl: arquivo || '',
+        status: isDraft ? 'Rascunho' : 'Aguardando Aprovação',
         revisao: 1
       }
     });
 
-    // Encontrar gestores/diretores para notificar (da mesma empresa)
-    const aprovadores = await prisma.usuario.findMany({
-      where: {
-        empresaId,
-        funcao: { in: ['Diretor', 'Gestor da Qualidade', 'Administrador'] }
-      }
-    });
-    const emails = aprovadores.map((a: any) => a.email);
+    if (!isDraft) {
+      // Encontrar gestores/diretores para notificar (da mesma empresa)
+      const aprovadores = await prisma.usuario.findMany({
+        where: {
+          empresaId,
+          funcao: { in: ['Diretor', 'Gestor da Qualidade', 'Administrador'] }
+        }
+      });
+      const emails = aprovadores.map((a: any) => a.email);
 
-    // Usa o serviço de email para notificar
-    await emailService.notificarAprovacaoPendente(
-      emails,
-      novoDocumento.autor,
-      novoDocumento.codigo,
-      novoDocumento.titulo,
-      false
-    );
+      // Usa o serviço de email para notificar
+      await emailService.notificarAprovacaoPendente(
+        emails,
+        novoDocumento.autor,
+        novoDocumento.codigo,
+        novoDocumento.titulo,
+        false
+      );
+    }
 
     return NextResponse.json({
-      message: 'Documento enviado para aprovação com sucesso',
+      message: isDraft ? 'Rascunho salvo com sucesso' : 'Documento enviado para aprovação com sucesso',
       documento: novoDocumento
     }, { status: 201 });
 

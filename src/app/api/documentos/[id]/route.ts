@@ -17,7 +17,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     const { id } = await params;
     const data = await req.json();
-    const { codigo, titulo, categoria, arquivo, setor, dataAtualizacao, dataProximaAtualizacao } = data;
+    const { codigo, titulo, categoria, arquivo, setor, dataAtualizacao, dataProximaAtualizacao, isDraft } = data;
 
     const doc = await prisma.documento.findUnique({ where: { id } });
 
@@ -30,42 +30,64 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Acesso negado. Documento pertence a outra empresa.' }, { status: 403 });
     }
 
-    const revisaoAtual = doc.revisao || 1;
-    const novaRevisao = revisaoAtual + 1;
-    
     const parsedSetores = Array.isArray(setor) ? setor : (setor || doc.setor || 'Geral').split(',').map((s:string)=>s.trim());
     if (!parsedSetores.includes('Qualidade')) {
       parsedSetores.push('Qualidade');
     }
 
-    const novoDoc = await prisma.documento.create({
-      data: {
-        empresaId: session.empresaId,
-        codigo: codigo || doc.codigo,
-        titulo: titulo || doc.titulo,
-        categoria: categoria || doc.categoria,
-        setor: parsedSetores.join(','),
-        autor: session.nome || doc.autor,
-        dataAtualizacao: dataAtualizacao ? new Date(dataAtualizacao) : null,
-        dataVencimento: dataProximaAtualizacao ? new Date(dataProximaAtualizacao) : null,
-        dataEnvio: new Date(),
-        arquivoUrl: arquivo || doc.arquivoUrl,
-        status: 'Aguardando Aprovação',
-        revisao: novaRevisao,
-      }
-    });
+    let resultDoc;
 
-    const diretores = await prisma.usuario.findMany({
-      where: {
-        empresaId: session.empresaId,
-        funcao: { in: ['Diretor', 'Administrador', 'Gestor da Qualidade'] }
-      }
-    });
-    const emails = diretores.map((d: any) => d.email);
+    if (doc.status === 'Rascunho') {
+      // Se for um rascunho, apenas atualizamos o próprio registro
+      resultDoc = await prisma.documento.update({
+        where: { id },
+        data: {
+          codigo: codigo || doc.codigo,
+          titulo: titulo || doc.titulo,
+          categoria: categoria || doc.categoria,
+          setor: parsedSetores.join(','),
+          dataAtualizacao: dataAtualizacao ? new Date(dataAtualizacao) : doc.dataAtualizacao,
+          dataVencimento: dataProximaAtualizacao ? new Date(dataProximaAtualizacao) : doc.dataVencimento,
+          arquivoUrl: arquivo || doc.arquivoUrl,
+          status: isDraft ? 'Rascunho' : 'Aguardando Aprovação'
+        }
+      });
+    } else {
+      // Se for uma revisão de um documento Vigente, criamos um novo
+      const revisaoAtual = doc.revisao || 1;
+      const novaRevisao = revisaoAtual + 1;
+      
+      resultDoc = await prisma.documento.create({
+        data: {
+          empresaId: session.empresaId,
+          codigo: codigo || doc.codigo,
+          titulo: titulo || doc.titulo,
+          categoria: categoria || doc.categoria,
+          setor: parsedSetores.join(','),
+          autor: session.nome || doc.autor,
+          dataAtualizacao: dataAtualizacao ? new Date(dataAtualizacao) : null,
+          dataVencimento: dataProximaAtualizacao ? new Date(dataProximaAtualizacao) : null,
+          dataEnvio: new Date(),
+          arquivoUrl: arquivo || doc.arquivoUrl,
+          status: isDraft ? 'Rascunho' : 'Aguardando Aprovação',
+          revisao: novaRevisao,
+        }
+      });
+    }
 
-    await emailService.notificarAprovacaoPendente(emails, novoDoc.autor, novoDoc.codigo, novoDoc.titulo, true);
+    if (!isDraft) {
+      const diretores = await prisma.usuario.findMany({
+        where: {
+          empresaId: session.empresaId,
+          funcao: { in: ['Diretor', 'Administrador', 'Gestor da Qualidade'] }
+        }
+      });
+      const emails = diretores.map((d: any) => d.email);
 
-    return NextResponse.json({ message: 'Revisão enviada com sucesso', documento: novoDoc }, { status: 200 });
+      await emailService.notificarAprovacaoPendente(emails, resultDoc.autor, resultDoc.codigo, resultDoc.titulo, doc.status !== 'Rascunho');
+    }
+
+    return NextResponse.json({ message: isDraft ? 'Rascunho salvo' : 'Enviado com sucesso', documento: resultDoc }, { status: 200 });
 
   } catch (error: any) {
     return NextResponse.json({ error: 'Erro interno ao atualizar documento' }, { status: 500 });
