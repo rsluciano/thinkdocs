@@ -10,6 +10,7 @@ export default function ListaMestra() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [modalRevalidar, setModalRevalidar] = useState({ isOpen: false, docId: '', novaData: '' });
+  const [modalAnexar, setModalAnexar] = useState({ isOpen: false, doc: null as any, file: null as File | null, uploading: false });
 
   // Auth Check Simples (Protótipo)
   useEffect(() => {
@@ -90,6 +91,46 @@ export default function ListaMestra() {
       }
     } catch (err) {
       alert('Erro de conexão.');
+    }
+  };
+
+  const handleAnexarDocumento = async () => {
+    if (!modalAnexar.file || !modalAnexar.doc) return;
+    setModalAnexar(prev => ({ ...prev, uploading: true }));
+    try {
+      // 1. Upload do arquivo
+      const formData = new FormData();
+      formData.append('file', modalAnexar.file);
+      formData.append('empresa', user?.empresaId || 'ThinkDocs');
+      formData.append('categoria', modalAnexar.doc.categoria);
+      
+      const uploadRes = await fetchAPI('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const uploadData = await uploadRes.json();
+      
+      if (!uploadRes.ok) {
+        throw new Error(uploadData.error || 'Falha ao fazer upload do arquivo');
+      }
+
+      // 2. Anexar via nova rota
+      const res = await fetchAPI(`/api/documentos/${modalAnexar.doc.id}/anexar`, {
+        method: 'PUT',
+        body: JSON.stringify({ arquivoUrl: uploadData.filename })
+      });
+      
+      if (res.ok) {
+        alert('Arquivo anexado com sucesso!');
+        setModalAnexar({ isOpen: false, doc: null, file: null, uploading: false });
+        carregarDocumentos(user);
+      } else {
+        alert('Falha ao vincular anexo ao documento.');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Erro ao anexar arquivo.');
+    } finally {
+      setModalAnexar(prev => ({ ...prev, uploading: false }));
     }
   };
 
@@ -217,10 +258,24 @@ export default function ListaMestra() {
                     })()}
                   </td>
                   <td style={{ padding: '1rem' }}>
+                    {!doc.arquivoUrl && (
+                      <div style={{ marginBottom: '0.5rem', color: '#dc2626', fontWeight: 'bold', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        ⚠️ Faltando Anexo
+                      </div>
+                    )}
                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                      <a href={`/documentos/ler/${doc.id}`} style={{ padding: '0.4rem 0.8rem', textDecoration: 'none', backgroundColor: 'var(--primary)', color: 'white', fontWeight: 'bold', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}>
-                        Ler Documento
-                      </a>
+                      {doc.arquivoUrl ? (
+                        <a href={`/documentos/ler/${doc.id}`} style={{ padding: '0.4rem 0.8rem', textDecoration: 'none', backgroundColor: 'var(--primary)', color: 'white', fontWeight: 'bold', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}>
+                          Ler Documento
+                        </a>
+                      ) : (
+                        <button 
+                          onClick={() => setModalAnexar({ isOpen: true, doc: doc, file: null, uploading: false })}
+                          style={{ padding: '0.4rem 0.8rem', textDecoration: 'none', backgroundColor: '#e2e8f0', color: '#0f172a', fontWeight: 'bold', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', border: '1px solid #cbd5e1' }}
+                        >
+                          📎 Anexar
+                        </button>
+                      )}
                       {user && ['Diretor', 'Gestor da Qualidade', 'Administrador', 'Responsável Técnico'].includes(user.funcao) && (
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                           <button 
@@ -288,6 +343,40 @@ export default function ListaMestra() {
                 style={{ padding: '0.5rem 1rem', backgroundColor: 'var(--primary)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
               >
                 Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Anexar Arquivo */}
+      {modalAnexar.isOpen && modalAnexar.doc && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
+          <div className="card animate-fade-in" style={{ width: '400px', backgroundColor: 'white' }}>
+            <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', fontWeight: 'bold' }}>Anexar Arquivo Faltante</h3>
+            <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>
+              Selecione o arquivo PDF para o documento <b>{modalAnexar.doc.codigo}</b>.
+            </p>
+            <input 
+              type="file" 
+              accept=".pdf"
+              onChange={(e) => setModalAnexar(prev => ({ ...prev, file: e.target.files ? e.target.files[0] : null }))}
+              style={{ width: '100%', padding: '0.5rem', border: '1px dashed var(--primary)', borderRadius: '4px', marginBottom: '1rem' }}
+            />
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => setModalAnexar({ isOpen: false, doc: null, file: null, uploading: false })} 
+                style={{ padding: '0.5rem 1rem', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)' }}
+                disabled={modalAnexar.uploading}
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={handleAnexarDocumento} 
+                style={{ padding: '0.5rem 1rem', backgroundColor: 'var(--primary)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                disabled={!modalAnexar.file || modalAnexar.uploading}
+              >
+                {modalAnexar.uploading ? 'Enviando...' : 'Salvar Anexo'}
               </button>
             </div>
           </div>
