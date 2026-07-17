@@ -86,3 +86,59 @@ model DocumentoRequisito {
   
   @@unique([requisitoId, documentoId])
 }
+
+// ============================================================================
+// NOVO SISTEMA DE AUDITORIA E CONFORMIDADE (RDC 978 / SGQ Avançado)
+// ============================================================================
+
+model RdcItem {
+  id                String   @id @default(cuid())
+  capitulo          String?
+  secao             String?
+  artigo            String?
+  tipo              String?  // Ex: Artigo, Inciso, Alínea, §1º
+  referencia        String   // Ex: Art.2-I
+  textoIntegral     String   // Texto completo da norma
+  requisitoObjetivo String?  // Requisito transformado (O estabelecimento possui...)
+  evidenciaObjetiva String?  // Ex: POP vigente, Planilha, Certidão
+  categoria         String?  // Ex: Licenciamento, Gestão da Qualidade
+  criticidade       String?  // Baixo, Médio, Alto, Crítico
+  aplicabilidade    String?  // Ex: Tipo I, Tipo II, Central, Itinerante
+
+  auditorias        AuditoriaRdc[]
+}
+
+model AuditoriaRdc {
+  id                  String   @id @default(cuid())
+  empresaId           String
+  rdcItemId           String
+  conforme            String?  // S (Sim), N (Não), NA (Não Aplicável)
+  evidenciaEncontrada String?  
+  acaoCorretiva       String?
+  responsavelId       String?
+  prazo               DateTime?
+  status              String   @default("Pendente") // Pendente, Em Andamento, Concluído
+  observacoes         String?
+  atualizadoEm        DateTime @updatedAt
+
+  rdcItem             RdcItem       @relation(fields: [rdcItemId], references: [id], onDelete: Cascade)
+  planosAcao          PlanoAcao5W2H[]
+
+  @@unique([empresaId, rdcItemId])
+}
+
+model PlanoAcao5W2H {
+  id              String   @id @default(cuid())
+  auditoriaRdcId  String
+  what            String?  // O que será feito?
+  why             String?  // Por que será feito?
+  where           String?  // Onde será feito?
+  when            DateTime?// Quando será feito?
+  who             String?  // Quem fará?
+  how             String?  // Como será feito?
+  howMuch         String?  // Quanto custará?
+  status          String   @default("Pendente")
+  criadoEm        DateTime @default(now())
+
+  auditoriaRdc    AuditoriaRdc @relation(fields: [auditoriaRdcId], references: [id], onDelete: Cascade)
+}
