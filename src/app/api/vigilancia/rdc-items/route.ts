@@ -24,10 +24,7 @@ export async function GET(req: NextRequest) {
 
     const items = await prisma.rdcItem.findMany({
       where,
-      orderBy: [
-        { capitulo: 'asc' },
-        { artigo: 'asc' }
-      ]
+      orderBy: { id: 'asc' }
     });
 
     return NextResponse.json(items);

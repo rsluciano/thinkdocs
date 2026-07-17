@@ -8,12 +8,11 @@ export default function VigilanciaLayout({ children }: { children: React.ReactNo
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    if (!token || !storedUser) {
+    const savedUser = localStorage.getItem('thinkdocs_user');
+    if (!savedUser) {
       router.push('/login');
     } else {
-      setUser(JSON.parse(storedUser));
+      setUser(JSON.parse(savedUser));
     }
   }, [router]);
 
