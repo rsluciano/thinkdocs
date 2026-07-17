@@ -38,7 +38,7 @@ export default function LerDocumento() {
       if (currentDoc) {
         setDoc(currentDoc);
         // Verifica se o usuario ja assinou essa versao
-        verificarLeitura(empresaId, usuarioId, currentDoc.id, currentDoc.versao);
+        verificarLeitura(empresaId, usuarioId, currentDoc.id, String(currentDoc.revisao));
       } else {
         setMensagem('Documento não encontrado.');
       }
@@ -81,7 +81,7 @@ export default function LerDocumento() {
           documentoId: doc.id,
           documentoCodigo: doc.codigo,
           documentoTitulo: doc.titulo,
-          documentoVersao: doc.versao
+          documentoVersao: String(doc.revisao)
         })
       });
       if (res.ok) {
@@ -105,7 +105,7 @@ export default function LerDocumento() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <div>
           <h1 className="text-2xl font-bold">{doc.codigo} - {doc.titulo}</h1>
-          <p className="text-muted" style={{ marginTop: '0.2rem' }}>Versão atual: {doc.versao} | Categoria: {doc.categoria}</p>
+          <p className="text-muted" style={{ marginTop: '0.2rem' }}>Revisão atual: {doc.revisao} | Categoria: {doc.categoria}</p>
         </div>
         <button onClick={() => router.back()} style={{ padding: '0.5rem 1rem', cursor: 'pointer', borderRadius: '4px', border: '1px solid var(--border)', backgroundColor: 'white' }}>
           Voltar
@@ -125,7 +125,7 @@ export default function LerDocumento() {
         {leituraConfirmada ? (
           <div style={{ textAlign: 'center', color: '#166534' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>✅ Leitura Confirmada</h3>
-            <p>Você já confirmou a leitura e compreensão da <b>{doc.versao}</b> deste documento.</p>
+            <p>Você já confirmou a leitura e compreensão da revisão <b>{doc.revisao}</b> deste documento.</p>
             <p style={{ fontSize: '0.85rem', marginTop: '0.5rem', color: '#15803d' }}>Sua assinatura eletrônica está registrada no sistema.</p>
             {mensagem && <p style={{ marginTop: '1rem', fontWeight: 'bold' }}>{mensagem}</p>}
           </div>
@@ -141,7 +141,7 @@ export default function LerDocumento() {
                 style={{ width: '1.2rem', height: '1.2rem', marginTop: '0.2rem', cursor: 'pointer' }}
               />
               <span style={{ fontSize: '1rem', lineHeight: '1.5', color: '#334155' }}>
-                Declaro que realizei a leitura completa do documento <b>{doc.codigo} - {doc.titulo} (Versão {doc.versao})</b> e compreendi inteiramente os procedimentos e normas aqui descritos.
+                Declaro que realizei a leitura completa do documento <b>{doc.codigo} - {doc.titulo} (Revisão {doc.revisao})</b> e compreendi inteiramente os procedimentos e normas aqui descritos.
               </span>
             </label>
 
