@@ -15,6 +15,10 @@ export default function MatrizRDC() {
   const [editData, setEditData] = useState<any>({});
   const [saving, setSaving] = useState(false);
 
+  // Estados para a Inteligência Artificial
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiResult, setAiResult] = useState<any>(null);
+
   useEffect(() => {
     carregarDados();
   }, []);
@@ -59,6 +63,30 @@ export default function MatrizRDC() {
       observacoes: aud.observacoes || ''
     });
     setModalOpen(true);
+    setAiResult(null); // Limpar análise anterior ao abrir um novo
+  };
+
+  const handleAiAnalysis = async () => {
+    if (!activeItem?.textoIntegral) return;
+    setAiLoading(true);
+    try {
+      const res = await fetch('/api/ai/analyze-requirement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ textoIntegral: activeItem.textoIntegral })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAiResult(data);
+      } else {
+        alert('Erro ao analisar com a IA.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Erro de conexão com a IA.');
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   const handleSave = async () => {
@@ -80,6 +108,37 @@ export default function MatrizRDC() {
       alert('Erro de conexão.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const toggleNA = async (item: any) => {
+    const aud = auditorias[item.id] || {};
+    const isNA = aud.conforme === 'NA';
+    const newConforme = isNA ? '' : 'NA';
+    
+    // Preparar payload mantendo os dados existentes ou criando novos
+    const payload = {
+      conforme: newConforme,
+      status: newConforme === 'NA' ? 'Concluído' : (aud.status || 'Pendente'),
+      evidenciaEncontrada: aud.evidenciaEncontrada || '',
+      acaoCorretiva: aud.acaoCorretiva || '',
+      prazo: aud.prazo || '',
+      observacoes: aud.observacoes || ''
+    };
+
+    try {
+      const res = await fetchAPI(`/api/vigilancia/auditoria/${item.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const audSalva = await res.json();
+        setAuditorias(prev => ({ ...prev, [item.id]: audSalva }));
+      } else {
+        alert('Erro ao atualizar status N/A.');
+      }
+    } catch (e) {
+      alert('Erro de conexão.');
     }
   };
 
@@ -110,84 +169,124 @@ export default function MatrizRDC() {
     }
   };
 
-  if (loading) return <p>Carregando Matriz...</p>;
+  if (loading) return (
+    <div className="flex justify-center items-center h-64">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
+  );
 
   return (
-    <div className="card">
-      <h2 style={{ color: 'var(--primary)', marginBottom: '1rem', fontWeight: 'bold' }}>Matriz RDC 978 (Requisitos)</h2>
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-blue-600">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
+          </svg>
+          Matriz RDC 978 - Requisitos
+        </h2>
+      </div>
       
       {/* Filtros */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
         <div>
-          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.3rem' }}>Categoria</label>
+          <label className="block text-sm font-semibold text-slate-700 mb-1">Categoria</label>
           <select 
             value={filtroCategoria} 
             onChange={e => setFiltroCategoria(e.target.value)}
-            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors"
           >
-            <option value="">Todas</option>
+            <option value="">Todas as Categorias</option>
             <option value="Gestão">Gestão</option>
             <option value="Estrutura Física">Estrutura Física</option>
             <option value="Recursos Humanos">Recursos Humanos</option>
             <option value="Documentação">Documentação</option>
+            <option value="Serviços e Infraestrutura">Serviços e Infraestrutura</option>
+            <option value="Gestão da Qualidade">Gestão da Qualidade</option>
+            <option value="Gestão de Documentos">Gestão de Documentos</option>
+            <option value="Pessoal e Educação">Pessoal e Educação</option>
+            <option value="Geral">Geral</option>
           </select>
         </div>
         <div>
-          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.3rem' }}>Conformidade</label>
+          <label className="block text-sm font-semibold text-slate-700 mb-1">Conformidade</label>
           <select 
             value={filtroConformidade} 
             onChange={e => setFiltroConformidade(e.target.value)}
-            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors"
           >
-            <option value="">Todos</option>
+            <option value="">Todos os Status</option>
             <option value="S">Conforme (S)</option>
             <option value="N">Não Conforme (N)</option>
             <option value="NA">Não Aplicável (NA)</option>
             <option value="NaoAvaliado">Não Avaliado</option>
           </select>
         </div>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'flex-end' }}>
-          <p style={{ fontSize: '0.9rem', color: 'var(--muted)', fontWeight: 'bold' }}>
-            {filteredItems.length} requisitos encontrados.
-          </p>
+        <div className="flex items-end justify-end">
+          <div className="bg-blue-50 text-blue-700 px-4 py-2.5 rounded-lg text-sm font-semibold border border-blue-100 w-full text-center md:text-right md:w-auto">
+            {filteredItems.length} requisitos listados
+          </div>
         </div>
       </div>
 
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', minWidth: '1200px', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-          <thead>
-            <tr style={{ backgroundColor: '#f1f5f9', borderBottom: '2px solid #cbd5e1', textAlign: 'left' }}>
-              <th style={{ padding: '0.75rem', position: 'sticky', top: 0 }}>Referência</th>
-              <th style={{ padding: '0.75rem', position: 'sticky', top: 0 }}>Requisito Objetivo</th>
-              <th style={{ padding: '0.75rem', position: 'sticky', top: 0 }}>Criticidade</th>
-              <th style={{ padding: '0.75rem', position: 'sticky', top: 0 }}>Conformidade</th>
-              <th style={{ padding: '0.75rem', position: 'sticky', top: 0 }}>Ação</th>
+      <div className="overflow-x-auto rounded-xl border border-slate-200">
+        <table className="w-full text-sm text-left text-slate-600">
+          <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th className="px-6 py-4 font-semibold">Referência</th>
+              <th className="px-6 py-4 font-semibold">Texto Integral do Requisito</th>
+              <th className="px-6 py-4 font-semibold text-center">Criticidade</th>
+              <th className="px-6 py-4 font-semibold text-center">Conformidade</th>
+              <th className="px-6 py-4 font-semibold text-right">Ação</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-slate-100">
             {filteredItems.map(item => {
               const aud = auditorias[item.id];
               return (
-                <tr key={item.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                  <td style={{ padding: '0.75rem', fontWeight: 'bold' }}>{item.referencia}</td>
-                  <td style={{ padding: '0.75rem', maxWidth: '400px' }}>{item.requisitoObjetivo || item.textoIntegral}</td>
-                  <td style={{ padding: '0.75rem' }}>
-                    <span style={{ backgroundColor: getCriticidadeColor(item.criticidade), color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.75rem' }}>
+                <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
+                  <td className="px-6 py-4 font-semibold text-slate-800 whitespace-nowrap align-top">{item.referencia}</td>
+                  <td className="px-6 py-4 align-top">
+                    <p className="line-clamp-3 text-slate-700" title={item.textoIntegral}>
+                      {item.textoIntegral}
+                    </p>
+                  </td>
+                  <td className="px-6 py-4 text-center align-top">
+                    <span 
+                      style={{ backgroundColor: getCriticidadeColor(item.criticidade) }}
+                      className="px-2.5 py-1 text-xs font-bold text-white rounded-full"
+                    >
                       {item.criticidade || 'N/A'}
                     </span>
                   </td>
-                  <td style={{ padding: '0.75rem', fontWeight: 'bold' }}>
-                    {!aud?.conforme ? <span style={{ color: '#94a3b8' }}>Não Avaliado</span> :
-                     aud.conforme === 'S' ? <span style={{ color: '#22c55e' }}>✅ Conforme</span> :
-                     aud.conforme === 'N' ? <span style={{ color: '#dc2626' }}>❌ Não Conforme</span> :
-                     <span style={{ color: '#f59e0b' }}>⚠️ Não Aplicável</span>}
+                  <td className="px-6 py-4 text-center align-top font-medium">
+                    {!aud?.conforme ? <span className="text-slate-400 bg-slate-100 px-2 py-1 rounded-md text-xs">Não Avaliado</span> :
+                     aud.conforme === 'S' ? <span className="text-green-700 bg-green-100 px-2 py-1 rounded-md text-xs">Conforme</span> :
+                     aud.conforme === 'N' ? <span className="text-red-700 bg-red-100 px-2 py-1 rounded-md text-xs">Não Conforme</span> :
+                     <span className="text-yellow-700 bg-yellow-100 px-2 py-1 rounded-md text-xs">Não Aplicável</span>}
                   </td>
-                  <td style={{ padding: '0.75rem' }}>
-                    <button 
-                      onClick={() => handleOpenModal(item)}
-                      style={{ padding: '0.3rem 0.8rem', backgroundColor: 'var(--primary)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.8rem' }}>
-                      Avaliar
-                    </button>
+                  <td className="px-6 py-4 text-right align-top">
+                    <div className="flex justify-end gap-2">
+                      <button 
+                        onClick={() => toggleNA(item)}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors shadow-sm border ${
+                          aud?.conforme === 'NA' 
+                            ? 'bg-yellow-100 text-yellow-800 border-yellow-300 hover:bg-yellow-200' 
+                            : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                        }`}
+                        title={aud?.conforme === 'NA' ? "Remover N/A" : "Marcar como Não Aplicável"}
+                      >
+                        N/A
+                      </button>
+                      <button 
+                        onClick={() => handleOpenModal(item)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
+                      >
+                        <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                        </svg>
+                        Avaliar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );
@@ -203,27 +302,81 @@ export default function MatrizRDC() {
         </table>
       </div>
 
-      {/* Modal de Avaliação */}
+      {/* Modal de Avaliação Premium */}
       {modalOpen && activeItem && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
-          <div className="card animate-fade-in" style={{ width: '600px', backgroundColor: 'white', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', fontWeight: 'bold' }}>
-              Avaliar Requisito {activeItem.referencia}
-            </h3>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-in border border-slate-200">
             
-            <div style={{ marginBottom: '1.5rem', backgroundColor: '#f1f5f9', padding: '1rem', borderRadius: '6px' }}>
-              <p style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '0.5rem' }}><strong>Texto Integral:</strong> {activeItem.textoIntegral}</p>
-              <p style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--primary)' }}><strong>Requisito Objetivo:</strong> {activeItem.requisitoObjetivo}</p>
-              <p style={{ fontSize: '0.85rem', marginTop: '0.5rem' }}><strong>Evidência Esperada:</strong> {activeItem.evidenciaObjetiva}</p>
+            <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-sm">{activeItem.referencia}</span>
+                Auditoria de Requisito
+              </h3>
+              <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
+            
+            <div className="p-6 overflow-y-auto flex-1">
+              {/* Box de IA */}
+              <div className="mb-6 rounded-xl border border-indigo-100 bg-indigo-50/50 p-1">
+                <div className="flex items-center justify-between px-4 py-3 bg-white rounded-lg border border-indigo-50 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                      <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09l2.846.813-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-indigo-900">Análise Inteligente</h4>
+                      <p className="text-xs text-indigo-700/80">Entenda este requisito e saiba quais evidências anexar.</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={handleAiAnalysis}
+                    disabled={aiLoading}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {aiLoading ? (
+                      <><div className="w-4 h-4 rounded-full border-2 border-indigo-200 border-t-white animate-spin"></div> Analisando...</>
+                    ) : 'Gerar Análise'}
+                  </button>
+                </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                {aiResult && (
+                  <div className="p-4 mt-2 bg-white rounded-lg border border-indigo-100 shadow-inner">
+                    <div className="mb-3">
+                      <strong className="text-xs uppercase text-indigo-800 tracking-wider font-bold">Interpretação Simplificada</strong>
+                      <p className="text-sm text-slate-700 mt-1">{aiResult.traducaoSimplificada}</p>
+                    </div>
+                    <div className="mb-3">
+                      <strong className="text-xs uppercase text-indigo-800 tracking-wider font-bold">Evidências Sugeridas</strong>
+                      <ul className="list-disc list-inside text-sm text-slate-700 mt-1">
+                        {aiResult.sugestoesEvidencias?.map((ev: string, idx: number) => <li key={idx}>{ev}</li>)}
+                      </ul>
+                    </div>
+                    <div className="mb-3">
+                      <strong className="text-xs uppercase text-red-800 tracking-wider font-bold">Riscos de Não Conformidade</strong>
+                      <p className="text-sm text-slate-700 mt-1">{aiResult.riscosNaoConformidade}</p>
+                    </div>
+                    <p className="text-xs text-slate-400 italic mt-4">{aiResult.nota}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <p className="text-sm text-slate-800 leading-relaxed"><strong className="text-slate-900 font-bold block mb-1">Texto da Norma:</strong> {activeItem.textoIntegral}</p>
+              </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.3rem' }}>Situação (Conformidade)</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Situação (Conformidade)</label>
                 <select 
                   value={editData.conforme} 
                   onChange={e => setEditData({...editData, conforme: e.target.value})}
-                  style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                  className="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors"
                 >
                   <option value="">Selecione...</option>
                   <option value="S">Sim (Conforme)</option>
@@ -233,11 +386,11 @@ export default function MatrizRDC() {
               </div>
               
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.3rem' }}>Status da Ação</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Status da Ação</label>
                 <select 
                   value={editData.status} 
                   onChange={e => setEditData({...editData, status: e.target.value})}
-                  style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                  className="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors"
                 >
                   <option value="Pendente">Pendente</option>
                   <option value="Em Andamento">Em Andamento</option>
@@ -246,62 +399,64 @@ export default function MatrizRDC() {
               </div>
             </div>
 
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.3rem' }}>Evidência Encontrada</label>
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-slate-700 mb-1">Evidência Encontrada</label>
               <textarea 
                 value={editData.evidenciaEncontrada}
                 onChange={e => setEditData({...editData, evidenciaEncontrada: e.target.value})}
                 rows={2}
-                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                className="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors"
                 placeholder="Ex: POP 001 anexado, Planilha assinada..."
               />
             </div>
 
             {editData.conforme === 'N' && (
-              <div style={{ marginBottom: '1rem', borderLeft: '4px solid #dc2626', paddingLeft: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.3rem', color: '#dc2626' }}>Ação Corretiva Imediata</label>
+              <div className="mb-4 border-l-4 border-red-500 pl-4 py-1 bg-red-50/50 rounded-r-lg">
+                <label className="block text-sm font-bold text-red-700 mb-1">Ação Corretiva Imediata</label>
                 <textarea 
                   value={editData.acaoCorretiva}
                   onChange={e => setEditData({...editData, acaoCorretiva: e.target.value})}
                   rows={2}
-                  style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1', marginBottom: '0.5rem' }}
+                  className="w-full bg-white border border-red-300 text-slate-800 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block p-2.5 transition-colors mb-3"
                   placeholder="Ação para corrigir o desvio..."
                 />
                 
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.3rem' }}>Prazo Limite</label>
+                <label className="block text-sm font-bold text-red-700 mb-1">Prazo Limite</label>
                 <input 
                   type="date"
                   value={editData.prazo}
                   onChange={e => setEditData({...editData, prazo: e.target.value})}
-                  style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                  className="w-full bg-white border border-red-300 text-slate-800 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block p-2.5 transition-colors"
                 />
-                <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '0.5rem' }}>* Para estruturar o Plano de Ação Completo (5W2H), utilize a Aba "Plano de Ação".</p>
+                <p className="text-xs text-red-600/80 mt-2 font-medium">* Para estruturar o Plano de Ação Completo (5W2H), utilize a Aba "Plano de Ação".</p>
               </div>
             )}
 
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.3rem' }}>Observações</label>
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-slate-700 mb-1">Observações Gerais</label>
               <textarea 
                 value={editData.observacoes}
                 onChange={e => setEditData({...editData, observacoes: e.target.value})}
                 rows={2}
-                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                className="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors"
               />
             </div>
+          </div>
 
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex gap-3 justify-end rounded-b-2xl">
               <button 
                 onClick={() => setModalOpen(false)} 
-                style={{ padding: '0.5rem 1rem', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)' }}
+                className="px-5 py-2.5 text-slate-600 font-semibold hover:bg-slate-200 rounded-lg transition-colors"
                 disabled={saving}
               >
                 Cancelar
               </button>
               <button 
                 onClick={handleSave} 
-                style={{ padding: '0.5rem 1rem', backgroundColor: 'var(--primary)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-70 flex items-center gap-2"
                 disabled={saving}
               >
+                {saving && <div className="w-4 h-4 rounded-full border-2 border-blue-200 border-t-white animate-spin"></div>}
                 {saving ? 'Salvando...' : 'Salvar Avaliação'}
               </button>
             </div>

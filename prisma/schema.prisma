@@ -93,15 +93,21 @@ model DocumentoRequisito {
 
 model RdcItem {
   id                String   @id @default(cuid())
+  referencia        String   // Ex: Art.2-I
   capitulo          String?
   secao             String?
+  subsecao          String?
   artigo            String?
+  paragrafo         String?
+  inciso            String?
+  alinea            String?
   tipo              String?  // Ex: Artigo, Inciso, Alínea, §1º
-  referencia        String   // Ex: Art.2-I
   textoIntegral     String   // Texto completo da norma
   requisitoObjetivo String?  // Requisito transformado (O estabelecimento possui...)
   evidenciaObjetiva String?  // Ex: POP vigente, Planilha, Certidão
   categoria         String?  // Ex: Licenciamento, Gestão da Qualidade
+  setor             String?  // Setor responsável sugerido
+  tipoDocumento     String?  // PDF, Imagem, Planilha, etc.
   criticidade       String?  // Baixo, Médio, Alto, Crítico
   aplicabilidade    String?  // Ex: Tipo I, Tipo II, Central, Itinerante
 
