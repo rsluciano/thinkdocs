@@ -136,7 +136,10 @@ export default function ChecklistPage() {
           <option value="Gestão da Qualidade">Gestão da Qualidade</option>
           <option value="Gestão de Documentos">Gestão de Documentos</option>
           <option value="Pessoal e Educação">Pessoal e Educação</option>
-        <      <div className="flex flex-col gap-6">
+        </select>
+      </div>
+
+      <div className="flex flex-col gap-6">
         {filteredItems.map(item => {
           const aud = auditorias[item.id];
           const isConforme = aud?.conforme === 'S';
@@ -288,9 +291,7 @@ export default function ChecklistPage() {
           );
         })}
       </div>
-          );
-        })}
-      </div>
+
     </div>
   );
 }
