@@ -139,7 +139,7 @@ export default function ChecklistPage() {
         </select>
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         {filteredItems.map(item => {
           const aud = auditorias[item.id];
           const isConforme = aud?.conforme === 'S';
@@ -147,89 +147,136 @@ export default function ChecklistPage() {
           const isNA = aud?.conforme === 'NA';
           
           return (
-            <div 
-              key={item.id} 
-              className={`p-5 rounded-xl border-l-4 shadow-sm bg-white border border-slate-100 transition-colors ${
-                isConforme ? 'border-l-green-500 bg-green-50/30' : 
-                isNaoConforme ? 'border-l-red-500 bg-red-50/30' : 
-                isNA ? 'border-l-yellow-500 bg-yellow-50/30' : 'border-l-slate-300'
-              }`}
-            >
-              <div className="flex justify-between items-start mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-md">{item.referencia}</span>
-                  {item.criticidade === 'Crítico' && <span className="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded-md">CRÍTICO</span>}
+            <div key={item.id} className="flex flex-col relative">
+              <div 
+                className={`group py-4 px-3 md:px-4 rounded-xl flex flex-col lg:flex-row gap-4 lg:items-center transition-all border ${
+                  isConforme ? 'bg-green-50/30 border-green-200' : 
+                  isNaoConforme ? 'bg-red-50/30 border-red-200' : 
+                  isNA ? 'bg-yellow-50/30 border-yellow-200' : 'bg-white border-slate-200 hover:border-slate-300 shadow-sm'
+                }`}
+              >
+                {/* Esquerda: Referência e Texto */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-[11px] font-extrabold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 tracking-wide">
+                      {item.referencia}
+                    </span>
+                    {item.criticidade === 'Crítico' && (
+                      <span className="text-[10px] font-bold text-red-700 bg-red-100 border border-red-200 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
+                        Crítico
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm font-medium text-slate-700 leading-relaxed pr-4">
+                    {item.textoIntegral}
+                  </p>
                 </div>
-                <button 
-                  onClick={() => handleAiAnalysis(item)}
-                  disabled={aiLoading === item.id}
-                  className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs font-bold rounded-lg transition-colors border shadow-sm ${
-                    aiResult[item.id] ? 'bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700' : 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100'
-                  }`}
-                  title="Análise com Inteligência Artificial"
-                >
-                  {aiLoading === item.id ? (
-                    <div className="w-3 h-3 rounded-full border-2 border-indigo-200 border-t-current animate-spin"></div>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09l2.846.813-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-                    </svg>
-                  )}
-                  {aiResult[item.id] ? 'Fechar IA' : 'Analisar com IA'}
-                </button>
+                
+                {/* Direita: Ações Inline */}
+                <div className="flex items-center gap-3 shrink-0 flex-wrap lg:flex-nowrap mt-2 lg:mt-0">
+                  <button 
+                    onClick={() => handleAiAnalysis(item)}
+                    disabled={aiLoading === item.id}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-all border shadow-sm ${
+                      aiResult[item.id] 
+                        ? 'bg-indigo-600 text-white border-indigo-700 hover:bg-indigo-700' 
+                        : 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50'
+                    }`}
+                    title="Explicar requisito com Inteligência Artificial"
+                  >
+                    {aiLoading === item.id ? (
+                      <div className="w-3.5 h-3.5 rounded-full border-2 border-indigo-200 border-t-current animate-spin"></div>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09l2.846.813-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+                      </svg>
+                    )}
+                    {aiResult[item.id] ? 'Ocultar IA' : 'IA'}
+                  </button>
+
+                  <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 shadow-inner items-center gap-1">
+                    <button 
+                      onClick={() => handleSaveStatus(item, 'S')}
+                      disabled={saving}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${
+                        isConforme 
+                          ? 'bg-green-500 text-white shadow-sm ring-1 ring-green-600' 
+                          : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50'
+                      }`}
+                    >
+                      SIM
+                    </button>
+                    <button 
+                      onClick={() => handleSaveStatus(item, 'N')}
+                      disabled={saving}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${
+                        isNaoConforme 
+                          ? 'bg-red-500 text-white shadow-sm ring-1 ring-red-600' 
+                          : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50'
+                      }`}
+                    >
+                      NÃO
+                    </button>
+                    <button 
+                      onClick={() => handleSaveStatus(item, 'NA')}
+                      disabled={saving}
+                      className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${
+                        isNA 
+                          ? 'bg-yellow-400 text-yellow-900 shadow-sm ring-1 ring-yellow-500' 
+                          : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50'
+                      }`}
+                      title="Não Aplicável"
+                    >
+                      N/A
+                    </button>
+                  </div>
+                </div>
               </div>
-              
-              <p className="text-sm font-medium text-slate-800 mb-4">{item.textoIntegral}</p>
-              
+
+              {/* Caixa da IA (Abre abaixo do item) */}
               {aiResult[item.id] && (
-                <div className="mb-4 p-3 bg-indigo-50/50 rounded-lg border border-indigo-100 shadow-inner animate-fade-in">
-                  <div className="mb-2">
-                    <strong className="text-[0.7rem] uppercase text-indigo-800 tracking-wider font-bold">Interpretação Simplificada</strong>
-                    <p className="text-xs text-slate-700 mt-1">{aiResult[item.id].traducaoSimplificada}</p>
+                <div className="mt-2 mb-4 ml-0 lg:ml-4 p-5 bg-gradient-to-br from-indigo-50 to-white rounded-xl border border-indigo-100 shadow-md animate-fade-in relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
+                  
+                  <div className="mb-4">
+                    <h4 className="text-[11px] uppercase text-indigo-600 tracking-widest font-extrabold flex items-center gap-1.5 mb-1.5">
+                      <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.82 1.508-2.316a7.5 7.5 0 10-7.516 0c.85.496 1.508 1.333 1.508 2.316V18" />
+                      </svg>
+                      Interpretação Simplificada
+                    </h4>
+                    <p className="text-sm text-slate-700 leading-relaxed">{aiResult[item.id].traducaoSimplificada}</p>
                   </div>
-                  <div className="mb-2">
-                    <strong className="text-[0.7rem] uppercase text-indigo-800 tracking-wider font-bold">Evidências Sugeridas</strong>
-                    <ul className="list-disc list-inside text-xs text-slate-700 mt-0.5">
-                      {aiResult[item.id].sugestoesEvidencias?.map((ev: string, idx: number) => <li key={idx}>{ev}</li>)}
-                    </ul>
-                  </div>
-                  <div>
-                    <strong className="text-[0.7rem] uppercase text-red-800 tracking-wider font-bold">Riscos de Não Conformidade</strong>
-                    <p className="text-xs text-slate-700 mt-1">{aiResult[item.id].riscosNaoConformidade}</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                      <h4 className="text-[11px] uppercase text-slate-500 tracking-widest font-extrabold mb-2 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                        Evidências Sugeridas
+                      </h4>
+                      <ul className="space-y-1.5">
+                        {aiResult[item.id].sugestoesEvidencias?.map((ev: string, idx: number) => (
+                          <li key={idx} className="text-xs text-slate-600 flex items-start gap-1.5">
+                            <span className="text-indigo-400 mt-0.5">•</span> {ev}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-red-50/50 p-3 rounded-lg border border-red-100 shadow-sm">
+                      <h4 className="text-[11px] uppercase text-red-600 tracking-widest font-extrabold mb-2 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        Riscos de Não Conformidade
+                      </h4>
+                      <p className="text-xs text-slate-700 leading-relaxed">{aiResult[item.id].riscosNaoConformidade}</p>
+                    </div>
                   </div>
                 </div>
               )}
-              
-              <div className="grid grid-cols-3 gap-2">
-                <button 
-                  onClick={() => handleSaveStatus(item, 'S')}
-                  disabled={saving}
-                  className={`py-2 px-1 rounded-lg text-xs md:text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-1
-                    ${isConforme ? 'bg-green-600 text-white shadow-green-500/30' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}
-                  `}
-                >
-                  {isConforme && '✅'} CONFORME
-                </button>
-                <button 
-                  onClick={() => handleSaveStatus(item, 'N')}
-                  disabled={saving}
-                  className={`py-2 px-1 rounded-lg text-xs md:text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-1
-                    ${isNaoConforme ? 'bg-red-600 text-white shadow-red-500/30' : 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-100'}
-                  `}
-                >
-                  {isNaoConforme && '❌'} NÃO CONFORME
-                </button>
-                <button 
-                  onClick={() => handleSaveStatus(item, 'NA')}
-                  disabled={saving}
-                  className={`py-2 px-1 rounded-lg text-xs md:text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-1
-                    ${isNA ? 'bg-yellow-500 text-white shadow-yellow-500/30' : 'bg-yellow-50 text-yellow-800 hover:bg-yellow-100 border border-yellow-100'}
-                  `}
-                  title="Não se aplica ao estabelecimento"
-                >
-                  {isNA && '⚠️'} N/A
-                </button>
-              </div>
             </div>
           );
         })}
