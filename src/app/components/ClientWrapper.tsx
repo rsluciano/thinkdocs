@@ -24,7 +24,7 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
 
   return (
     <div className="app-wrapper">
-      <aside className={`sidebar ${isVigilancia ? 'bg-slate-50 border-r border-slate-200' : ''}`}>
+      <aside className={`sidebar ${isVigilancia ? 'bg-[#182232] border-r border-[#24334a]' : ''}`}>
         <div className="sidebar-header">
           {isVigilancia ? <ThinkPlusLogo /> : <CompanyLogo />}
         </div>
