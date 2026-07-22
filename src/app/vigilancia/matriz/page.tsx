@@ -15,6 +15,16 @@ export default function MatrizRDC() {
   const [filtroCapitulo, setFiltroCapitulo] = useState('');
   const [filtroCriticidade, setFiltroCriticidade] = useState('');
 
+  // Estados para edição in-line (Modal)
+  const [modalOpen, setModalOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState<any>(null);
+  const [editData, setEditData] = useState<any>({});
+  const [saving, setSaving] = useState(false);
+
+  // Estados para a Inteligência Artificial
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiResult, setAiResult] = useState<any>(null);
+
   useEffect(() => {
     carregarDados();
   }, []);
@@ -188,6 +198,7 @@ export default function MatrizRDC() {
   };
   
   const getRefBadge = (ref: string) => {
+    if (!ref) return 'Item';
     if (ref.toLowerCase().includes('art.')) return 'Artigo';
     if (ref.toLowerCase().includes('parágrafo')) return 'Parágrafo';
     if (ref.toLowerCase().includes('inciso') || ref.includes(' - ')) return 'Inciso';
