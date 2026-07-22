@@ -9,15 +9,11 @@ export default function MatrizRDC() {
   const [filtroCategoria, setFiltroCategoria] = useState('');
   const [filtroConformidade, setFiltroConformidade] = useState('');
 
-  // Estados para edição in-line (Modal)
-  const [modalOpen, setModalOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState<any>(null);
-  const [editData, setEditData] = useState<any>({});
-  const [saving, setSaving] = useState(false);
-
-  // Estados para a Inteligência Artificial
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiResult, setAiResult] = useState<any>(null);
+  // Estados para Paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [filtroCapitulo, setFiltroCapitulo] = useState('');
+  const [filtroCriticidade, setFiltroCriticidade] = useState('');
 
   useEffect(() => {
     carregarDados();
@@ -146,27 +142,62 @@ export default function MatrizRDC() {
   const filteredItems = items.filter(item => {
     const aud = auditorias[item.id];
     let passCat = true;
+    let passCap = true;
+    let passCrit = true;
     let passConf = true;
 
     if (filtroCategoria && item.categoria !== filtroCategoria) passCat = false;
+    // Capítulo logic can be added later if data supports it. Using generic filter.
+    if (filtroCapitulo && !item.referencia?.includes(filtroCapitulo)) passCap = false; 
     
+    if (filtroCriticidade && item.criticidade?.toLowerCase() !== filtroCriticidade.toLowerCase()) passCrit = false;
+
     if (filtroConformidade) {
       const isConf = aud?.conforme;
       if (filtroConformidade === 'NaoAvaliado' && isConf) passConf = false;
       if (filtroConformidade !== 'NaoAvaliado' && isConf !== filtroConformidade) passConf = false;
     }
 
-    return passCat && passConf;
+    return passCat && passCap && passCrit && passConf;
   });
+
+  // Cálculos de KPIs
+  const totalRequisitos = filteredItems.length;
+  const numConformes = filteredItems.filter(item => auditorias[item.id]?.conforme === 'S').length;
+  const numNaoConformes = filteredItems.filter(item => auditorias[item.id]?.conforme === 'N').length;
+  const numPendentes = filteredItems.filter(item => !auditorias[item.id]?.conforme).length;
+
+  // Paginação
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
 
   const getCriticidadeColor = (crit: string) => {
     switch(crit?.toLowerCase()) {
-      case 'crítico': return '#dc2626'; // Red
-      case 'alto': return '#ea580c'; // Orange
-      case 'médio': return '#eab308'; // Yellow
-      case 'baixo': return '#22c55e'; // Green
-      default: return '#94a3b8';
+      case 'crítico': 
+      case 'crítica': return 'text-red-600'; 
+      case 'alto':
+      case 'alta': return 'text-orange-600'; 
+      case 'médio': 
+      case 'média': return 'text-yellow-600'; 
+      case 'baixo': 
+      case 'baixa': return 'text-green-600'; 
+      default: return 'text-slate-500';
     }
+  };
+  
+  const getRefBadge = (ref: string) => {
+    if (ref.toLowerCase().includes('art.')) return 'Artigo';
+    if (ref.toLowerCase().includes('parágrafo')) return 'Parágrafo';
+    if (ref.toLowerCase().includes('inciso') || ref.includes(' - ')) return 'Inciso';
+    return 'Item';
+  };
+
+  const getRefBadgeColor = (type: string) => {
+    if (type === 'Artigo') return 'bg-blue-100 text-blue-700';
+    if (type === 'Parágrafo') return 'bg-purple-100 text-purple-700';
+    return 'bg-indigo-100 text-indigo-700';
   };
 
   if (loading) return (
@@ -176,24 +207,75 @@ export default function MatrizRDC() {
   );
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-blue-600">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
-          </svg>
-          Matriz RDC 978 - Requisitos
-        </h2>
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-0 overflow-hidden">
+      
+      {/* HEADER SECTION */}
+      <div className="p-6 border-b border-slate-100 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-blue-600">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-slate-800">Matriz RDC 978 - Requisitos</h2>
+            <p className="text-sm text-slate-500 mt-1">Visualize, acompanhe e gerencie todos os requisitos da RDC 978/2025</p>
+          </div>
+        </div>
+
+        {/* KPI CARDS */}
+        <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
+          {/* Card Total */}
+          <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3 flex-1 min-w-[140px] shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+              <span className="text-xl">📋</span>
+            </div>
+            <div>
+              <p className="text-xl font-black text-slate-800 leading-none">{totalRequisitos}</p>
+              <p className="text-xs font-semibold text-slate-500 mt-1">Total de Requisitos</p>
+            </div>
+          </div>
+          {/* Card Conformes */}
+          <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3 flex-1 min-w-[140px] shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
+              <span className="text-xl">✅</span>
+            </div>
+            <div>
+              <p className="text-xl font-black text-slate-800 leading-none">{numConformes}</p>
+              <p className="text-xs font-semibold text-slate-500 mt-1">Conformes</p>
+            </div>
+          </div>
+          {/* Card Pendências */}
+          <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3 flex-1 min-w-[140px] shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-yellow-50 flex items-center justify-center">
+              <span className="text-xl">⚠️</span>
+            </div>
+            <div>
+              <p className="text-xl font-black text-slate-800 leading-none">{numPendentes}</p>
+              <p className="text-xs font-semibold text-slate-500 mt-1">Pendências</p>
+            </div>
+          </div>
+          {/* Card Não Conformes */}
+          <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3 flex-1 min-w-[140px] shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+              <span className="text-xl">❌</span>
+            </div>
+            <div>
+              <p className="text-xl font-black text-slate-800 leading-none">{numNaoConformes}</p>
+              <p className="text-xs font-semibold text-slate-500 mt-1">Não Conformes</p>
+            </div>
+          </div>
+        </div>
       </div>
       
-      {/* Filtros */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-1">Categoria</label>
+      {/* FILTROS SECTION */}
+      <div className="p-4 bg-white border-b border-slate-100 flex flex-wrap items-center gap-4">
+        <div className="flex-1 min-w-[150px]">
+          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Categoria</label>
           <select 
             value={filtroCategoria} 
-            onChange={e => setFiltroCategoria(e.target.value)}
-            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors"
+            onChange={e => {setFiltroCategoria(e.target.value); setCurrentPage(1);}}
+            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 transition-colors font-semibold shadow-sm"
           >
             <option value="">Todas as Categorias</option>
             <option value="Gestão">Gestão</option>
@@ -207,12 +289,42 @@ export default function MatrizRDC() {
             <option value="Geral">Geral</option>
           </select>
         </div>
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-1">Conformidade</label>
+
+        <div className="flex-1 min-w-[150px]">
+          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Capítulo</label>
+          <select 
+            value={filtroCapitulo} 
+            onChange={e => {setFiltroCapitulo(e.target.value); setCurrentPage(1);}}
+            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 transition-colors font-semibold shadow-sm"
+          >
+            <option value="">Todos os Capítulos</option>
+            <option value="Art. 1">Art. 1º ao 10º</option>
+            <option value="Art. 11">Art. 11º em diante</option>
+          </select>
+        </div>
+
+        <div className="flex-1 min-w-[150px]">
+          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Criticidade</label>
+          <select 
+            value={filtroCriticidade} 
+            onChange={e => {setFiltroCriticidade(e.target.value); setCurrentPage(1);}}
+            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 transition-colors font-semibold shadow-sm"
+          >
+            <option value="">Todas</option>
+            <option value="Crítica">Crítica</option>
+            <option value="Alta">Alta</option>
+            <option value="Média">Média</option>
+            <option value="Baixa">Baixa</option>
+            <option value="Informativo">Informativo</option>
+          </select>
+        </div>
+
+        <div className="flex-1 min-w-[150px]">
+          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Conformidade</label>
           <select 
             value={filtroConformidade} 
-            onChange={e => setFiltroConformidade(e.target.value)}
-            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors"
+            onChange={e => {setFiltroConformidade(e.target.value); setCurrentPage(1);}}
+            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 transition-colors font-semibold shadow-sm"
           >
             <option value="">Todos os Status</option>
             <option value="S">Conforme (S)</option>
@@ -221,70 +333,99 @@ export default function MatrizRDC() {
             <option value="NaoAvaliado">Não Avaliado</option>
           </select>
         </div>
-        <div className="flex items-end justify-end">
-          <div className="bg-blue-50 text-blue-700 px-4 py-2.5 rounded-lg text-sm font-semibold border border-blue-100 w-full text-center md:text-right md:w-auto">
-            {filteredItems.length} requisitos listados
-          </div>
+
+        <div className="flex items-end gap-2 mt-5">
+          <button className="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-sm font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" /></svg>
+            Filtros Avançados
+          </button>
+          <button 
+            onClick={() => {setFiltroCategoria(''); setFiltroCapitulo(''); setFiltroCriticidade(''); setFiltroConformidade(''); setCurrentPage(1);}}
+            className="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-sm font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-2"
+          >
+            Limpar Filtros
+          </button>
+          <button className="px-4 py-2 bg-blue-600 border border-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+            Exportar
+          </button>
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200">
-        <table className="w-full text-sm text-left text-slate-600">
-          <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+      {/* TABLE SECTION */}
+      <div className="overflow-x-auto w-full">
+        <table className="w-full text-sm text-left text-slate-600 border-collapse">
+          <thead className="text-[10px] text-slate-500 uppercase tracking-wider bg-slate-50/80 border-b border-slate-200 font-bold">
             <tr>
-              <th className="px-6 py-4 font-semibold">Referência</th>
-              <th className="px-6 py-4 font-semibold">Texto Integral do Requisito</th>
-              <th className="px-6 py-4 font-semibold text-center">Criticidade</th>
-              <th className="px-6 py-4 font-semibold text-center">Conformidade</th>
-              <th className="px-6 py-4 font-semibold text-right">Ação</th>
+              <th className="px-6 py-4 w-40">Referência</th>
+              <th className="px-6 py-4">Texto Integral do Requisito</th>
+              <th className="px-6 py-4 w-48">Categoria</th>
+              <th className="px-6 py-4 w-32 text-center">Criticidade</th>
+              <th className="px-6 py-4 w-40 text-center">Conformidade</th>
+              <th className="px-6 py-4 w-24 text-right">Ação</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {filteredItems.map(item => {
+            {currentItems.map(item => {
               const aud = auditorias[item.id];
+              const refType = getRefBadge(item.referencia);
+              const refBadgeColor = getRefBadgeColor(refType);
+              
               return (
-                <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="px-6 py-4 font-semibold text-slate-800 whitespace-nowrap align-top">{item.referencia}</td>
-                  <td className="px-6 py-4 align-top">
-                    <p className="line-clamp-3 text-slate-700" title={item.textoIntegral}>
+                <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group cursor-pointer" onClick={() => handleOpenModal(item)}>
+                  <td className="px-6 py-5 align-top">
+                    <p className="font-black text-slate-800 text-[13px]">{item.referencia}</p>
+                    <span className={`inline-block mt-1 px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wide ${refBadgeColor}`}>
+                      {refType}
+                    </span>
+                  </td>
+                  <td className="px-6 py-5 align-top">
+                    <p className="text-slate-600 text-[13px] leading-relaxed line-clamp-2 pr-4" title={item.textoIntegral}>
                       {item.textoIntegral}
                     </p>
                   </td>
-                  <td className="px-6 py-4 text-center align-top">
-                    <span 
-                      style={{ backgroundColor: getCriticidadeColor(item.criticidade) }}
-                      className="px-2.5 py-1 text-xs font-bold text-white rounded-full"
-                    >
+                  <td className="px-6 py-5 align-top">
+                    <div className="flex items-center gap-2 text-slate-600">
+                      <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-slate-400">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                      </svg>
+                      <span className="text-[13px] font-medium truncate max-w-[150px]">{item.categoria || 'Geral'}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 align-top text-center">
+                    <span className={`text-[13px] font-bold ${getCriticidadeColor(item.criticidade)}`}>
                       {item.criticidade || 'N/A'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-center align-top font-medium">
-                    {!aud?.conforme ? <span className="text-slate-400 bg-slate-100 px-2 py-1 rounded-md text-xs">Não Avaliado</span> :
-                     aud.conforme === 'S' ? <span className="text-green-700 bg-green-100 px-2 py-1 rounded-md text-xs">Conforme</span> :
-                     aud.conforme === 'N' ? <span className="text-red-700 bg-red-100 px-2 py-1 rounded-md text-xs">Não Conforme</span> :
-                     <span className="text-yellow-700 bg-yellow-100 px-2 py-1 rounded-md text-xs">Não Aplicável</span>}
+                  <td className="px-6 py-5 align-top text-center">
+                    {!aud?.conforme ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-slate-600 bg-slate-100 rounded-full border border-slate-200">
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Pendente
+                      </span>
+                    ) : aud.conforme === 'S' ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-emerald-700 bg-emerald-50 rounded-full border border-emerald-200">
+                        <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" /></svg>
+                        Conforme
+                      </span>
+                    ) : aud.conforme === 'N' ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-rose-700 bg-rose-50 rounded-full border border-rose-200">
+                        <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
+                        Não Conforme
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-yellow-700 bg-yellow-50 rounded-full border border-yellow-200">
+                        <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM6.75 9.25a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5z" clipRule="evenodd" /></svg>
+                        Não Aplicável
+                      </span>
+                    )}
                   </td>
-                  <td className="px-6 py-4 text-right align-top">
-                    <div className="flex justify-end gap-2">
-                      <button 
-                        onClick={() => toggleNA(item)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors shadow-sm border ${
-                          aud?.conforme === 'NA' 
-                            ? 'bg-yellow-100 text-yellow-800 border-yellow-300 hover:bg-yellow-200' 
-                            : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                        }`}
-                        title={aud?.conforme === 'NA' ? "Remover N/A" : "Marcar como Não Aplicável"}
-                      >
-                        N/A
+                  <td className="px-6 py-5 align-top text-right">
+                    <div className="flex items-center justify-end gap-2 text-slate-400 group-hover:text-blue-600 transition-colors">
+                      <button className="p-1.5 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors" title="Visualizar">
+                        <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                       </button>
-                      <button 
-                        onClick={() => handleOpenModal(item)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
-                      >
-                        <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                        </svg>
-                        Avaliar
+                      <button className="p-1.5 hover:bg-slate-100 hover:text-slate-800 rounded-lg transition-colors" title="Opções">
+                        <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
                       </button>
                     </div>
                   </td>
@@ -293,7 +434,7 @@ export default function MatrizRDC() {
             })}
             {filteredItems.length === 0 && (
               <tr>
-                <td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: 'var(--muted)' }}>
+                <td colSpan={6} style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
                   Nenhum requisito encontrado para os filtros atuais.
                 </td>
               </tr>
@@ -302,7 +443,91 @@ export default function MatrizRDC() {
         </table>
       </div>
 
-      {/* Modal de Avaliação Premium */}
+      {/* FOOTER / PAGINATION */}
+      <div className="p-4 border-t border-slate-200 bg-white flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3 text-sm text-slate-500 font-medium">
+          <span>Mostrando {filteredItems.length === 0 ? 0 : indexOfFirstItem + 1} a {Math.min(indexOfLastItem, filteredItems.length)} de {filteredItems.length} requisitos</span>
+          <select 
+            value={itemsPerPage} 
+            onChange={e => {setItemsPerPage(Number(e.target.value)); setCurrentPage(1);}}
+            className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg px-2 py-1 outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value={10}>10 por página</option>
+            <option value={20}>20 por página</option>
+            <option value={50}>50 por página</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <button 
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(1)}
+            className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            «
+          </button>
+          <button 
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            ‹
+          </button>
+          
+          {/* Exibir até 3 páginas no meio */}
+          {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
+            // Logica simplificada para centralizar páginas
+            let pageNum = currentPage;
+            if (currentPage === 1) pageNum = i + 1;
+            else if (currentPage === totalPages && totalPages > 2) pageNum = totalPages - 2 + i;
+            else pageNum = currentPage - 1 + i;
+
+            if (pageNum > totalPages) return null;
+
+            return (
+              <button 
+                key={pageNum}
+                onClick={() => setCurrentPage(pageNum)}
+                className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-bold transition-colors ${
+                  currentPage === pageNum 
+                    ? 'bg-blue-600 text-white border-blue-600' 
+                    : 'border border-transparent text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                {pageNum}
+              </button>
+            )
+          })}
+
+          {totalPages > 3 && currentPage < totalPages - 1 && (
+            <span className="w-8 h-8 flex items-center justify-center text-slate-400">...</span>
+          )}
+
+          {totalPages > 3 && currentPage < totalPages - 1 && (
+            <button 
+              onClick={() => setCurrentPage(totalPages)}
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-sm font-bold border border-transparent text-slate-600 hover:bg-slate-100"
+            >
+              {totalPages}
+            </button>
+          )}
+
+          <button 
+            disabled={currentPage === totalPages || totalPages === 0}
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            ›
+          </button>
+          <button 
+            disabled={currentPage === totalPages || totalPages === 0}
+            onClick={() => setCurrentPage(totalPages)}
+            className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            »
+          </button>
+        </div>
+      </div>
       {modalOpen && activeItem && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-in border border-slate-200">
