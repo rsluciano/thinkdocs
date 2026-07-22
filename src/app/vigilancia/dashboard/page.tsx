@@ -134,7 +134,7 @@ export default function DashboardPage() {
   return (
     <div className="animate-fade-in space-y-8">
       {/* Atalhos Rápidos */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-12">
         <h2 className="text-slate-800 font-bold mb-4 flex items-center gap-2">
           Acesso Rápido
         </h2>
