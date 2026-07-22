@@ -89,23 +89,88 @@ export default function DashboardPage() {
   ];
 
   const shortcuts = [
-    { name: 'Painel Executivo', href: '/vigilancia/painel-executivo', icon: '📈', color: 'bg-indigo-600' },
-    { name: 'Matriz RDC', href: '/vigilancia/matriz', icon: '📋', color: 'bg-blue-600' },
-    { name: 'Checklist', href: '/vigilancia/checklist', icon: '✅', color: 'bg-green-600' },
-    { name: 'Não Conformidades', href: '/nao-conformidades', icon: '🚨', color: 'bg-red-600' },
-    { name: 'Documentos', href: '/vigilancia/controle-documentos', icon: '📑', color: 'bg-slate-700' },
+    { 
+      name: 'Painel Executivo', 
+      desc: 'Indicadores e maturidade',
+      href: '/vigilancia/painel-executivo', 
+      icon: (
+        <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-indigo-600">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      )
+    },
+    { 
+      name: 'Matriz RDC', 
+      desc: 'Visualizar regulamentação',
+      href: '/vigilancia/matriz', 
+      icon: (
+        <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-blue-600">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+        </svg>
+      )
+    },
+    { 
+      name: 'Checklist', 
+      desc: 'Executar auditoria',
+      href: '/vigilancia/checklist', 
+      icon: (
+        <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-slate-700">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
+        </svg>
+      )
+    },
+    { 
+      name: 'Documentos', 
+      desc: 'Gerenciar evidências',
+      href: '/vigilancia/controle-documentos', 
+      icon: (
+        <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-blue-500">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
+        </svg>
+      )
+    },
   ];
 
   return (
     <div className="animate-fade-in space-y-8">
       {/* Atalhos Rápidos */}
-      <div className="flex flex-wrap gap-4 mb-2">
-        {shortcuts.map(s => (
-          <Link key={s.name} href={s.href} className={`${s.color} hover:opacity-90 text-white font-bold py-3 px-5 rounded-xl shadow-md transition-all flex items-center gap-2 hover:scale-105`}>
-            <span className="text-xl">{s.icon}</span>
-            <span>{s.name}</span>
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h2 className="text-slate-800 font-bold mb-4 flex items-center gap-2">
+          Acesso Rápido
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {shortcuts.map(s => (
+            <Link 
+              key={s.name} 
+              href={s.href} 
+              className="group bg-white border border-slate-200 hover:border-indigo-300 hover:shadow-md rounded-xl p-4 transition-all flex items-center gap-4"
+            >
+              <div className="flex-shrink-0">
+                {s.icon}
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-800 text-sm group-hover:text-indigo-700 transition-colors">{s.name}</h3>
+                <p className="text-xs text-slate-500 mt-0.5">{s.desc}</p>
+              </div>
+            </Link>
+          ))}
+          
+          {/* Card Especial: Upload (tracejado) */}
+          <Link 
+            href="/vigilancia/controle-documentos" 
+            className="group bg-slate-50/50 border-2 border-dashed border-slate-300 hover:border-indigo-400 hover:bg-indigo-50/50 rounded-xl p-4 transition-all flex items-center gap-4"
+          >
+            <div className="flex-shrink-0">
+              <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-slate-600 group-hover:text-indigo-600">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-700 text-sm group-hover:text-indigo-700 transition-colors">Upload de Documentos</h3>
+              <p className="text-xs text-slate-500 mt-0.5">Enviar evidências</p>
+            </div>
           </Link>
-        ))}
+        </div>
       </div>
 
       {/* Cards KPI */}
