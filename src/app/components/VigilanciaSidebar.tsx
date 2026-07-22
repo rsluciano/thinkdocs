@@ -3,11 +3,21 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
+import Image from 'next/image';
+
 export function ThinkPlusLogo() {
   return (
-    <div className="flex flex-col items-start mb-6 px-4 pt-6">
-      <h1 className="text-2xl font-black text-indigo-700 tracking-tight">THINK<span className="text-slate-800">PLUS</span></h1>
-      <span className="text-[10px] uppercase font-bold text-slate-500 tracking-widest mt-1">Acreditação & Qualidade</span>
+    <div className="flex flex-col items-center mb-6 px-4 pt-6">
+      <div className="relative w-40 h-20">
+        <Image 
+          src="/think_vs_logo.jpg" 
+          alt="Think V.S. Logo" 
+          fill 
+          style={{ objectFit: 'contain' }}
+          className="rounded-xl"
+        />
+      </div>
+      <span className="text-[10px] uppercase font-bold text-slate-500 tracking-widest mt-2">Acreditação & Qualidade</span>
     </div>
   );
 }
