@@ -148,3 +148,33 @@ model PlanoAcao5W2H {
 
   auditoriaRdc    AuditoriaRdc @relation(fields: [auditoriaRdcId], references: [id], onDelete: Cascade)
 }
+
+// ============================================================================
+// NOVO SISTEMA DE GESTÃO DA QUALIDADE (Não Conformidades)
+// ============================================================================
+
+model NaoConformidade {
+  id                String   @id @default(cuid())
+  empresaId         String
+  titulo            String
+  descricao         String
+  origem            String   // Ex: Auditoria Interna, Auditoria Externa, Reclamação, Melhoria
+  dataRegistro      DateTime @default(now())
+  
+  // Análise e Causa
+  analiseCausa      String?
+  
+  // Ações Corretivas/Melhoria
+  acaoCorretiva     String?
+  responsavelAcao   String?
+  prazoAcao         DateTime?
+  
+  // Monitoramento
+  status            String   @default("Registrada") // Registrada, Em Análise, Ação Pendente, Concluída
+  dataFechamento    DateTime?
+  observacoesFinais String?
+  
+  criadoPor         String   // Nome ou ID do usuário que criou
+  criadoEm          DateTime @default(now())
+  atualizadoEm      DateTime @updatedAt
+}

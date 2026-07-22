@@ -233,6 +233,10 @@ export function SidebarNav() {
         <a href="/vigilancia/dashboard" className="nav-item">🛡️ Vigilância Sanitária</a>
       )}
 
+      {['Gestor da Qualidade', 'Administrador', 'Diretor'].includes(user.funcao) && (
+        <a href="/nao-conformidades" className="nav-item">🚨 Não Conformidades</a>
+      )}
+
       <a href="/pesquisar" className="nav-item">🔍 Pesquisar</a>
 
       {['Administrador', 'Diretor', 'Gestor da Qualidade'].includes(user.funcao) && (
