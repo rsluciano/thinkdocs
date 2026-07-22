@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { fetchAPI } from '@/lib/api';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 
+import Link from 'next/link';
+
 export default function DashboardPage() {
   const [items, setItems] = useState<any[]>([]);
   const [auditorias, setAuditorias] = useState<any[]>([]);
@@ -86,8 +88,26 @@ export default function DashboardPage() {
     { title: 'Pendências', value: pendentes, color: '#eab308' }
   ];
 
+  const shortcuts = [
+    { name: 'Painel Executivo', href: '/vigilancia/painel-executivo', icon: '📈', color: 'bg-indigo-600' },
+    { name: 'Matriz RDC', href: '/vigilancia/matriz', icon: '📋', color: 'bg-blue-600' },
+    { name: 'Checklist', href: '/vigilancia/checklist', icon: '✅', color: 'bg-green-600' },
+    { name: 'Não Conformidades', href: '/nao-conformidades', icon: '🚨', color: 'bg-red-600' },
+    { name: 'Documentos', href: '/vigilancia/controle-documentos', icon: '📑', color: 'bg-slate-700' },
+  ];
+
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in space-y-8">
+      {/* Atalhos Rápidos */}
+      <div className="flex flex-wrap gap-4 mb-2">
+        {shortcuts.map(s => (
+          <Link key={s.name} href={s.href} className={`${s.color} hover:opacity-90 text-white font-bold py-3 px-5 rounded-xl shadow-md transition-all flex items-center gap-2 hover:scale-105`}>
+            <span className="text-xl">{s.icon}</span>
+            <span>{s.name}</span>
+          </Link>
+        ))}
+      </div>
+
       {/* Cards KPI */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
         {cards.map(c => (
