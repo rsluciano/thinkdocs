@@ -39,11 +39,21 @@ export async function POST(req: NextRequest) {
 
     const { senha: _, ...safeUser } = usuario;
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       message: 'Login bem-sucedido',
       usuario: safeUser,
       token
     }, { status: 200 });
+
+    response.cookies.set('thinkdocs_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 // 24 hours
+    });
+
+    return response;
 
   } catch (error: any) {
     console.error('Erro no login:', error);

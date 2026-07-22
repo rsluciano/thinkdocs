@@ -33,6 +33,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Acesso negado. Documento pertence a outra empresa.' }, { status: 403 });
     }
 
+    // Verificação RBAC
+    const isGestor = ['Diretor', 'Administrador', 'Gestor da Qualidade'].includes(session.funcao);
+    if (!isGestor && doc.autor !== session.nome) {
+       return NextResponse.json({ error: 'Acesso negado. Apenas gestores ou o autor podem alterar este documento.' }, { status: 403 });
+    }
+
     const updated = await prisma.documento.update({
       where: { id },
       data: { arquivoUrl }

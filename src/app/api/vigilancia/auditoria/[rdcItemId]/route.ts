@@ -17,6 +17,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ rdcI
     const { rdcItemId } = await params;
     const data = await req.json();
 
+    // Verificação RBAC
+    const isGestor = ['Diretor', 'Administrador', 'Gestor da Qualidade'].includes(session.funcao);
+    if (!isGestor) {
+       return NextResponse.json({ error: 'Acesso negado. Apenas Gestores da Qualidade ou Diretores podem responder à auditoria RDC.' }, { status: 403 });
+    }
+
     const {
       conforme,
       evidenciaEncontrada,

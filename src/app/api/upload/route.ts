@@ -69,15 +69,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Falha ao fazer upload para o Storage' }, { status: 500 });
     }
 
-    const { data: publicUrlData } = supabase
-      .storage
-      .from('documentos')
-      .getPublicUrl(filePathPath);
-
+    // URL pública removida por segurança. Usar sempre o proxy interno /api/download
     return NextResponse.json({ 
       message: 'Upload concluído com sucesso', 
       filename: safeFilename,
-      url: publicUrlData.publicUrl
+      url: `/api/download?empresa=${session.empresaId}&categoria=${encodeURIComponent(String(categoria))}&file=${encodeURIComponent(safeFilename)}`
     });
 
   } catch (error) {

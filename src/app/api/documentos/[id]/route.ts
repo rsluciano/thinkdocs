@@ -30,6 +30,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Acesso negado. Documento pertence a outra empresa.' }, { status: 403 });
     }
 
+    // Verificação RBAC
+    const isGestor = ['Diretor', 'Administrador', 'Gestor da Qualidade'].includes(session.funcao);
+    if (!isGestor && doc.autor !== session.nome) {
+       return NextResponse.json({ error: 'Acesso negado. Apenas gestores ou o autor podem editar este documento.' }, { status: 403 });
+    }
+
     const parsedSetores = Array.isArray(setor) ? setor : (setor || doc.setor || 'Geral').split(',').map((s:string)=>s.trim());
     if (!parsedSetores.includes('Qualidade')) {
       parsedSetores.push('Qualidade');
@@ -116,6 +122,12 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     // Verificação de IDOR
     if (excluidoDoc.empresaId !== session.empresaId) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    }
+
+    // Verificação RBAC
+    const isGestor = ['Diretor', 'Administrador', 'Gestor da Qualidade'].includes(session.funcao);
+    if (!isGestor && excluidoDoc.autor !== session.nome) {
+       return NextResponse.json({ error: 'Acesso negado. Apenas gestores ou o autor podem excluir este documento.' }, { status: 403 });
     }
 
     await prisma.documento.delete({ where: { id } });
