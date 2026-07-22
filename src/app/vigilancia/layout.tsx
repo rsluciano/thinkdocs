@@ -19,7 +19,7 @@ export default function VigilanciaLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
-      <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8">
+      <div className="flex-1 w-full px-4 sm:px-6 md:px-8 py-8">
         <div className="animate-fade-in w-full">
           {children}
         </div>
