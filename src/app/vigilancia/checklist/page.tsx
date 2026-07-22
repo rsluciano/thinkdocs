@@ -145,6 +145,7 @@ export default function ChecklistPage() {
           const isConforme = aud?.conforme === 'S';
           const isNaoConforme = aud?.conforme === 'N';
           const isNA = aud?.conforme === 'NA';
+          const isInfo = aud?.conforme === 'INFO';
           
           return (
             <div 
@@ -152,7 +153,8 @@ export default function ChecklistPage() {
               className={`flex flex-col bg-white border rounded-2xl shadow-sm transition-colors overflow-hidden ${
                 isConforme ? 'border-green-300 shadow-green-100' : 
                 isNaoConforme ? 'border-red-300 shadow-red-100' : 
-                isNA ? 'border-yellow-300 shadow-yellow-100' : 'border-slate-200 hover:border-blue-300 hover:shadow-md'
+                isNA ? 'border-yellow-300 shadow-yellow-100' : 
+                isInfo ? 'border-blue-300 shadow-blue-100' : 'border-slate-200 hover:border-blue-300 hover:shadow-md'
               }`}
             >
               {/* Cabeçalho do Card: Tag, Criticidade e Botão IA */}
@@ -245,13 +247,13 @@ export default function ChecklistPage() {
                 <button 
                   onClick={() => handleSaveStatus(item, 'S')}
                   disabled={saving}
-                  className={`flex-1 py-4 px-2 rounded-xl text-sm md:text-base font-black uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2
+                  className={`flex-1 py-4 px-2 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2
                     ${isConforme 
                       ? 'bg-green-600 text-white shadow-green-500/40 ring-2 ring-green-600 ring-offset-2' 
                       : 'bg-white text-slate-600 border border-slate-200 hover:bg-green-50 hover:text-green-700 hover:border-green-200'}
                   `}
                 >
-                  <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                  <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                     <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
                   </svg>
                   Conforme
@@ -260,13 +262,13 @@ export default function ChecklistPage() {
                 <button 
                   onClick={() => handleSaveStatus(item, 'N')}
                   disabled={saving}
-                  className={`flex-1 py-4 px-2 rounded-xl text-sm md:text-base font-black uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2
+                  className={`flex-1 py-4 px-2 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2
                     ${isNaoConforme 
                       ? 'bg-red-600 text-white shadow-red-500/40 ring-2 ring-red-600 ring-offset-2' 
                       : 'bg-white text-slate-600 border border-slate-200 hover:bg-red-50 hover:text-red-700 hover:border-red-200'}
                   `}
                 >
-                  <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                  <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                     <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clipRule="evenodd" />
                   </svg>
                   Não Conforme
@@ -275,16 +277,31 @@ export default function ChecklistPage() {
                 <button 
                   onClick={() => handleSaveStatus(item, 'NA')}
                   disabled={saving}
-                  className={`flex-1 py-4 px-2 rounded-xl text-sm md:text-base font-black uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2
+                  className={`flex-1 py-4 px-2 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2
                     ${isNA 
                       ? 'bg-yellow-400 text-yellow-900 shadow-yellow-500/40 ring-2 ring-yellow-400 ring-offset-2' 
                       : 'bg-white text-slate-600 border border-slate-200 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-200'}
                   `}
                 >
-                  <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                  <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                     <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
                   </svg>
-                  N/A (Não se Aplica)
+                  N/A
+                </button>
+
+                <button 
+                  onClick={() => handleSaveStatus(item, 'INFO')}
+                  disabled={saving}
+                  className={`flex-1 py-4 px-2 rounded-xl text-xs md:text-sm font-black uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2
+                    ${aud?.conforme === 'INFO'
+                      ? 'bg-blue-200 text-blue-900 shadow-blue-500/40 ring-2 ring-blue-400 ring-offset-2' 
+                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200'}
+                  `}
+                >
+                  <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                    <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm0 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0-11.25a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75z" clipRule="evenodd" />
+                  </svg>
+                  Informativo
                 </button>
               </div>
             </div>

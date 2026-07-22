@@ -230,42 +230,7 @@ export function SidebarNav() {
       )}
       
       {['Diretor', 'Gestor da Qualidade', 'Administrador'].includes(user.funcao) && (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <button 
-            onClick={(e) => {
-              e.preventDefault();
-              setVigilanciaOpen(!vigilanciaOpen);
-              if (!vigilanciaOpen && !isVigilanciaActive) {
-                window.location.href = '/vigilancia/dashboard';
-              }
-            }}
-            className={`nav-item ${isVigilanciaActive ? 'active' : ''}`}
-            style={{ 
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
-              width: '100%', background: 'none', border: 'none', cursor: 'pointer',
-              textAlign: 'left',
-              padding: '0.75rem 1rem'
-            }}
-          >
-            <span>🛡️ Vigilância Sanitária</span>
-            <span style={{ fontSize: '0.8rem', opacity: 0.6 }}>{vigilanciaOpen ? '▼' : '▶'}</span>
-          </button>
-          
-          {vigilanciaOpen && (
-            <div style={{ 
-              display: 'flex', flexDirection: 'column', 
-              marginLeft: '2rem', borderLeft: '2px solid var(--border)', 
-              paddingLeft: '0.5rem', marginTop: '0.2rem', gap: '0.2rem'
-            }}>
-              <a href="/vigilancia/dashboard" className="nav-item" style={{ padding: '0.4rem 0.5rem', fontSize: '0.9rem', backgroundColor: pathname === '/vigilancia/dashboard' ? 'var(--primary)' : 'transparent', color: pathname === '/vigilancia/dashboard' ? 'white' : 'inherit' }}>📊 Dashboard</a>
-              <a href="/vigilancia/matriz" className="nav-item" style={{ padding: '0.4rem 0.5rem', fontSize: '0.9rem', backgroundColor: pathname === '/vigilancia/matriz' ? 'var(--primary)' : 'transparent', color: pathname === '/vigilancia/matriz' ? 'white' : 'inherit' }}>📋 Matriz RDC</a>
-              <a href="/vigilancia/checklist" className="nav-item" style={{ padding: '0.4rem 0.5rem', fontSize: '0.9rem', backgroundColor: pathname === '/vigilancia/checklist' ? 'var(--primary)' : 'transparent', color: pathname === '/vigilancia/checklist' ? 'white' : 'inherit' }}>✅ Checklist</a>
-              <a href="/vigilancia/plano-acao" className="nav-item" style={{ padding: '0.4rem 0.5rem', fontSize: '0.9rem', backgroundColor: pathname === '/vigilancia/plano-acao' ? 'var(--primary)' : 'transparent', color: pathname === '/vigilancia/plano-acao' ? 'white' : 'inherit' }}>🎯 Plano de Ação</a>
-              <a href="/vigilancia/lista-mestra" className="nav-item" style={{ padding: '0.4rem 0.5rem', fontSize: '0.9rem', backgroundColor: pathname === '/vigilancia/lista-mestra' ? 'var(--primary)' : 'transparent', color: pathname === '/vigilancia/lista-mestra' ? 'white' : 'inherit' }}>📑 Lista Mestra</a>
-              <a href="/vigilancia/painel-executivo" className="nav-item" style={{ padding: '0.4rem 0.5rem', fontSize: '0.9rem', backgroundColor: pathname === '/vigilancia/painel-executivo' ? 'var(--primary)' : 'transparent', color: pathname === '/vigilancia/painel-executivo' ? 'white' : 'inherit' }}>📈 Painel Executivo</a>
-            </div>
-          )}
-        </div>
+        <a href="/vigilancia/dashboard" className="nav-item">🛡️ Vigilância Sanitária</a>
       )}
 
       <a href="/pesquisar" className="nav-item">🔍 Pesquisar</a>

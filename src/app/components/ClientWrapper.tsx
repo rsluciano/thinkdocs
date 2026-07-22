@@ -3,9 +3,10 @@
 import React, { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { CompanyLogo, HeaderClient, SidebarNav } from "./ClientLayoutElements";
+import { ThinkPlusLogo, VigilanciaSidebarNav } from "./VigilanciaSidebar";
 
 export default function ClientWrapper({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+  const pathname = usePathname() || '';
   const router = useRouter();
 
   useEffect(() => {
@@ -19,13 +20,15 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
     return <>{children}</>;
   }
 
+  const isVigilancia = pathname.startsWith('/vigilancia');
+
   return (
     <div className="app-wrapper">
-      <aside className="sidebar">
+      <aside className={`sidebar ${isVigilancia ? 'bg-slate-50 border-r border-slate-200' : ''}`}>
         <div className="sidebar-header">
-          <CompanyLogo />
+          {isVigilancia ? <ThinkPlusLogo /> : <CompanyLogo />}
         </div>
-        <SidebarNav />
+        {isVigilancia ? <VigilanciaSidebarNav /> : <SidebarNav />}
       </aside>
       <main className="main-content">
         <header className="topbar">

@@ -48,6 +48,7 @@ export default function DashboardPage() {
     if (status === 'S') conformes++;
     else if (status === 'N') naoConformes++;
     else if (status === 'NA') naoAplicaveis++;
+    else if (status === 'INFO') { /* não conta para progresso de auditoria */ }
     else pendentes++;
 
     const cat = item.categoria || 'Sem Categoria';
@@ -58,7 +59,7 @@ export default function DashboardPage() {
     cData.total++;
     if (status === 'S') cData.conformes++;
     else if (status === 'N') cData.naoConformes++;
-    else cData.pendentes++;
+    else if (status !== 'INFO' && status !== 'NA') cData.pendentes++;
   });
 
   const pieData = [
