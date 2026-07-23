@@ -171,11 +171,30 @@ export default function ControleDocumentosPage() {
 
       {/* FILTROS DE PESQUISA */}
       <div className="bg-slate-50/50 p-8 rounded-2xl border border-slate-200 shadow-sm mb-8 mx-8">
-        <h3 className="text-sm font-black text-slate-800 mb-5 uppercase tracking-wide">Filtros de Pesquisa</h3>
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-8 gap-4">
+          <h3 className="text-sm font-black text-slate-800 uppercase tracking-wide">Filtros de Pesquisa</h3>
+          <div className="flex flex-wrap items-center gap-3">
+             <button onClick={() => { setBusca(''); setCapitulo(''); setTipo(''); setSituacao(''); }} className="h-12 px-6 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
+               Limpar
+             </button>
+             <button className="h-12 px-6 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
+               <svg className="w-5 h-5 mr-2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+               Exportar
+             </button>
+             <button className="h-12 px-6 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold flex items-center hover:bg-slate-50 transition-colors shadow-sm cursor-pointer">
+               <svg className="w-5 h-5 mr-2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+               Avançados
+             </button>
+             <button className="h-12 px-8 bg-[#2970ff] text-white rounded-xl text-sm font-bold shadow-md hover:bg-blue-600 transition-colors flex items-center cursor-pointer">
+               <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+               Buscar
+             </button>
+          </div>
+        </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-5">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">Buscar</label>
+            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Buscar</label>
             <div className="relative">
               <input type="text" placeholder="Digite o nome do documento, requisito ou palavra-chave..." 
                 className="w-full h-12 pl-4 pr-10 rounded-xl border border-slate-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none shadow-sm"
@@ -185,14 +204,14 @@ export default function ControleDocumentosPage() {
           </div>
           
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">Requisito (Artigo / Inciso / Parágrafo)</label>
+            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Requisito (Artigo / Inciso)</label>
             <input type="text" placeholder="Ex.: Art. 73, Inciso I..." 
                 className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none shadow-sm"
                 value={requisito} onChange={e => setRequisito(e.target.value)} />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">Capítulo</label>
+            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Capítulo</label>
             <select className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-blue-500 outline-none shadow-sm cursor-pointer"
               value={capitulo} onChange={e => setCapitulo(e.target.value)}>
               <option value="">Todos os Capítulos</option>
@@ -204,29 +223,23 @@ export default function ControleDocumentosPage() {
             </select>
           </div>
 
-          <div className="flex items-end h-full gap-3">
-            <div className="flex-1">
-              <label className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">Tipo de Documento</label>
-              <select className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-blue-500 outline-none shadow-sm cursor-pointer"
-                value={tipo} onChange={e => setTipo(e.target.value)}>
-                <option value="">Todos os Tipos</option>
-                <option value="POP">POP</option>
-                <option value="Manual">Manual</option>
-                <option value="Registro">Registro</option>
-                <option value="Certificado">Certificado</option>
-                <option value="Licença">Licença</option>
-              </select>
-            </div>
-            <button className="h-12 px-4 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold flex items-center hover:bg-slate-50 transition-colors shrink-0 shadow-sm">
-               <svg className="w-5 h-5 mr-2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-               Avançados
-            </button>
+          <div>
+            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Tipo de Documento</label>
+            <select className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-blue-500 outline-none shadow-sm cursor-pointer"
+              value={tipo} onChange={e => setTipo(e.target.value)}>
+              <option value="">Todos os Tipos</option>
+              <option value="POP">POP</option>
+              <option value="Manual">Manual</option>
+              <option value="Registro">Registro</option>
+              <option value="Certificado">Certificado</option>
+              <option value="Licença">Licença</option>
+            </select>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">Situação</label>
+            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Situação</label>
             <select className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-blue-500 outline-none shadow-sm cursor-pointer"
               value={situacao} onChange={e => setSituacao(e.target.value)}>
               <option value="">Todos</option>
@@ -236,7 +249,7 @@ export default function ControleDocumentosPage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">Status da Revisão</label>
+            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Status da Revisão</label>
             <select className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-blue-500 outline-none shadow-sm cursor-pointer"
               value={statusRevisao} onChange={e => setStatusRevisao(e.target.value)}>
               <option value="">Todos</option>
@@ -245,23 +258,12 @@ export default function ControleDocumentosPage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">Data Inicial</label>
+            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Data Inicial</label>
             <input type="date" className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm text-slate-500 outline-none shadow-sm cursor-pointer" />
           </div>
-          <div className="flex gap-4">
-             <div className="flex-1">
-               <label className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">Data Final</label>
-               <input type="date" className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm text-slate-500 outline-none shadow-sm cursor-pointer" />
-             </div>
-             <div className="flex items-end gap-3 pb-0">
-               <button onClick={() => { setBusca(''); setCapitulo(''); setTipo(''); setSituacao(''); }} className="h-12 px-5 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors flex items-center shrink-0 shadow-sm cursor-pointer">
-                 Limpar
-               </button>
-               <button className="h-12 px-8 bg-[#2970ff] text-white rounded-xl text-sm font-bold shadow-md hover:bg-blue-600 transition-colors flex items-center shrink-0 cursor-pointer">
-                 <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                 Buscar
-               </button>
-             </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Data Final</label>
+            <input type="date" className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm text-slate-500 outline-none shadow-sm cursor-pointer" />
           </div>
         </div>
 
@@ -287,11 +289,6 @@ export default function ControleDocumentosPage() {
              Relatório
           </button>
         </div>
-        <button className="h-11 px-5 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
-          <svg className="w-5 h-5 mr-2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-          Exportar
-          <svg className="w-4 h-4 ml-2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-        </button>
       </div>
 
       {/* TABELA DE DOCUMENTOS */}
