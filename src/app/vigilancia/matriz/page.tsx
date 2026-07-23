@@ -536,6 +536,9 @@ export default function MatrizRDC() {
           </button>
         </div>
       </div>
+      {/* End Table Wrapper */}
+      </div>
+      
       {modalOpen && activeItem && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-in border border-slate-200">
