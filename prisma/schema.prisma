@@ -173,6 +173,9 @@ model NaoConformidade {
   titulo            String
   descricao         String
   origem            String   // Ex: Auditoria Interna, Auditoria Externa, Reclamação, Melhoria
+  tipo              String?  // Não Conformidade, Desvio, Observação
+  setor             String?  // Setor relacionado
+  criticidade       String?  // Alta, Média, Baixa
   dataRegistro      DateTime @default(now())
   
   // Análise e Causa

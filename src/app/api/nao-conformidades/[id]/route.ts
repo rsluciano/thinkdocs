@@ -15,6 +15,11 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     const { 
+      titulo,
+      descricao,
+      tipo,
+      setor,
+      criticidade,
       status, 
       analiseCausa, 
       acaoCorretiva, 
@@ -30,6 +35,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       responsavelAcao,
       observacoesFinais,
     };
+
+    if (titulo) dataAtualizacao.titulo = titulo;
+    if (descricao) dataAtualizacao.descricao = descricao;
+    if (tipo) dataAtualizacao.tipo = tipo;
+    if (setor) dataAtualizacao.setor = setor;
+    if (criticidade) dataAtualizacao.criticidade = criticidade;
 
     if (prazoAcao) {
       dataAtualizacao.prazoAcao = new Date(prazoAcao);

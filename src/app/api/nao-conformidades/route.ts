@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Sessão inválida' }, { status: 401 });
     }
 
-    const { titulo, descricao, origem, responsavelAcao, prazoAcao } = await req.json();
+    const { titulo, descricao, origem, responsavelAcao, prazoAcao, tipo, setor, criticidade } = await req.json();
 
     const rnc = await prisma.naoConformidade.create({
       data: {
@@ -46,6 +46,9 @@ export async function POST(req: NextRequest) {
         titulo,
         descricao,
         origem,
+        tipo,
+        setor,
+        criticidade,
         responsavelAcao,
         prazoAcao: prazoAcao ? new Date(prazoAcao) : null,
         criadoPor: session.nome
