@@ -713,128 +713,151 @@ export default function MatrizRDC() {
             
             <div className="p-6 overflow-y-auto flex-1">
               {modalTab === 'avaliacao' ? (
-                <>
-              {/* Box de IA */}
-              <div className="mb-6 rounded-xl border border-indigo-100 bg-indigo-50/50 p-1">
-                <div className="flex items-center justify-between px-4 py-3 bg-white rounded-lg border border-indigo-50 shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
-                      <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09l2.846.813-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-indigo-900">Análise Inteligente</h4>
-                      <p className="text-xs text-indigo-700/80">Entenda este requisito e saiba quais evidências anexar.</p>
-                    </div>
+              <div className="flex flex-col gap-6">
+                
+                {/* 1. SELETOR DE CONFORMIDADE (NOVO DESIGN PREMIUM) */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-3 uppercase tracking-wide">Situação de Conformidade</label>
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => setEditData({...editData, conforme: 'S'})}
+                      className={`flex-1 py-3 px-4 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${editData.conforme === 'S' ? 'bg-emerald-50 border-emerald-500 text-emerald-700 shadow-[0_0_0_2px_rgba(16,185,129,0.2)]' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'}`}
+                    >
+                      <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 20 20" fill="currentColor" className="w-7 h-7"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" /></svg>
+                      <span className="font-bold text-sm">Conforme</span>
+                    </button>
+                    <button 
+                      onClick={() => setEditData({...editData, conforme: 'N'})}
+                      className={`flex-1 py-3 px-4 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${editData.conforme === 'N' ? 'bg-rose-50 border-rose-500 text-rose-700 shadow-[0_0_0_2px_rgba(244,63,94,0.2)]' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'}`}
+                    >
+                      <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 20 20" fill="currentColor" className="w-7 h-7"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
+                      <span className="font-bold text-sm">Não Conforme</span>
+                    </button>
+                    <button 
+                      onClick={() => setEditData({...editData, conforme: 'NA'})}
+                      className={`flex-1 py-3 px-4 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${editData.conforme === 'NA' ? 'bg-amber-50 border-amber-500 text-amber-700 shadow-[0_0_0_2px_rgba(245,158,11,0.2)]' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'}`}
+                    >
+                      <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 20 20" fill="currentColor" className="w-7 h-7"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM6.75 9.25a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5z" clipRule="evenodd" /></svg>
+                      <span className="font-bold text-sm">Não Aplicável</span>
+                    </button>
                   </div>
-                  <button 
-                    onClick={handleAiAnalysis}
-                    disabled={aiLoading}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {aiLoading ? (
-                      <><div className="w-4 h-4 rounded-full border-2 border-indigo-200 border-t-white animate-spin"></div> Analisando...</>
-                    ) : 'Gerar Análise'}
-                  </button>
                 </div>
 
-                {aiResult && (
-                  <div className="p-4 mt-2 bg-white rounded-lg border border-indigo-100 shadow-inner">
-                    <div className="mb-3">
-                      <strong className="text-xs uppercase text-indigo-800 tracking-wider font-bold">Interpretação Simplificada</strong>
-                      <p className="text-sm text-slate-700 mt-1">{aiResult.traducaoSimplificada}</p>
+                {/* 2. INFORMAÇÕES DA NORMA E IA */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col">
+                    <strong className="text-slate-500 font-bold block mb-2 text-xs uppercase tracking-wide">Texto da Norma</strong> 
+                    <div className="text-sm text-slate-700 leading-relaxed overflow-y-auto max-h-[160px] pr-2 custom-scrollbar">
+                      {activeItem.textoIntegral}
                     </div>
-                    <div className="mb-3">
-                      <strong className="text-xs uppercase text-indigo-800 tracking-wider font-bold">Evidências Sugeridas</strong>
-                      <ul className="list-disc list-inside text-sm text-slate-700 mt-1">
-                        {aiResult.sugestoesEvidencias?.map((ev: string, idx: number) => <li key={idx}>{ev}</li>)}
-                      </ul>
+                  </div>
+
+                  <div className="rounded-xl border border-indigo-100 bg-indigo-50/30 flex flex-col overflow-hidden max-h-[220px]">
+                    <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-indigo-50 shadow-sm shrink-0">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                          <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09l2.846.813-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                          </svg>
+                        </div>
+                        <h4 className="text-sm font-bold text-indigo-900">IA Analista</h4>
+                      </div>
+                      <button 
+                        onClick={handleAiAnalysis}
+                        disabled={aiLoading}
+                        className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-1.5"
+                      >
+                        {aiLoading ? (
+                          <><div className="w-3 h-3 rounded-full border-2 border-indigo-200 border-t-white animate-spin"></div> Analisando</>
+                        ) : 'Gerar Análise'}
+                      </button>
                     </div>
-                    <div className="mb-3">
-                      <strong className="text-xs uppercase text-red-800 tracking-wider font-bold">Riscos de Não Conformidade</strong>
-                      <p className="text-sm text-slate-700 mt-1">{aiResult.riscosNaoConformidade}</p>
+
+                    <div className="p-4 overflow-y-auto custom-scrollbar flex-1">
+                      {aiResult ? (
+                        <div className="space-y-4">
+                          <div>
+                            <strong className="text-[10px] uppercase text-indigo-800 tracking-wider font-bold block mb-1">Interpretação</strong>
+                            <p className="text-xs text-slate-700 leading-relaxed">{aiResult.traducaoSimplificada}</p>
+                          </div>
+                          <div>
+                            <strong className="text-[10px] uppercase text-indigo-800 tracking-wider font-bold block mb-1">Evidências Sugeridas</strong>
+                            <ul className="list-disc list-inside text-xs text-slate-700">
+                              {aiResult.sugestoesEvidencias?.map((ev: string, idx: number) => <li key={idx}>{ev}</li>)}
+                            </ul>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center h-full text-center p-4">
+                          <p className="text-xs text-indigo-400">Clique em "Gerar Análise" para a IA traduzir o requisito e sugerir evidências.</p>
+                        </div>
+                      )}
                     </div>
-                    <p className="text-xs text-slate-400 italic mt-4">{aiResult.nota}</p>
+                  </div>
+                </div>
+
+                {/* 3. CAMPOS ADICIONAIS E AÇÃO CORRETIVA */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">Status da Avaliação</label>
+                    <select 
+                      value={editData.status} 
+                      onChange={e => setEditData({...editData, status: e.target.value})}
+                      className="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors shadow-sm"
+                    >
+                      <option value="Pendente">Pendente</option>
+                      <option value="Em Andamento">Em Andamento</option>
+                      <option value="Concluído">Concluído</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">Resumo da Evidência Encontrada</label>
+                    <input 
+                      value={editData.evidenciaEncontrada}
+                      onChange={e => setEditData({...editData, evidenciaEncontrada: e.target.value})}
+                      className="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors shadow-sm"
+                      placeholder="Ex: Anexado POP 001 e Termo Assinado..."
+                    />
+                  </div>
+                </div>
+
+                {editData.conforme === 'N' && (
+                  <div className="border-l-4 border-red-500 bg-red-50/50 rounded-r-xl p-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-bold text-red-700 mb-1 uppercase tracking-wide">Ação Corretiva Imediata</label>
+                        <input 
+                          value={editData.acaoCorretiva}
+                          onChange={e => setEditData({...editData, acaoCorretiva: e.target.value})}
+                          className="w-full bg-white border border-red-300 text-slate-800 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block p-2.5 shadow-sm"
+                          placeholder="Ação para corrigir o desvio..."
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-red-700 mb-1 uppercase tracking-wide">Prazo Limite</label>
+                        <input 
+                          type="date"
+                          value={editData.prazo}
+                          onChange={e => setEditData({...editData, prazo: e.target.value})}
+                          className="w-full bg-white border border-red-300 text-slate-800 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block p-2.5 shadow-sm"
+                        />
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-red-600/80 mt-2 font-medium">* Para estruturar o Plano de Ação Completo (5W2H), utilize a Aba "Plano de Ação" (em breve).</p>
                   </div>
                 )}
-              </div>
 
-              <div className="mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <p className="text-sm text-slate-800 leading-relaxed"><strong className="text-slate-900 font-bold block mb-1">Texto da Norma:</strong> {activeItem.textoIntegral}</p>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">Observações Gerais</label>
+                  <textarea 
+                    value={editData.observacoes}
+                    onChange={e => setEditData({...editData, observacoes: e.target.value})}
+                    rows={2}
+                    className="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors shadow-sm"
+                    placeholder="Anotações internas sobre esta avaliação..."
+                  />
+                </div>
               </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Situação (Conformidade)</label>
-                <select 
-                  value={editData.conforme} 
-                  onChange={e => setEditData({...editData, conforme: e.target.value})}
-                  className="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors"
-                >
-                  <option value="">Selecione...</option>
-                  <option value="S">Sim (Conforme)</option>
-                  <option value="N">Não (Não Conforme)</option>
-                  <option value="NA">Não Aplicável</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Status da Ação</label>
-                <select 
-                  value={editData.status} 
-                  onChange={e => setEditData({...editData, status: e.target.value})}
-                  className="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors"
-                >
-                  <option value="Pendente">Pendente</option>
-                  <option value="Em Andamento">Em Andamento</option>
-                  <option value="Concluído">Concluído</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Evidência Encontrada</label>
-              <textarea 
-                value={editData.evidenciaEncontrada}
-                onChange={e => setEditData({...editData, evidenciaEncontrada: e.target.value})}
-                rows={2}
-                className="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors"
-                placeholder="Ex: POP 001 anexado, Planilha assinada..."
-              />
-            </div>
-
-            {editData.conforme === 'N' && (
-              <div className="mb-4 border-l-4 border-red-500 pl-4 py-1 bg-red-50/50 rounded-r-lg">
-                <label className="block text-sm font-bold text-red-700 mb-1">Ação Corretiva Imediata</label>
-                <textarea 
-                  value={editData.acaoCorretiva}
-                  onChange={e => setEditData({...editData, acaoCorretiva: e.target.value})}
-                  rows={2}
-                  className="w-full bg-white border border-red-300 text-slate-800 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block p-2.5 transition-colors mb-3"
-                  placeholder="Ação para corrigir o desvio..."
-                />
-                
-                <label className="block text-sm font-bold text-red-700 mb-1">Prazo Limite</label>
-                <input 
-                  type="date"
-                  value={editData.prazo}
-                  onChange={e => setEditData({...editData, prazo: e.target.value})}
-                  className="w-full bg-white border border-red-300 text-slate-800 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block p-2.5 transition-colors"
-                />
-                <p className="text-xs text-red-600/80 mt-2 font-medium">* Para estruturar o Plano de Ação Completo (5W2H), utilize a Aba "Plano de Ação".</p>
-              </div>
-            )}
-
-            <div className="mb-4">
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Observações Gerais</label>
-              <textarea 
-                value={editData.observacoes}
-                onChange={e => setEditData({...editData, observacoes: e.target.value})}
-                rows={2}
-              />
-            </div>
-            </>
               ) : (
                 <div className="flex flex-col gap-6">
                   {/* Lista de documentos vinculados */}
