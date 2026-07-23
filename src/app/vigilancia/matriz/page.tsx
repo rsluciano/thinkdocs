@@ -221,72 +221,72 @@ export default function MatrizRDC() {
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-0 overflow-hidden">
       
       {/* HEADER SECTION */}
-      <div className="p-6 border-b border-slate-100 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-blue-600">
+      <div className="p-8 border-b border-slate-100 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8 bg-white">
+        <div className="flex items-center gap-5">
+          <div className="w-14 h-14 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 text-blue-600">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
             </svg>
           </div>
           <div>
-            <h2 className="text-xl font-black text-slate-800">Matriz RDC 978 - Requisitos</h2>
-            <p className="text-sm text-slate-500 mt-1">Visualize, acompanhe e gerencie todos os requisitos da RDC 978/2025</p>
+            <h2 className="text-3xl font-black text-slate-800 tracking-tight">Matriz RDC 978 - Requisitos</h2>
+            <p className="text-sm text-slate-500 mt-1.5 font-medium">Visualize, acompanhe e gerencie todos os requisitos da RDC 978/2025</p>
           </div>
         </div>
 
         {/* KPI CARDS */}
-        <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
+        <div className="flex flex-wrap items-center gap-5 w-full xl:w-auto">
           {/* Card Total */}
-          <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3 flex-1 min-w-[140px] shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-              <span className="text-xl">📋</span>
+          <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-6 py-4 flex-1 min-w-[160px] shadow-sm transition-shadow hover:shadow-md">
+            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
+              <span className="text-2xl">📋</span>
             </div>
             <div>
-              <p className="text-xl font-black text-slate-800 leading-none">{totalRequisitos}</p>
-              <p className="text-xs font-semibold text-slate-500 mt-1">Total de Requisitos</p>
+              <p className="text-2xl font-black text-slate-800 leading-none mb-1.5">{totalRequisitos}</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Total de Requisitos</p>
             </div>
           </div>
           {/* Card Conformes */}
-          <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3 flex-1 min-w-[140px] shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
-              <span className="text-xl">✅</span>
+          <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-6 py-4 flex-1 min-w-[160px] shadow-sm transition-shadow hover:shadow-md">
+            <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center">
+              <span className="text-2xl">✅</span>
             </div>
             <div>
-              <p className="text-xl font-black text-slate-800 leading-none">{numConformes}</p>
-              <p className="text-xs font-semibold text-slate-500 mt-1">Conformes</p>
+              <p className="text-2xl font-black text-slate-800 leading-none mb-1.5">{numConformes}</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Conformes</p>
             </div>
           </div>
           {/* Card Pendências */}
-          <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3 flex-1 min-w-[140px] shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-yellow-50 flex items-center justify-center">
-              <span className="text-xl">⚠️</span>
+          <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-6 py-4 flex-1 min-w-[160px] shadow-sm transition-shadow hover:shadow-md">
+            <div className="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center">
+              <span className="text-2xl">⚠️</span>
             </div>
             <div>
-              <p className="text-xl font-black text-slate-800 leading-none">{numPendentes}</p>
-              <p className="text-xs font-semibold text-slate-500 mt-1">Pendências</p>
+              <p className="text-2xl font-black text-slate-800 leading-none mb-1.5">{numPendentes}</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Pendências</p>
             </div>
           </div>
           {/* Card Não Conformes */}
-          <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3 flex-1 min-w-[140px] shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
-              <span className="text-xl">❌</span>
+          <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-6 py-4 flex-1 min-w-[160px] shadow-sm transition-shadow hover:shadow-md">
+            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+              <span className="text-2xl">❌</span>
             </div>
             <div>
-              <p className="text-xl font-black text-slate-800 leading-none">{numNaoConformes}</p>
-              <p className="text-xs font-semibold text-slate-500 mt-1">Não Conformes</p>
+              <p className="text-2xl font-black text-slate-800 leading-none mb-1.5">{numNaoConformes}</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Não Conformes</p>
             </div>
           </div>
         </div>
       </div>
       
       {/* FILTROS SECTION */}
-      <div className="p-4 bg-white border-b border-slate-100 flex flex-wrap items-center gap-4">
-        <div className="flex-1 min-w-[150px]">
-          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Categoria</label>
+      <div className="p-6 bg-slate-50/50 border-b border-slate-200 flex flex-wrap items-end gap-5">
+        <div className="flex-1 min-w-[180px]">
+          <label className="block text-xs font-bold text-slate-600 uppercase tracking-widest mb-2">Categoria</label>
           <select 
             value={filtroCategoria} 
             onChange={e => {setFiltroCategoria(e.target.value); setCurrentPage(1);}}
-            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 transition-colors font-semibold shadow-sm"
+            className="w-full bg-white border border-slate-300 text-slate-700 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-3 transition-colors font-semibold shadow-sm h-12 cursor-pointer"
           >
             <option value="">Todas as Categorias</option>
             <option value="Gestão">Gestão</option>
@@ -301,12 +301,12 @@ export default function MatrizRDC() {
           </select>
         </div>
 
-        <div className="flex-1 min-w-[150px]">
-          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Capítulo</label>
+        <div className="flex-1 min-w-[180px]">
+          <label className="block text-xs font-bold text-slate-600 uppercase tracking-widest mb-2">Capítulo</label>
           <select 
             value={filtroCapitulo} 
             onChange={e => {setFiltroCapitulo(e.target.value); setCurrentPage(1);}}
-            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 transition-colors font-semibold shadow-sm"
+            className="w-full bg-white border border-slate-300 text-slate-700 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-3 transition-colors font-semibold shadow-sm h-12 cursor-pointer"
           >
             <option value="">Todos os Capítulos</option>
             <option value="Art. 1">Art. 1º ao 10º</option>
@@ -314,14 +314,14 @@ export default function MatrizRDC() {
           </select>
         </div>
 
-        <div className="flex-1 min-w-[150px]">
-          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Criticidade</label>
+        <div className="flex-1 min-w-[180px]">
+          <label className="block text-xs font-bold text-slate-600 uppercase tracking-widest mb-2">Criticidade</label>
           <select 
             value={filtroCriticidade} 
             onChange={e => {setFiltroCriticidade(e.target.value); setCurrentPage(1);}}
-            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 transition-colors font-semibold shadow-sm"
+            className="w-full bg-white border border-slate-300 text-slate-700 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-3 transition-colors font-semibold shadow-sm h-12 cursor-pointer"
           >
-            <option value="">Todas</option>
+            <option value="">Todas as Criticidades</option>
             <option value="Crítica">Crítica</option>
             <option value="Alta">Alta</option>
             <option value="Média">Média</option>
@@ -330,12 +330,12 @@ export default function MatrizRDC() {
           </select>
         </div>
 
-        <div className="flex-1 min-w-[150px]">
-          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Conformidade</label>
+        <div className="flex-1 min-w-[180px]">
+          <label className="block text-xs font-bold text-slate-600 uppercase tracking-widest mb-2">Conformidade</label>
           <select 
             value={filtroConformidade} 
             onChange={e => {setFiltroConformidade(e.target.value); setCurrentPage(1);}}
-            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 transition-colors font-semibold shadow-sm"
+            className="w-full bg-white border border-slate-300 text-slate-700 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-3 transition-colors font-semibold shadow-sm h-12 cursor-pointer"
           >
             <option value="">Todos os Status</option>
             <option value="S">Conforme (S)</option>
@@ -345,19 +345,19 @@ export default function MatrizRDC() {
           </select>
         </div>
 
-        <div className="flex items-end gap-2 mt-5">
-          <button className="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-sm font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" /></svg>
-            Filtros Avançados
+        <div className="flex items-end gap-3 mt-4 md:mt-0">
+          <button className="h-12 px-5 bg-white border border-slate-300 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-2 cursor-pointer">
+            <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-slate-500"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" /></svg>
+            Avançados
           </button>
           <button 
             onClick={() => {setFiltroCategoria(''); setFiltroCapitulo(''); setFiltroCriticidade(''); setFiltroConformidade(''); setCurrentPage(1);}}
-            className="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-sm font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-2"
+            className="h-12 px-5 bg-white border border-slate-300 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-2 cursor-pointer"
           >
-            Limpar Filtros
+            Limpar
           </button>
-          <button className="px-4 py-2 bg-blue-600 border border-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+          <button className="h-12 px-6 bg-blue-600 border border-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2 cursor-pointer">
+            <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
             Exportar
           </button>
         </div>
@@ -366,14 +366,14 @@ export default function MatrizRDC() {
       {/* TABLE SECTION */}
       <div className="overflow-x-auto w-full">
         <table className="w-full text-sm text-left text-slate-600 border-collapse">
-          <thead className="text-[10px] text-slate-500 uppercase tracking-wider bg-slate-50/80 border-b border-slate-200 font-bold">
+          <thead className="text-[11px] text-slate-500 uppercase tracking-widest bg-slate-50/80 border-b border-slate-200 font-bold">
             <tr>
-              <th className="px-6 py-4 w-40">Referência</th>
-              <th className="px-6 py-4">Texto Integral do Requisito</th>
-              <th className="px-6 py-4 w-48">Categoria</th>
-              <th className="px-6 py-4 w-32 text-center">Criticidade</th>
-              <th className="px-6 py-4 w-40 text-center">Conformidade</th>
-              <th className="px-6 py-4 w-24 text-right">Ação</th>
+              <th className="px-8 py-5 w-48">Referência</th>
+              <th className="px-8 py-5">Texto Integral do Requisito</th>
+              <th className="px-8 py-5 w-52">Categoria</th>
+              <th className="px-8 py-5 w-36 text-center">Criticidade</th>
+              <th className="px-8 py-5 w-44 text-center">Conformidade</th>
+              <th className="px-8 py-5 w-28 text-right">Ação</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -383,59 +383,59 @@ export default function MatrizRDC() {
               const refBadgeColor = getRefBadgeColor(refType);
               
               return (
-                <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group cursor-pointer" onClick={() => handleOpenModal(item)}>
-                  <td className="px-6 py-5 align-top">
-                    <p className="font-black text-slate-800 text-[13px]">{item.referencia}</p>
-                    <span className={`inline-block mt-1 px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wide ${refBadgeColor}`}>
+                <tr key={item.id} className="hover:bg-slate-50/70 transition-colors group cursor-pointer" onClick={() => handleOpenModal(item)}>
+                  <td className="px-8 py-6 align-top">
+                    <p className="font-black text-slate-800 text-sm mb-1">{item.referencia}</p>
+                    <span className={`inline-block px-2.5 py-1 text-[10px] font-bold rounded uppercase tracking-wider ${refBadgeColor}`}>
                       {refType}
                     </span>
                   </td>
-                  <td className="px-6 py-5 align-top">
-                    <p className="text-slate-600 text-[13px] leading-relaxed line-clamp-2 pr-4" title={item.textoIntegral}>
+                  <td className="px-8 py-6 align-top">
+                    <p className="text-slate-700 text-sm leading-relaxed line-clamp-3 pr-4" title={item.textoIntegral}>
                       {item.textoIntegral}
                     </p>
                   </td>
-                  <td className="px-6 py-5 align-top">
+                  <td className="px-8 py-6 align-top">
                     <div className="flex items-center gap-2 text-slate-600">
-                      <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-slate-400">
+                      <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-slate-400 shrink-0">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                       </svg>
-                      <span className="text-[13px] font-medium truncate max-w-[150px]">{item.categoria || 'Geral'}</span>
+                      <span className="text-sm font-semibold truncate max-w-[150px]">{item.categoria || 'Geral'}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-5 align-top text-center">
-                    <span className={`text-[13px] font-bold ${getCriticidadeColor(item.criticidade)}`}>
+                  <td className="px-8 py-6 align-top text-center">
+                    <span className={`text-sm font-bold ${getCriticidadeColor(item.criticidade)}`}>
                       {item.criticidade || 'N/A'}
                     </span>
                   </td>
-                  <td className="px-6 py-5 align-top text-center">
+                  <td className="px-8 py-6 align-top text-center">
                     {!aud?.conforme ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-slate-600 bg-slate-100 rounded-full border border-slate-200">
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Pendente
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 bg-slate-100 rounded-full border border-slate-200">
+                        <span className="w-2 h-2 rounded-full bg-slate-400"></span> Pendente
                       </span>
                     ) : aud.conforme === 'S' ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-emerald-700 bg-emerald-50 rounded-full border border-emerald-200">
-                        <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" /></svg>
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 rounded-full border border-emerald-200">
+                        <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" /></svg>
                         Conforme
                       </span>
                     ) : aud.conforme === 'N' ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-rose-700 bg-rose-50 rounded-full border border-rose-200">
-                        <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-rose-700 bg-rose-50 rounded-full border border-rose-200">
+                        <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
                         Não Conforme
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-yellow-700 bg-yellow-50 rounded-full border border-yellow-200">
-                        <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM6.75 9.25a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5z" clipRule="evenodd" /></svg>
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-yellow-700 bg-yellow-50 rounded-full border border-yellow-200">
+                        <svg xmlns="http://www.w3.org/O/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM6.75 9.25a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5z" clipRule="evenodd" /></svg>
                         Não Aplicável
                       </span>
                     )}
                   </td>
-                  <td className="px-6 py-5 align-top text-right">
-                    <div className="flex items-center justify-end gap-2 text-slate-400 group-hover:text-blue-600 transition-colors">
-                      <button className="p-1.5 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors" title="Visualizar">
+                  <td className="px-8 py-6 align-top text-right">
+                    <div className="flex items-center justify-end gap-3 text-slate-400 group-hover:text-blue-600 transition-colors">
+                      <button className="p-2 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors cursor-pointer" title="Visualizar">
                         <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                       </button>
-                      <button className="p-1.5 hover:bg-slate-100 hover:text-slate-800 rounded-lg transition-colors" title="Opções">
+                      <button className="p-2 hover:bg-slate-200 hover:text-slate-800 rounded-lg transition-colors cursor-pointer" title="Opções">
                         <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
                       </button>
                     </div>
