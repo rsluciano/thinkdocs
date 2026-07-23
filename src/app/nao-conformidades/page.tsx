@@ -99,7 +99,7 @@ export default function NaoConformidadesPage() {
       <div className="p-8 w-full">
         
         {/* HEADER */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-12">
           <div className="w-12 h-12 bg-white rounded-xl border border-slate-200 flex items-center justify-center shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-slate-800">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -112,7 +112,7 @@ export default function NaoConformidadesPage() {
         </div>
 
         {/* CARDS DE ESTATÍSTICA */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-12">
           {/* Card Total */}
           <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
             <div className="flex items-start justify-between mb-4">
@@ -195,7 +195,7 @@ export default function NaoConformidadesPage() {
         </div>
 
         {/* BARRA DE FILTROS */}
-        <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm mb-6 flex flex-wrap gap-4 items-end">
+        <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm mb-12 flex flex-wrap gap-4 items-end">
           <div className="flex-1 min-w-[200px]">
             <label className="block text-xs font-bold text-slate-500 mb-1">Buscar</label>
             <div className="relative">
@@ -250,7 +250,7 @@ export default function NaoConformidadesPage() {
         </div>
 
         {/* MAIN LAYOUT (Tabela e Drawer Lateral) */}
-        <div className="flex gap-6 items-start">
+        <div className="flex gap-8 items-start">
           
           {/* TABELA */}
           <div className={`transition-all duration-300 ease-in-out ${selectedRnc ? 'w-2/3' : 'w-full'} bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden`}>
@@ -429,7 +429,7 @@ export default function NaoConformidadesPage() {
         </div>
 
         {/* BOTTOM WIDGETS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
           
           <div className="col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
             <h3 className="text-base font-bold text-slate-900 mb-1">Análise de Causa Rápida</h3>
