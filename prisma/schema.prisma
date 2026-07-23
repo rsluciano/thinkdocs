@@ -39,6 +39,7 @@ model Documento {
   dataObsoletado     DateTime?
   
   requisitos         DocumentoRequisito[]
+  auditorias         AuditoriaDocumento[]
 }
 
 model Leitura {
@@ -129,8 +130,21 @@ model AuditoriaRdc {
 
   rdcItem             RdcItem       @relation(fields: [rdcItemId], references: [id], onDelete: Cascade)
   planosAcao          PlanoAcao5W2H[]
+  documentos          AuditoriaDocumento[]
 
   @@unique([empresaId, rdcItemId])
+}
+
+model AuditoriaDocumento {
+  id             String   @id @default(cuid())
+  auditoriaId    String
+  documentoId    String
+  criadoEm       DateTime @default(now())
+  
+  auditoria      AuditoriaRdc @relation(fields: [auditoriaId], references: [id], onDelete: Cascade)
+  documento      Documento    @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+
+  @@unique([auditoriaId, documentoId])
 }
 
 model PlanoAcao5W2H {
