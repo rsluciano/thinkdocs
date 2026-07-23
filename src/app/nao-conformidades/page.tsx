@@ -95,8 +95,8 @@ export default function NaoConformidadesPage() {
   const getPct = (val: number) => stats.total === 0 ? '0%' : ((val / stats.total) * 100).toFixed(1) + '%';
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-10">
-      <div className="p-8 max-w-[1600px] mx-auto">
+    <div className="min-h-screen bg-[#F8FAFC] pb-10 w-full">
+      <div className="p-8 w-full">
         
         {/* HEADER */}
         <div className="flex items-center gap-4 mb-8">
@@ -206,7 +206,7 @@ export default function NaoConformidadesPage() {
             </div>
           </div>
           
-          <div className="min-w-[150px]">
+          <div className="flex-1 min-w-[150px]">
             <label className="block text-xs font-bold text-slate-500 mb-1">Período de Identificação</label>
             <div className="flex items-center gap-2">
               <input type="date" className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-sm text-slate-700 outline-none w-full" />
@@ -214,21 +214,21 @@ export default function NaoConformidadesPage() {
             </div>
           </div>
 
-          <div className="w-[140px]">
+          <div className="flex-1 min-w-[140px]">
             <label className="block text-xs font-bold text-slate-500 mb-1">Tipo</label>
             <select className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 outline-none">
               <option>Todos os Tipos</option>
             </select>
           </div>
 
-          <div className="w-[140px]">
+          <div className="flex-1 min-w-[140px]">
             <label className="block text-xs font-bold text-slate-500 mb-1">Situação</label>
             <select className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 outline-none">
               <option>Todas as Situações</option>
             </select>
           </div>
 
-          <div className="w-[140px]">
+          <div className="flex-1 min-w-[140px]">
             <label className="block text-xs font-bold text-slate-500 mb-1">Setor</label>
             <select className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 outline-none">
               <option>Todos os Setores</option>
