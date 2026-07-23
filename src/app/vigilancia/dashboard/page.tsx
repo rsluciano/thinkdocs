@@ -174,37 +174,37 @@ export default function DashboardPage() {
       </div>
 
       {/* Cards KPI */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-10">
-        <div className="bg-slate-50 border border-slate-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm">📈</span>
-            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Taxa de Conformidade</p>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
+        <div className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="text-xs">📈</span>
+            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">Taxa de Conformidade</p>
           </div>
-          <p className="text-3xl font-black text-slate-800">{porcentagem}%</p>
+          <p className="text-xl font-black text-slate-800">{porcentagem}%</p>
         </div>
         
-        <div className="bg-blue-50 border border-blue-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm">📋</span>
-            <p className="text-[11px] font-bold text-blue-600 uppercase tracking-wide">Itens Avaliados</p>
+        <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-2.5 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="text-xs">📋</span>
+            <p className="text-[9px] font-bold text-blue-600 uppercase tracking-wide">Itens Avaliados</p>
           </div>
-          <p className="text-3xl font-black text-blue-700">{totalRespondidos} / {items.length}</p>
+          <p className="text-xl font-black text-blue-700">{totalRespondidos} / {items.length}</p>
         </div>
 
-        <div className="bg-red-50 border border-red-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm">❌</span>
-            <p className="text-[11px] font-bold text-red-600 uppercase tracking-wide">Não Conformidades</p>
+        <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-2.5 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="text-xs">❌</span>
+            <p className="text-[9px] font-bold text-red-600 uppercase tracking-wide">Não Conformidades</p>
           </div>
-          <p className="text-3xl font-black text-red-700">{naoConformes}</p>
+          <p className="text-xl font-black text-red-700">{naoConformes}</p>
         </div>
 
-        <div className="bg-yellow-50 border border-yellow-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm">⚠️</span>
-            <p className="text-[11px] font-bold text-yellow-600 uppercase tracking-wide">Pendências</p>
+        <div className="bg-yellow-50 border border-yellow-100 rounded-xl px-4 py-2.5 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="text-xs">⚠️</span>
+            <p className="text-[9px] font-bold text-yellow-600 uppercase tracking-wide">Pendências</p>
           </div>
-          <p className="text-3xl font-black text-yellow-700">{pendentes}</p>
+          <p className="text-xl font-black text-yellow-700">{pendentes}</p>
         </div>
       </div>
 

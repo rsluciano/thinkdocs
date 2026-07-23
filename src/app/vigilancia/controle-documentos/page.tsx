@@ -97,107 +97,107 @@ export default function ControleDocumentosPage() {
     <div className="w-full bg-[#f8fafc] min-h-screen pb-12 font-sans animate-fade-in">
       
       {/* HEADER */}
-      <div className="flex items-center gap-5 mb-8 bg-white p-8 border-b border-slate-200">
-        <div className="w-14 h-14 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
-          <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 text-blue-600">
+      <div className="flex items-center gap-4 mb-4 bg-white px-6 py-4 border-b border-slate-200">
+        <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+          <svg xmlns="http://www.w3.org/O/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-blue-600">
             <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
           </svg>
         </div>
         <div>
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Documentos e Evidências</h1>
-          <p className="text-sm text-slate-500 mt-1.5 font-medium">Gerencie e organize todas as evidências dos requisitos da RDC 978/2025</p>
+          <h1 className="text-2xl font-black text-slate-800 tracking-tight">Documentos e Evidências</h1>
+          <p className="text-xs text-slate-500 mt-0.5 font-medium">Gerencie e organize todas as evidências dos requisitos da RDC 978/2025</p>
         </div>
       </div>
 
       {/* KPI CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-5 mb-10 px-8">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6 px-6">
         
-        <div className="bg-slate-50 border border-slate-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm">📋</span>
-            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Total de Documentos</p>
+        <div className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="text-xs">📋</span>
+            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">Total de Documentos</p>
           </div>
-          <p className="text-3xl font-black text-slate-800">1.248</p>
+          <p className="text-xl font-black text-slate-800">1.248</p>
         </div>
 
-        <div className="bg-green-50 border border-green-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm">✅</span>
-            <p className="text-[11px] font-bold text-green-600 uppercase tracking-wide">Evidências Vinculadas</p>
+        <div className="bg-green-50 border border-green-100 rounded-xl px-4 py-2.5 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="text-xs">✅</span>
+            <p className="text-[9px] font-bold text-green-600 uppercase tracking-wide">Evidências Vinculadas</p>
           </div>
-          <p className="text-3xl font-black text-green-700">986</p>
+          <p className="text-xl font-black text-green-700">986</p>
         </div>
 
-        <div className="bg-yellow-50 border border-yellow-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm">⏳</span>
-            <p className="text-[11px] font-bold text-yellow-600 uppercase tracking-wide">Pendentes Revisão</p>
+        <div className="bg-yellow-50 border border-yellow-100 rounded-xl px-4 py-2.5 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="text-xs">⏳</span>
+            <p className="text-[9px] font-bold text-yellow-600 uppercase tracking-wide">Pendentes Revisão</p>
           </div>
-          <p className="text-3xl font-black text-yellow-700">72</p>
+          <p className="text-xl font-black text-yellow-700">72</p>
         </div>
 
-        <div className="bg-red-50 border border-red-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm">❌</span>
-            <p className="text-[11px] font-bold text-red-600 uppercase tracking-wide">Documentos Vencidos</p>
+        <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-2.5 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="text-xs">❌</span>
+            <p className="text-[9px] font-bold text-red-600 uppercase tracking-wide">Documentos Vencidos</p>
           </div>
-          <p className="text-3xl font-black text-red-700">15</p>
+          <p className="text-xl font-black text-red-700">15</p>
         </div>
 
-        <div className="bg-blue-50 border border-blue-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm">📑</span>
-            <p className="text-[11px] font-bold text-blue-600 uppercase tracking-wide">Tipos Cadastrados</p>
+        <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-2.5 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="text-xs">📑</span>
+            <p className="text-[9px] font-bold text-blue-600 uppercase tracking-wide">Tipos Cadastrados</p>
           </div>
-          <p className="text-3xl font-black text-blue-700">23</p>
+          <p className="text-xl font-black text-blue-700">23</p>
         </div>
 
       </div>
 
       {/* FILTROS DE PESQUISA */}
-      <div className="bg-slate-50/50 p-8 rounded-2xl border border-slate-200 shadow-sm mb-8 mx-8">
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-8 gap-4">
-          <h3 className="text-sm font-black text-slate-800 uppercase tracking-wide">Filtros de Pesquisa</h3>
-          <div className="flex flex-wrap items-center gap-3">
-             <button onClick={() => { setBusca(''); setCapitulo(''); setTipo(''); setSituacao(''); }} className="h-12 px-6 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
+      <div className="bg-white border-y border-slate-200 py-5 mb-6 px-6 shadow-[0_4px_20px_-15px_rgba(0,0,0,0.1)]">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-4 gap-4">
+          <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Filtros de Pesquisa</h3>
+          <div className="flex flex-wrap items-center gap-2">
+             <button onClick={() => { setBusca(''); setCapitulo(''); setTipo(''); setSituacao(''); }} className="h-9 px-4 bg-white border border-slate-300 text-slate-700 rounded-3xl text-[11px] font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
                Limpar
              </button>
-             <button className="h-12 px-6 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
-               <svg className="w-5 h-5 mr-2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+             <button className="h-9 px-4 bg-white border border-slate-300 text-slate-700 rounded-3xl text-[11px] font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
+               <svg className="w-3.5 h-3.5 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                Exportar
              </button>
-             <button className="h-12 px-6 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold flex items-center hover:bg-slate-50 transition-colors shadow-sm cursor-pointer">
-               <svg className="w-5 h-5 mr-2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+             <button className="h-9 px-4 bg-white border border-slate-300 text-slate-700 rounded-3xl text-[11px] font-bold flex items-center hover:bg-slate-50 transition-colors shadow-sm cursor-pointer">
+               <svg className="w-3.5 h-3.5 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                Avançados
              </button>
-             <button className="h-12 px-8 bg-[#2970ff] text-white rounded-xl text-sm font-bold shadow-md hover:bg-blue-600 transition-colors flex items-center cursor-pointer">
-               <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+             <button className="h-9 px-6 bg-[#2970ff] text-white rounded-3xl text-[11px] font-bold shadow-md hover:bg-blue-600 transition-colors flex items-center cursor-pointer">
+               <svg className="w-3.5 h-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                Buscar
              </button>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-3">
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Buscar</label>
+            <label className="block text-[9px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Buscar</label>
             <div className="relative">
               <input type="text" placeholder="Digite o nome do documento, requisito ou palavra-chave..." 
-                className="w-full h-12 pl-4 pr-10 rounded-xl border border-slate-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none shadow-sm"
+                className="w-full h-9 pl-3 pr-8 rounded-lg border border-slate-300 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none shadow-sm"
                 value={busca} onChange={e => setBusca(e.target.value)} />
-              <svg className="w-5 h-5 text-slate-400 absolute right-4 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <svg className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </div>
           </div>
           
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Requisito (Artigo / Inciso)</label>
+            <label className="block text-[9px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Requisito (Artigo / Inciso)</label>
             <input type="text" placeholder="Ex.: Art. 73, Inciso I..." 
-                className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none shadow-sm"
+                className="w-full h-9 px-3 rounded-lg border border-slate-300 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none shadow-sm"
                 value={requisito} onChange={e => setRequisito(e.target.value)} />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Capítulo</label>
-            <select className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-blue-500 outline-none shadow-sm cursor-pointer"
+            <label className="block text-[9px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Capítulo</label>
+            <select className="w-full h-9 px-3 rounded-lg border border-slate-300 text-xs focus:border-blue-500 outline-none shadow-sm cursor-pointer"
               value={capitulo} onChange={e => setCapitulo(e.target.value)}>
               <option value="">Todos os Capítulos</option>
               <option value="I">I - Disposições Gerais</option>
@@ -209,8 +209,8 @@ export default function ControleDocumentosPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Tipo de Documento</label>
-            <select className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-blue-500 outline-none shadow-sm cursor-pointer"
+            <label className="block text-[9px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Tipo de Documento</label>
+            <select className="w-full h-9 px-3 rounded-lg border border-slate-300 text-xs focus:border-blue-500 outline-none shadow-sm cursor-pointer"
               value={tipo} onChange={e => setTipo(e.target.value)}>
               <option value="">Todos os Tipos</option>
               <option value="POP">POP</option>
@@ -222,10 +222,10 @@ export default function ControleDocumentosPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Situação</label>
-            <select className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-blue-500 outline-none shadow-sm cursor-pointer"
+            <label className="block text-[9px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Situação</label>
+            <select className="w-full h-9 px-3 rounded-lg border border-slate-300 text-xs focus:border-blue-500 outline-none shadow-sm cursor-pointer"
               value={situacao} onChange={e => setSituacao(e.target.value)}>
               <option value="">Todos</option>
               <option value="Válido">Válido</option>
@@ -234,8 +234,8 @@ export default function ControleDocumentosPage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Status da Revisão</label>
-            <select className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-blue-500 outline-none shadow-sm cursor-pointer"
+            <label className="block text-[9px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Status da Revisão</label>
+            <select className="w-full h-9 px-3 rounded-lg border border-slate-300 text-xs focus:border-blue-500 outline-none shadow-sm cursor-pointer"
               value={statusRevisao} onChange={e => setStatusRevisao(e.target.value)}>
               <option value="">Todos</option>
               <option value="Aprovado">Aprovado</option>
@@ -243,61 +243,60 @@ export default function ControleDocumentosPage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Data Inicial</label>
-            <input type="date" className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm text-slate-500 outline-none shadow-sm cursor-pointer" />
+            <label className="block text-[9px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Data Inicial</label>
+            <input type="date" className="w-full h-9 px-3 rounded-lg border border-slate-300 text-xs text-slate-500 outline-none shadow-sm cursor-pointer" />
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-3 uppercase tracking-wide">Data Final</label>
-            <input type="date" className="w-full h-12 px-4 rounded-xl border border-slate-300 text-sm text-slate-500 outline-none shadow-sm cursor-pointer" />
+            <label className="block text-[9px] font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Data Final</label>
+            <input type="date" className="w-full h-9 px-3 rounded-lg border border-slate-300 text-xs text-slate-500 outline-none shadow-sm cursor-pointer" />
           </div>
         </div>
-
       </div>
 
       {/* TOOLBAR */}
-      <div className="flex items-center justify-between mb-6 px-8">
-        <div className="flex items-center gap-3">
-          <button onClick={() => setModalNovoDocOpen(true)} className="h-11 px-6 bg-[#2970ff] text-white rounded-xl text-sm font-bold shadow-md hover:bg-blue-600 transition-colors flex items-center cursor-pointer">
-            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+      <div className="flex items-center justify-between mb-4 px-6">
+        <div className="flex items-center gap-2">
+          <button onClick={() => setModalNovoDocOpen(true)} className="h-10 px-5 bg-[#2970ff] text-white rounded-3xl text-[11px] font-bold shadow-md hover:bg-blue-600 transition-colors flex items-center cursor-pointer">
+            <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
             Novo Documento
           </button>
-          <button className="h-11 px-5 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
-             <svg className="w-5 h-5 mr-2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+          <button className="h-9 px-4 bg-white border border-slate-300 text-slate-700 rounded-3xl text-[11px] font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
+             <svg className="w-4 h-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
              Upload em Lote
           </button>
-          <button className="h-11 px-5 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
-             <svg className="w-5 h-5 mr-2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+          <button className="h-9 px-4 bg-white border border-slate-300 text-slate-700 rounded-3xl text-[11px] font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
+             <svg className="w-4 h-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
              Pastas
           </button>
-          <button className="h-11 px-5 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
-             <svg className="w-5 h-5 mr-2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+          <button className="h-9 px-4 bg-white border border-slate-300 text-slate-700 rounded-3xl text-[11px] font-bold hover:bg-slate-50 transition-colors flex items-center shadow-sm cursor-pointer">
+             <svg className="w-4 h-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
              Relatório
           </button>
         </div>
       </div>
 
       {/* TABELA DE DOCUMENTOS */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col mx-8">
+      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col mx-6">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200">
-                <th className="px-6 py-5 w-12"><input type="checkbox" className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer" /></th>
-                <th className="px-6 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-widest">Documento</th>
-                <th className="px-6 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-widest">Requisito Vinculado</th>
-                <th className="px-6 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-widest">Capítulo</th>
-                <th className="px-6 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-widest">Tipo de Documento</th>
-                <th className="px-6 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-widest">Data Upload</th>
-                <th className="px-6 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-widest">Validade</th>
-                <th className="px-6 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-widest text-center">Status</th>
-                <th className="px-6 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-widest text-center">Ação</th>
+                <th className="px-4 py-3 w-10"><input type="checkbox" className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 cursor-pointer" /></th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest">Documento</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest">Requisito Vinculado</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest">Capítulo</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest">Tipo de Documento</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest">Data Upload</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest">Validade</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest text-center">Status</th>
+                <th className="px-4 py-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest text-center">Ação</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {currentItems.map((doc, i) => (
                 <tr key={i} className="hover:bg-slate-50/70 transition-colors group">
-                  <td className="px-6 py-5 align-top"><input type="checkbox" className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 mt-1.5 w-4 h-4 cursor-pointer" /></td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 py-3 align-top"><input type="checkbox" className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 mt-1 w-3.5 h-3.5 cursor-pointer" /></td>
+                  <td className="px-4 py-3">
                     <div className="flex gap-4">
                       {getIconFile(doc.tipoImg)}
                       <div>
@@ -306,39 +305,39 @@ export default function ControleDocumentosPage() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
-                    <p className="text-sm font-bold text-slate-700 mb-0.5">{doc.req}</p>
-                    <p className="text-sm text-slate-500">{doc.reqDesc}</p>
+                  <td className="px-4 py-3">
+                    <p className="text-xs font-bold text-slate-700 mb-0.5">{doc.req}</p>
+                    <p className="text-xs text-slate-500">{doc.reqDesc}</p>
                   </td>
-                  <td className="px-6 py-5">
-                    <p className="text-sm font-medium text-slate-600">{doc.cap}</p>
+                  <td className="px-4 py-3">
+                    <p className="text-xs font-medium text-slate-600">{doc.cap}</p>
                   </td>
-                  <td className="px-6 py-5">
-                    <span className={`px-3 py-1.5 text-xs font-bold rounded-lg border ${getBadgeColor(doc.tipoBadge)}`}>
+                  <td className="px-4 py-3">
+                    <span className={`px-2.5 py-1 text-[10px] font-bold rounded-lg border ${getBadgeColor(doc.tipoBadge)}`}>
                       {doc.tipoBadge}
                     </span>
                   </td>
-                  <td className="px-6 py-5">
-                    <p className="text-sm font-bold text-slate-700 mb-0.5">{doc.data}</p>
-                    <p className="text-sm text-slate-500">Por: {doc.autor}</p>
+                  <td className="px-4 py-3">
+                    <p className="text-xs font-bold text-slate-700 mb-0.5">{doc.data}</p>
+                    <p className="text-[10px] text-slate-500">Por: {doc.autor}</p>
                   </td>
-                  <td className="px-6 py-5">
-                    <p className={`text-sm font-bold mb-0.5 ${doc.status === 'Vence em breve' ? 'text-orange-600' : 'text-slate-700'}`}>{doc.validade}</p>
-                    <p className={`text-sm ${doc.status === 'Vence em breve' ? 'text-orange-500 font-semibold' : 'text-slate-500'}`}>{doc.dias}</p>
+                  <td className="px-4 py-3">
+                    <p className={`text-xs font-bold mb-0.5 ${doc.status === 'Vence em breve' ? 'text-orange-600' : 'text-slate-700'}`}>{doc.validade}</p>
+                    <p className={`text-[10px] ${doc.status === 'Vence em breve' ? 'text-orange-500 font-semibold' : 'text-slate-500'}`}>{doc.dias}</p>
                   </td>
-                  <td className="px-6 py-5 text-center">
+                  <td className="px-4 py-3 text-center">
                     {getStatusPill(doc.status)}
                   </td>
-                  <td className="px-6 py-5">
-                    <div className="flex items-center justify-center gap-2">
-                      <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer" title="Visualizar">
-                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center justify-center gap-1.5">
+                      <button className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer" title="Visualizar">
+                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                       </button>
-                      <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer" title="Download">
-                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                      <button className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer" title="Download">
+                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                       </button>
-                      <button className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer" title="Opções">
-                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
+                      <button className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer" title="Opções">
+                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
                       </button>
                     </div>
                   </td>
