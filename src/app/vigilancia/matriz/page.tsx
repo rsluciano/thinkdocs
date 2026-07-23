@@ -235,46 +235,38 @@ export default function MatrizRDC() {
         </div>
 
         {/* KPI CARDS */}
-        <div className="flex flex-wrap items-center gap-5 w-full xl:w-auto">
+        <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
           {/* Card Total */}
-          <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-6 py-4 flex-1 min-w-[160px] shadow-sm transition-shadow hover:shadow-md">
-            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
-              <span className="text-2xl">📋</span>
+          <div className="bg-slate-50 border border-slate-100 rounded-xl px-5 py-4 flex-1 min-w-[150px] shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-sm">📋</span>
+              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Total Geral</p>
             </div>
-            <div>
-              <p className="text-2xl font-black text-slate-800 leading-none mb-1.5">{totalRequisitos}</p>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Total de Requisitos</p>
-            </div>
+            <p className="text-3xl font-black text-slate-800">{totalRequisitos}</p>
           </div>
           {/* Card Conformes */}
-          <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-6 py-4 flex-1 min-w-[160px] shadow-sm transition-shadow hover:shadow-md">
-            <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center">
-              <span className="text-2xl">✅</span>
+          <div className="bg-green-50 border border-green-100 rounded-xl px-5 py-4 flex-1 min-w-[150px] shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-sm">✅</span>
+              <p className="text-[11px] font-bold text-green-600 uppercase tracking-wide">Conformes</p>
             </div>
-            <div>
-              <p className="text-2xl font-black text-slate-800 leading-none mb-1.5">{numConformes}</p>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Conformes</p>
-            </div>
+            <p className="text-3xl font-black text-green-700">{numConformes}</p>
           </div>
           {/* Card Pendências */}
-          <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-6 py-4 flex-1 min-w-[160px] shadow-sm transition-shadow hover:shadow-md">
-            <div className="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center">
-              <span className="text-2xl">⚠️</span>
+          <div className="bg-yellow-50 border border-yellow-100 rounded-xl px-5 py-4 flex-1 min-w-[150px] shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-sm">⚠️</span>
+              <p className="text-[11px] font-bold text-yellow-600 uppercase tracking-wide">Pendências</p>
             </div>
-            <div>
-              <p className="text-2xl font-black text-slate-800 leading-none mb-1.5">{numPendentes}</p>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Pendências</p>
-            </div>
+            <p className="text-3xl font-black text-yellow-700">{numPendentes}</p>
           </div>
           {/* Card Não Conformes */}
-          <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl px-6 py-4 flex-1 min-w-[160px] shadow-sm transition-shadow hover:shadow-md">
-            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
-              <span className="text-2xl">❌</span>
+          <div className="bg-red-50 border border-red-100 rounded-xl px-5 py-4 flex-1 min-w-[150px] shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-sm">❌</span>
+              <p className="text-[11px] font-bold text-red-600 uppercase tracking-wide">Não Conformes</p>
             </div>
-            <div>
-              <p className="text-2xl font-black text-slate-800 leading-none mb-1.5">{numNaoConformes}</p>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Não Conformes</p>
-            </div>
+            <p className="text-3xl font-black text-red-700">{numNaoConformes}</p>
           </div>
         </div>
       </div>

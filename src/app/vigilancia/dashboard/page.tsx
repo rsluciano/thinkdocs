@@ -174,13 +174,38 @@ export default function DashboardPage() {
       </div>
 
       {/* Cards KPI */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-        {cards.map(c => (
-          <div key={c.title} className="card" style={{ borderLeft: `4px solid ${c.color}`, padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '0.9rem', color: 'var(--muted)', marginBottom: '0.5rem', fontWeight: 'bold' }}>{c.title}</h3>
-            <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0f172a' }}>{c.value}</p>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-10">
+        <div className="bg-slate-50 border border-slate-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm">📈</span>
+            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Taxa de Conformidade</p>
           </div>
-        ))}
+          <p className="text-3xl font-black text-slate-800">{porcentagem}%</p>
+        </div>
+        
+        <div className="bg-blue-50 border border-blue-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm">📋</span>
+            <p className="text-[11px] font-bold text-blue-600 uppercase tracking-wide">Itens Avaliados</p>
+          </div>
+          <p className="text-3xl font-black text-blue-700">{totalRespondidos} / {items.length}</p>
+        </div>
+
+        <div className="bg-red-50 border border-red-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm">❌</span>
+            <p className="text-[11px] font-bold text-red-600 uppercase tracking-wide">Não Conformidades</p>
+          </div>
+          <p className="text-3xl font-black text-red-700">{naoConformes}</p>
+        </div>
+
+        <div className="bg-yellow-50 border border-yellow-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm">⚠️</span>
+            <p className="text-[11px] font-bold text-yellow-600 uppercase tracking-wide">Pendências</p>
+          </div>
+          <p className="text-3xl font-black text-yellow-700">{pendentes}</p>
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>

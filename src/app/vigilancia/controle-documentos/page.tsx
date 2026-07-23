@@ -112,59 +112,44 @@ export default function ControleDocumentosPage() {
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-5 mb-10 px-8">
         
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 flex items-center shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-14 h-14 bg-blue-50 text-blue-600 flex items-center justify-center rounded-xl mr-5 shrink-0">
-             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+        <div className="bg-slate-50 border border-slate-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm">📋</span>
+            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Total de Documentos</p>
           </div>
-          <div>
-            <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mb-1">Total de Documentos</p>
-            <h3 className="text-2xl font-black text-slate-800 leading-none mb-1.5">1.248</h3>
-            <p className="text-xs text-emerald-600 font-bold">+18 este mês</p>
-          </div>
+          <p className="text-3xl font-black text-slate-800">1.248</p>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 flex items-center shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-14 h-14 bg-emerald-50 text-emerald-600 flex items-center justify-center rounded-xl mr-5 shrink-0">
-             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <div className="bg-green-50 border border-green-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm">✅</span>
+            <p className="text-[11px] font-bold text-green-600 uppercase tracking-wide">Evidências Vinculadas</p>
           </div>
-          <div>
-            <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mb-1">Evidências Vinculadas</p>
-            <h3 className="text-2xl font-black text-slate-800 leading-none mb-1.5">986</h3>
-            <p className="text-xs text-slate-500 font-bold">79% do total</p>
-          </div>
+          <p className="text-3xl font-black text-green-700">986</p>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 flex items-center shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-14 h-14 bg-amber-50 text-amber-600 flex items-center justify-center rounded-xl mr-5 shrink-0">
-             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <div className="bg-yellow-50 border border-yellow-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm">⏳</span>
+            <p className="text-[11px] font-bold text-yellow-600 uppercase tracking-wide">Pendentes Revisão</p>
           </div>
-          <div>
-            <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mb-1">Pendentes de Revisão</p>
-            <h3 className="text-2xl font-black text-slate-800 leading-none mb-1.5">72</h3>
-            <p className="text-xs text-emerald-600 font-bold">+5 este mês</p>
-          </div>
+          <p className="text-3xl font-black text-yellow-700">72</p>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 flex items-center shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-14 h-14 bg-rose-50 text-rose-600 flex items-center justify-center rounded-xl mr-5 shrink-0">
-             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+        <div className="bg-red-50 border border-red-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm">❌</span>
+            <p className="text-[11px] font-bold text-red-600 uppercase tracking-wide">Documentos Vencidos</p>
           </div>
-          <div>
-            <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mb-1">Documentos Vencidos</p>
-            <h3 className="text-2xl font-black text-slate-800 leading-none mb-1.5">15</h3>
-            <p className="text-xs text-rose-600 font-bold">Verificar</p>
-          </div>
+          <p className="text-3xl font-black text-red-700">15</p>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 flex items-center shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-14 h-14 bg-purple-50 text-purple-600 flex items-center justify-center rounded-xl mr-5 shrink-0">
-             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" /></svg>
+        <div className="bg-blue-50 border border-blue-100 rounded-xl px-5 py-4 shadow-sm flex flex-col justify-center">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm">📑</span>
+            <p className="text-[11px] font-bold text-blue-600 uppercase tracking-wide">Tipos Cadastrados</p>
           </div>
-          <div>
-            <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mb-1">Tipos de Documentos</p>
-            <h3 className="text-2xl font-black text-slate-800 leading-none mb-1.5">23</h3>
-            <p className="text-xs text-slate-500 font-bold">Cadastrados</p>
-          </div>
+          <p className="text-3xl font-black text-blue-700">23</p>
         </div>
 
       </div>
