@@ -2,6 +2,7 @@
 import { fetchAPI } from '@/lib/api';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 // ─── Animated SVG Icons per Category ────────────────────────
 const CategoryIllustration = ({ name, active, customColor }: { name: string; active: boolean; customColor?: string }) => {
@@ -254,6 +255,37 @@ export default function CategoriasPage() {
         </div>
       ) : (
         <>
+          {/* Gráfico Analítico de Categorias */}
+          <div className="card" style={{ marginBottom: '2rem', padding: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: '2rem', alignItems: 'center' }}>
+            <div style={{ flex: 1, minWidth: '250px' }}>
+              <h2 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '0.5rem' }}>Distribuição de Documentos</h2>
+              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Percentual e quantidade por tipo de documento no sistema.</p>
+            </div>
+            
+            <div style={{ flex: 2, height: 200, minWidth: '300px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={categories.length > 0 ? categories : [{ name: 'Nenhum', count: 1 }]}
+                    cx="50%" cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={3}
+                    dataKey="count"
+                  >
+                    {(categories.length > 0 ? categories : [{ name: 'Nenhum' }]).map((cat: any, index: number) => (
+                      <Cell key={`cell-${index}`} fill={CAT_GRADIENTS[cat.name]?.accent || CAT_GRADIENTS['Geral'].accent} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    formatter={(value: any) => [`${value} docs`, 'Quantidade']}
+                    contentStyle={{ borderRadius: '8px', border: '1px solid var(--color-border)', fontSize: '0.875rem' }} 
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
           {/* Category cards grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
             {categories.map((cat, idx) => {

@@ -7,6 +7,7 @@ import { fetchAPI } from '@/lib/api';
 export default function Dashboard() {
   const router = useRouter();
   const [documentos, setDocumentos] = useState<any[]>([]);
+  const [ncStats, setNcStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [empresaInfo, setEmpresaInfo] = useState({ nome: '', logo: '' });
   
@@ -40,14 +41,16 @@ export default function Dashboard() {
         finalLogo = '/logo-souza-areas.png';
       }
       setEmpresaInfo({ nome: user.empresaNome || '', logo: finalLogo });
-      fetchAPI(`/api/documentos?empresaId=${user.empresaId}&userFuncao=${encodeURIComponent(user.funcao)}&userSetor=${encodeURIComponent(user.setor)}`)
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) setDocumentos(data);
-          else setDocumentos([]);
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
+      
+      Promise.all([
+        fetchAPI(`/api/documentos?empresaId=${user.empresaId}&userFuncao=${encodeURIComponent(user.funcao)}&userSetor=${encodeURIComponent(user.setor)}`).then(res => res.json()),
+        fetchAPI('/api/nao-conformidades/dashboard').then(res => res.json()).catch(() => null)
+      ]).then(([docsData, ncData]) => {
+        if (Array.isArray(docsData)) setDocumentos(docsData);
+        else setDocumentos([]);
+        if (ncData && !ncData.error) setNcStats(ncData);
+        setLoading(false);
+      }).catch(() => setLoading(false));
     }
   }, [router]);
 
@@ -207,6 +210,45 @@ export default function Dashboard() {
             ❌ Limpar Filtros
           </button>
         )}
+      </div>
+
+      {/* BLOCO DE NÃO CONFORMIDADES (Resumo) */}
+      {ncStats && (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', marginTop: '1rem' }}>
+            <h2 className="text-2xl font-semibold">🚨 Resumo de Não Conformidades</h2>
+            <button onClick={() => router.push('/nao-conformidades')} style={{ padding: '0.4rem 1rem', background: '#eff6ff', color: '#2563eb', fontWeight: 700, borderRadius: '6px', border: 'none', cursor: 'pointer' }}>
+              Ir para o Módulo de NCs &rarr;
+            </button>
+          </div>
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
+            <div className="card hover-scale" style={{ flex: 1, minWidth: '150px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+              <span style={{ color: '#64748b', fontWeight: 'bold' }}>Total de RNCs</span>
+              <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0f172a' }}>{ncStats.stats?.total || 0}</p>
+            </div>
+            <div className="card hover-scale" style={{ flex: 1, minWidth: '150px', backgroundColor: '#fffbeb', border: '1px solid #fde68a' }}>
+              <span style={{ color: '#b45309', fontWeight: 'bold' }}>Abertas</span>
+              <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#d97706' }}>{ncStats.stats?.abertas || 0}</p>
+            </div>
+            <div className="card hover-scale" style={{ flex: 1, minWidth: '150px', backgroundColor: '#f5f3ff', border: '1px solid #ddd6fe' }}>
+              <span style={{ color: '#6d28d9', fontWeight: 'bold' }}>Em Análise</span>
+              <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#7c3aed' }}>{ncStats.stats?.emAnalise || 0}</p>
+            </div>
+            <div className="card hover-scale" style={{ flex: 1, minWidth: '150px', backgroundColor: '#f0f9ff', border: '1px solid #bae6fd' }}>
+              <span style={{ color: '#0369a1', fontWeight: 'bold' }}>Em Ação (CAPA)</span>
+              <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0ea5e9' }}>{ncStats.stats?.emAcao || 0}</p>
+            </div>
+            <div className="card hover-scale" style={{ flex: 1, minWidth: '150px', backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}>
+              <span style={{ color: '#991b1b', fontWeight: 'bold' }}>RNCs Críticas</span>
+              <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#ef4444' }}>{ncStats.stats?.criticas || 0}</p>
+            </div>
+          </div>
+          <hr style={{ margin: '2rem 0', borderColor: 'var(--border)' }} />
+        </>
+      )}
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+        <h2 className="text-2xl font-semibold">📄 Documentos do Sistema</h2>
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
