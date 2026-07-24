@@ -101,16 +101,44 @@ const KpiCard = ({ value, label, icon, color, bg, change, sparkData }: {
 );
 
 // ─── Status Badge ─────────────────────────────────────────────
-const StatusBadge = ({ status }: { status: string }) => {
+const StatusBadge = ({ status, onChange }: { status: string; onChange?: (val: string) => void }) => {
   const cfg = STATUS_CONFIG[status] || STATUS_CONFIG['Registrada'];
-  return <span className={`badge ${cfg.cls}`}>{cfg.label}</span>;
+  const badge = <span className={`badge ${cfg.cls}`}>{cfg.label}</span>;
+  if (!onChange) return badge;
+  return (
+    <div style={{ position: 'relative', display: 'inline-block' }} title="Clique para alterar a situação">
+      {badge}
+      <select
+        value={status}
+        onChange={e => onChange(e.target.value)}
+        onClick={e => e.stopPropagation()}
+        style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }}
+      >
+        {Object.keys(STATUS_CONFIG).map(s => <option key={s} value={s}>{s}</option>)}
+      </select>
+    </div>
+  );
 };
 
 // ─── Criticidade Badge ────────────────────────────────────────
-const CritBadge = ({ criticidade }: { criticidade?: string }) => {
+const CritBadge = ({ criticidade, onChange }: { criticidade?: string; onChange?: (val: string) => void }) => {
   if (!criticidade) return null;
   const cfg = CRIT_CONFIG[criticidade] || CRIT_CONFIG['Observação'];
-  return <span className={`badge ${cfg.cls}`}>{criticidade}</span>;
+  const badge = <span className={`badge ${cfg.cls}`}>{criticidade}</span>;
+  if (!onChange) return badge;
+  return (
+    <div style={{ position: 'relative', display: 'inline-block' }} title="Clique para alterar a criticidade">
+      {badge}
+      <select
+        value={criticidade}
+        onChange={e => onChange(e.target.value)}
+        onClick={e => e.stopPropagation()}
+        style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }}
+      >
+        {Object.keys(CRIT_CONFIG).map(s => <option key={s} value={s}>{s}</option>)}
+      </select>
+    </div>
+  );
 };
 
 // ─── Icon Components ──────────────────────────────────────────
@@ -180,7 +208,7 @@ const TableSkeleton = () => (
 );
 
 // ─── Drawer (Detail Panel) ────────────────────────────────────
-const DetailDrawer = ({ rnc, onClose, onEdit, idx }: { rnc: RNC; onClose: () => void; onEdit: () => void; idx: number }) => {
+const DetailDrawer = ({ rnc, onClose, onEdit, onQuickUpdate, idx }: { rnc: RNC; onClose: () => void; onEdit: () => void; onQuickUpdate: (id: string, field: string, val: string) => void; idx: number }) => {
   const [activeTab, setActiveTab] = useState<'info'|'causa'|'plano'|'evidencias'|'timeline'>('info');
 
   const timelineSteps = [
@@ -212,8 +240,8 @@ const DetailDrawer = ({ rnc, onClose, onEdit, idx }: { rnc: RNC; onClose: () => 
             <span style={{ fontFamily: 'monospace', fontSize: '0.75rem', background: 'var(--color-surface-2)', padding: '2px 8px', borderRadius: 4, color: 'var(--color-text-muted)', fontWeight: 600, border: '1px solid var(--color-border)' }}>
               {ncId}
             </span>
-            <StatusBadge status={rnc.status} />
-            {rnc.criticidade && <CritBadge criticidade={rnc.criticidade} />}
+            <StatusBadge status={rnc.status} onChange={val => onQuickUpdate(rnc.id, 'status', val)} />
+            {rnc.criticidade && <CritBadge criticidade={rnc.criticidade} onChange={val => onQuickUpdate(rnc.id, 'criticidade', val)} />}
           </div>
           <h3 style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--color-text-primary)', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {rnc.titulo}
@@ -504,6 +532,31 @@ export default function NaoConformidadesPage() {
     finally { setSaving(false); }
   };
 
+  // ATUALIZAR STATUS OU CRITICIDADE DIRETO
+  const handleQuickUpdate = async (id: string, field: string, val: string) => {
+    const targetRnc = rncs.find(r => r.id === id);
+    if (!targetRnc) return;
+    try {
+      const payload = { ...targetRnc, [field]: val };
+      const res = await fetchAPI(`/api/nao-conformidades/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const updated = await fetchAPI('/api/nao-conformidades');
+        if (updated.ok) {
+          const all: RNC[] = await updated.json();
+          setRncs(all);
+          if (selectedRnc?.id === id) {
+            setSelectedRnc(all.find(r => r.id === id) || null);
+          }
+        }
+      } else {
+        alert('Erro ao atualizar. Verifique a conexão.');
+      }
+    } catch { alert('Erro de comunicação com a API.'); }
+  };
+
   // Computed stats
   const stats = useMemo(() => ({
     total:     rncs.length,
@@ -773,8 +826,8 @@ export default function NaoConformidadesPage() {
                           <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>{rnc.setor || 'Geral'}</span>
                         </div>
                       </td>
-                      <td style={{ textAlign: 'center' }}><StatusBadge status={rnc.status} /></td>
-                      <td style={{ textAlign: 'center' }}><CritBadge criticidade={rnc.criticidade} /></td>
+                      <td style={{ textAlign: 'center' }}><StatusBadge status={rnc.status} onChange={val => handleQuickUpdate(rnc.id, 'status', val)} /></td>
+                      <td style={{ textAlign: 'center' }}><CritBadge criticidade={rnc.criticidade} onChange={val => handleQuickUpdate(rnc.id, 'criticidade', val)} /></td>
                       <td>
                         <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-primary)', whiteSpace: 'nowrap' }}>{fmtDate(rnc.dataRegistro)}</div>
                         <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>{fmtRelative(rnc.dataRegistro)}</div>
@@ -812,6 +865,7 @@ export default function NaoConformidadesPage() {
               rnc={selectedRnc}
               onClose={() => setSelectedRnc(null)}
               onEdit={() => handleOpenEdit(selectedRnc)}
+              onQuickUpdate={handleQuickUpdate}
               idx={selectedIdx}
             />
           )}
