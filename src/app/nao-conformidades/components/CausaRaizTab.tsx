@@ -39,7 +39,18 @@ export default function CausaRaizTab({ rnc }: { rnc: RNC }) {
         method: 'POST',
         body: JSON.stringify({ action: 'SUGGEST_METHODOLOGY', ncData: rnc })
       });
-      if (res.ok) setAiSuggestion(await res.json());
+      if (res.ok) {
+        setAiSuggestion(await res.json());
+      } else {
+        const err = await res.json();
+        if (err.needsApiKey) {
+           setAiSuggestion({
+             reasoning: "⚠️ Atenção: A chave de API do DeepSeek não foi encontrada ou é inválida no arquivo .env. Configure DEEPSEEK_API_KEY para a inteligência artificial funcionar.",
+             confidence: 0,
+             suggestion: "Configurar API Key"
+           });
+        }
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -54,7 +65,15 @@ export default function CausaRaizTab({ rnc }: { rnc: RNC }) {
         method: 'POST',
         body: JSON.stringify({ action, ncData: rnc })
       });
-      if (res.ok) setAiContext(await res.json());
+      if (res.ok) {
+        setAiContext(await res.json());
+      } else {
+        const err = await res.json();
+        if (err.needsApiKey) {
+          alert("Configure a chave DEEPSEEK_API_KEY no arquivo .env para usar esta funcionalidade.");
+          setView('HOME');
+        }
+      }
     } catch (e) {
       console.error(e);
     } finally {
