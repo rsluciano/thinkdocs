@@ -180,7 +180,7 @@ const TableSkeleton = () => (
 );
 
 // ─── Drawer (Detail Panel) ────────────────────────────────────
-const DetailDrawer = ({ rnc, onClose, idx }: { rnc: RNC; onClose: () => void; idx: number }) => {
+const DetailDrawer = ({ rnc, onClose, onEdit, idx }: { rnc: RNC; onClose: () => void; onEdit: () => void; idx: number }) => {
   const [activeTab, setActiveTab] = useState<'info'|'causa'|'plano'|'evidencias'|'timeline'>('info');
 
   const timelineSteps = [
@@ -372,8 +372,21 @@ const DetailDrawer = ({ rnc, onClose, idx }: { rnc: RNC; onClose: () => void; id
 
       {/* Drawer Footer */}
       <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--color-border)', display: 'flex', gap: '0.625rem' }}>
-        <button className="btn btn-primary" style={{ flex: 1 }}>Editar</button>
-        <button className="btn btn-secondary">Histórico</button>
+        <button
+          className="btn btn-primary"
+          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+          onClick={onEdit}
+        >
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+          </svg>
+          Editar Não Conformidade
+        </button>
+        <button className="btn btn-secondary">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
       </div>
     </div>
   );
@@ -384,6 +397,8 @@ export default function NaoConformidadesPage() {
   const [rncs, setRncs] = useState<RNC[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);   // true = editando, false = criando
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedRnc, setSelectedRnc] = useState<RNC | null>(null);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [view, setView] = useState<'table'|'kanban'|'analytics'>('table');
@@ -393,14 +408,17 @@ export default function NaoConformidadesPage() {
   const [filterSetor, setFilterSetor] = useState('');
   const [sortCol, setSortCol] = useState<'dataRegistro'|'titulo'|'criticidade'>('dataRegistro');
   const [sortDir, setSortDir] = useState<'asc'|'desc'>('desc');
+  const [saving, setSaving] = useState(false);
 
-  // Form state
+  // Form state (compartilhado entre criação e edição)
   const [titulo, setTitulo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [origem, setOrigem] = useState('Auditoria Interna');
   const [tipo, setTipo] = useState('Não Conformidade');
   const [setor, setSetor] = useState('');
   const [criticidade, setCriticidade] = useState('Alta');
+  const [status, setStatus] = useState('Registrada');
+  const [responsavelAcao, setResponsavelAcao] = useState('');
 
   useEffect(() => { carregarRncs(); }, []);
 
@@ -413,18 +431,77 @@ export default function NaoConformidadesPage() {
     finally { setLoading(false); }
   };
 
+  // Abrir modal para CRIAR
+  const handleOpenCreate = () => {
+    setEditMode(false);
+    setEditingId(null);
+    setTitulo(''); setDescricao(''); setOrigem('Auditoria Interna');
+    setTipo('Não Conformidade'); setSetor(''); setCriticidade('Alta');
+    setStatus('Registrada'); setResponsavelAcao('');
+    setModalOpen(true);
+  };
+
+  // Abrir modal para EDITAR (pré-preenche com dados da NC)
+  const handleOpenEdit = (rnc: RNC) => {
+    setEditMode(true);
+    setEditingId(rnc.id);
+    setTitulo(rnc.titulo);
+    setDescricao(rnc.descricao || '');
+    setOrigem(rnc.origem || 'Auditoria Interna');
+    setTipo(rnc.tipo || 'Não Conformidade');
+    setSetor(rnc.setor || '');
+    setCriticidade(rnc.criticidade || 'Alta');
+    setStatus(rnc.status || 'Registrada');
+    setResponsavelAcao(rnc.responsavelAcao || '');
+    setModalOpen(true);
+  };
+
+  // CRIAR nova NC
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaving(true);
     try {
       const res = await fetchAPI('/api/nao-conformidades', {
         method: 'POST',
         body: JSON.stringify({ titulo, descricao, origem, tipo, setor, criticidade })
       });
       if (res.ok) {
-        setModalOpen(false); setTitulo(''); setDescricao(''); setSetor('');
+        setModalOpen(false);
         carregarRncs();
+      } else {
+        alert('Erro ao registrar a NC.');
       }
     } catch { alert('Erro ao registrar.'); }
+    finally { setSaving(false); }
+  };
+
+  // ATUALIZAR NC existente
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingId) return;
+    setSaving(true);
+    try {
+      const res = await fetchAPI(`/api/nao-conformidades/${editingId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ titulo, descricao, origem, tipo, setor, criticidade, status, responsavelAcao })
+      });
+      if (res.ok) {
+        setModalOpen(false);
+        // Atualizar a NC selecionada localmente para o drawer refletir
+        const updated = await fetchAPI('/api/nao-conformidades');
+        if (updated.ok) {
+          const all: RNC[] = await updated.json();
+          setRncs(all);
+          // Re-selecionar a NC atualizada
+          const novo = all.find(r => r.id === editingId) || null;
+          setSelectedRnc(novo);
+        }
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert('Erro ao salvar: ' + (err.error || 'Tente novamente.'));
+      }
+    } catch { alert('Erro ao salvar alterações.'); }
+    finally { setSaving(false); }
   };
 
   // Computed stats
@@ -542,7 +619,7 @@ export default function NaoConformidadesPage() {
           </button>
           <button
             className="btn btn-primary btn-lg"
-            onClick={() => setModalOpen(true)}
+            onClick={handleOpenCreate}
             style={{ gap: '0.5rem' }}
           >
             <Icon.Plus />
@@ -731,7 +808,12 @@ export default function NaoConformidadesPage() {
 
           {/* Drawer */}
           {selectedRnc && (
-            <DetailDrawer rnc={selectedRnc} onClose={() => setSelectedRnc(null)} idx={selectedIdx} />
+            <DetailDrawer
+              rnc={selectedRnc}
+              onClose={() => setSelectedRnc(null)}
+              onEdit={() => handleOpenEdit(selectedRnc)}
+              idx={selectedIdx}
+            />
           )}
         </div>
       )}
@@ -875,29 +957,51 @@ export default function NaoConformidadesPage() {
         </div>
       )}
 
-      {/* ─── CREATE MODAL ─── */}
+      {/* ─── MODAL CRIAR / EDITAR ─── */}
       {modalOpen && (
         <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && setModalOpen(false)}>
           <div className="modal-box animate-slide-up">
             <div className="modal-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#EF4444" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
+                <div style={{
+                  width: 36, height: 36, borderRadius: 'var(--radius-md)',
+                  background: editMode ? '#EFF6FF' : '#FEF2F2',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                  {editMode ? (
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#2563EB" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+                    </svg>
+                  ) : (
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#EF4444" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  )}
                 </div>
-                <h3 className="modal-title">Registrar Não Conformidade</h3>
+                <div>
+                  <h3 className="modal-title">
+                    {editMode ? 'Editar Não Conformidade' : 'Registrar Não Conformidade'}
+                  </h3>
+                  {editMode && (
+                    <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.125rem' }}>
+                      Atualize as informações da NC selecionada
+                    </p>
+                  )}
+                </div>
               </div>
               <button className="btn btn-ghost btn-icon" onClick={() => setModalOpen(false)}><Icon.Close /></button>
             </div>
 
-            <form onSubmit={handleCreate}>
+            <form onSubmit={editMode ? handleUpdate : handleCreate}>
               <div className="modal-body">
+
+                {/* Título */}
                 <div>
                   <label className="input-label">Título <span style={{ color: 'var(--color-danger)' }}>*</span></label>
                   <input required value={titulo} onChange={e => setTitulo(e.target.value)} className="input-field" placeholder="Descreva brevemente o problema..." />
                 </div>
 
+                {/* Tipo + Criticidade */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
                   <div>
                     <label className="input-label">Tipo</label>
@@ -918,6 +1022,7 @@ export default function NaoConformidadesPage() {
                   </div>
                 </div>
 
+                {/* Setor + Origem */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
                   <div>
                     <label className="input-label">Setor <span style={{ color: 'var(--color-danger)' }}>*</span></label>
@@ -935,6 +1040,28 @@ export default function NaoConformidadesPage() {
                   </div>
                 </div>
 
+                {/* Campos extras em modo de edição: Status + Responsável */}
+                {editMode && (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
+                    <div>
+                      <label className="input-label">Situação</label>
+                      <select value={status} onChange={e => setStatus(e.target.value)} className="input-field">
+                        <option value="Registrada">Registrada</option>
+                        <option value="Em Análise">Em Análise</option>
+                        <option value="Ação Pendente">Ação Pendente</option>
+                        <option value="Em Ação">Em Ação</option>
+                        <option value="Concluída">Concluída</option>
+                        <option value="Atrasada">Atrasada</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="input-label">Responsável pela Ação</label>
+                      <input value={responsavelAcao} onChange={e => setResponsavelAcao(e.target.value)} className="input-field" placeholder="Nome do responsável..." />
+                    </div>
+                  </div>
+                )}
+
+                {/* Descrição */}
                 <div>
                   <label className="input-label">Descrição Completa <span style={{ color: 'var(--color-danger)' }}>*</span></label>
                   <textarea
@@ -944,11 +1071,33 @@ export default function NaoConformidadesPage() {
                     style={{ resize: 'vertical', minHeight: 100 }}
                   />
                 </div>
+
               </div>
 
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancelar</button>
-                <button type="submit" className="btn btn-primary">Registrar NC</button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={saving}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', opacity: saving ? 0.7 : 1 }}
+                >
+                  {saving ? (
+                    <>
+                      <svg style={{ animation: 'spin 1s linear infinite' }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Salvando...
+                    </>
+                  ) : editMode ? (
+                    <>
+                      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                      </svg>
+                      Salvar Alterações
+                    </>
+                  ) : 'Registrar NC'}
+                </button>
               </div>
             </form>
           </div>
