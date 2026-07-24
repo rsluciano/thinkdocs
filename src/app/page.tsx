@@ -206,6 +206,7 @@ export default function Dashboard() {
           >
             ❌ Limpar Filtros
           </button>
+        )}
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
