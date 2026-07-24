@@ -61,7 +61,17 @@ export async function POST(req: NextRequest) {
       setor: user.setor || 'Geral'
     });
 
-    return NextResponse.json({ token: newToken, message: 'Contexto alterado com sucesso' });
+    const response = NextResponse.json({ token: newToken, message: 'Contexto alterado com sucesso' });
+
+    response.cookies.set('thinkdocs_token', newToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 // 24 hours
+    });
+
+    return response;
 
   } catch (error) {
     console.error('Erro ao trocar contexto:', error);
