@@ -9,13 +9,21 @@ datasource db {
 }
 
 model Usuario {
+  id                 String   @id @default(cuid())
+  nome               String
+  email              String   @unique
+  senha              String
+  funcao             String
+  setor              String
+  empresaId          String
+  empresasPermitidas Json?
+  criadoEm           DateTime @default(now())
+}
+
+model Empresa {
   id        String   @id @default(cuid())
   nome      String
-  email     String   @unique
-  senha     String
-  funcao    String
-  setor     String
-  empresaId String
+  logoUrl   String?
   criadoEm  DateTime @default(now())
 }
 

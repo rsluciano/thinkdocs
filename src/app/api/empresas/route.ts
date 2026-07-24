@@ -1,55 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const dbPath = path.join(process.cwd(), 'local-db.json');
-
-function getDb() {
-  if (!fs.existsSync(dbPath)) return { empresas: [], usuarios: [], documentos: [] };
-  return JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-}
-function saveDb(data: any) {
-  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
-}
+import prisma from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
-    const { nome, logoUrl, adminId } = data;
+    const { nome, logoUrl, adminId, originalEmpresaId, originalEmpresaNome } = data;
 
     if (!nome || !adminId) {
       return NextResponse.json({ error: 'Nome do laboratório e ID do Admin são obrigatórios.' }, { status: 400 });
     }
 
-    const db = getDb();
-    
-    // Criar nova Empresa
-    const novaEmpresa = {
-      id: `emp_${Date.now()}`,
-      nome,
-      logoUrl: logoUrl || '/thinkdocs.png'
-    };
-    db.empresas.push(novaEmpresa);
+    // Criar nova Empresa no PostgreSQL via Prisma
+    const novaEmpresa = await prisma.empresa.create({
+      data: {
+        nome,
+        logoUrl: logoUrl || '/thinkdocs.png'
+      }
+    });
 
     // Adicionar à lista de empresas permitidas do Admin Logado
-    const adminIndex = db.usuarios.findIndex((u: any) => u.id === adminId);
-    if (adminIndex !== -1) {
-      const admin = db.usuarios[adminIndex];
-      if (!admin.empresasPermitidas) {
-        admin.empresasPermitidas = [{ id: admin.empresaId, nome: admin.empresaNome }];
-      }
-      admin.empresasPermitidas.push({ id: novaEmpresa.id, nome: novaEmpresa.nome, logoUrl: novaEmpresa.logoUrl });
-    }
+    const admin = await prisma.usuario.findUnique({
+      where: { id: adminId }
+    });
 
-    saveDb(db);
+    let updatedPermitidas: any[] = [];
+    
+    if (admin) {
+      const existing = Array.isArray(admin.empresasPermitidas) ? admin.empresasPermitidas : [];
+      updatedPermitidas = [...existing];
+      
+      // Se estiver vazio (primeiro laboratório criado), adiciona o laboratório original do admin também
+      if (updatedPermitidas.length === 0 && originalEmpresaId && originalEmpresaNome) {
+        updatedPermitidas.push({ id: originalEmpresaId, nome: originalEmpresaNome });
+      }
+      
+      // Adiciona a nova empresa criada
+      updatedPermitidas.push({ id: novaEmpresa.id, nome: novaEmpresa.nome, logoUrl: novaEmpresa.logoUrl });
+
+      await prisma.usuario.update({
+        where: { id: adminId },
+        data: {
+          empresasPermitidas: updatedPermitidas
+        }
+      });
+    }
 
     return NextResponse.json({
       message: 'Laboratório criado com sucesso',
       empresa: novaEmpresa,
-      empresasPermitidas: db.usuarios[adminIndex]?.empresasPermitidas
+      empresasPermitidas: updatedPermitidas
     }, { status: 201 });
 
   } catch (error: any) {
+    console.error('Erro ao criar laboratório:', error);
     return NextResponse.json({ error: 'Erro interno ao criar laboratório' }, { status: 500 });
   }
 }
