@@ -61,22 +61,25 @@ export default function Dashboard() {
   };
 
   // Listas Semi-Filtradas (Cross-Filtering)
-  const docsForStatus = documentos.filter(d => 
+  // Ocultar Arquivo Morto (Obsoletos) do Dashboard principal
+  const documentosDashboard = documentos.filter(d => d.status !== 'Obsoleto' && d.status !== 'Arquivo Morto');
+
+  const docsForStatus = documentosDashboard.filter(d => 
     (!filtros.categoria || d.categoria === filtros.categoria) &&
     (!filtros.setor || (Array.isArray(d.setor) ? d.setor : [d.setor || 'Geral']).includes('Geral') || (Array.isArray(d.setor) ? d.setor : [d.setor || 'Geral']).includes(filtros.setor))
   );
 
-  const docsForCategoria = documentos.filter(d => 
+  const docsForCategoria = documentosDashboard.filter(d => 
     (!filtros.status || getFiltroStatus(d.status) === filtros.status) &&
     (!filtros.setor || (Array.isArray(d.setor) ? d.setor : [d.setor || 'Geral']).includes('Geral') || (Array.isArray(d.setor) ? d.setor : [d.setor || 'Geral']).includes(filtros.setor))
   );
 
-  const docsForSetor = documentos.filter(d => 
+  const docsForSetor = documentosDashboard.filter(d => 
     (!filtros.status || getFiltroStatus(d.status) === filtros.status) &&
     (!filtros.categoria || d.categoria === filtros.categoria)
   );
 
-  const fullyFilteredDocs = documentos.filter(d => 
+  const fullyFilteredDocs = documentosDashboard.filter(d => 
     (!filtros.status || getFiltroStatus(d.status) === filtros.status) &&
     (!filtros.categoria || d.categoria === filtros.categoria) &&
     (!filtros.setor || (Array.isArray(d.setor) ? d.setor : [d.setor || 'Geral']).includes('Geral') || (Array.isArray(d.setor) ? d.setor : [d.setor || 'Geral']).includes(filtros.setor))

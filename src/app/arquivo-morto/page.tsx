@@ -35,6 +35,33 @@ export default function ArquivoMorto() {
     }
   };
 
+  // Gráfico de documentos por ano
+  const docsPorAno = documentos.reduce((acc, doc) => {
+    // Tenta usar dataObsoletado, se não tiver, cai pra dataVencimento, se não, 'N/D'
+    let dataRef = doc.dataObsoletado || doc.dataVencimento;
+    let ano = 'Desconhecido';
+    if (dataRef) {
+      // Pode vir no formato DD/MM/YYYY ou ISO (YYYY-MM-DD...)
+      if (dataRef.includes('/')) {
+        ano = dataRef.split('/')[2].split(' ')[0];
+      } else {
+        ano = new Date(dataRef).getFullYear().toString();
+      }
+    }
+    acc[ano] = (acc[ano] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const chartData = Object.keys(docsPorAno)
+    .filter(ano => ano !== 'NaN' && ano !== 'Desconhecido')
+    .sort((a, b) => b.localeCompare(a))
+    .map(ano => ({
+      ano,
+      count: docsPorAno[ano],
+      percent: documentos.length > 0 ? ((docsPorAno[ano] / documentos.length) * 100).toFixed(1) : '0'
+    }));
+
+
   return (
     <div className="animate-fade-in" style={{ paddingBottom: '3rem' }}>
       <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--color-primary)', fontWeight: 700, cursor: 'pointer', padding: 0, fontSize: '0.95rem' }}>
@@ -53,6 +80,47 @@ export default function ArquivoMorto() {
           </div>
         </div>
       </div>
+
+      {!loading && documentos.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+          
+          <div className="card" style={{ padding: '1.5rem', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', border: '1px solid var(--color-border)', borderRadius: '12px', backgroundColor: '#fff' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#64748B" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+              <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Arquivado</span>
+            </div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 700, color: '#0F172A', letterSpacing: '-0.03em' }}>{documentos.length}</div>
+            <p style={{ color: '#64748B', fontSize: '0.85rem', margin: '0.5rem 0 0 0' }}>Documentos substituídos ou obsoletos.</p>
+          </div>
+
+          <div className="card" style={{ padding: '1.5rem', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', border: '1px solid var(--color-border)', borderRadius: '12px', backgroundColor: '#fff' }}>
+            <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#0F172A', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#64748B" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              Volume Arquivado por Ano
+            </h2>
+            {chartData.length === 0 ? (
+               <div style={{ color: '#94A3B8', fontSize: '0.85rem' }}>Gráfico indisponível (falta de datas).</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {chartData.map((d, idx) => (
+                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.875rem' }}>
+                      <span style={{ fontWeight: 600, color: '#334155' }}>Ano {d.ano}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ color: '#64748B', fontSize: '0.75rem' }}>{d.count}</span>
+                        <span style={{ backgroundColor: '#F1F5F9', color: '#0F172A', fontWeight: 600, padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.7rem' }}>{d.percent}%</span>
+                      </div>
+                    </div>
+                    <div style={{ width: '100%', backgroundColor: '#F1F5F9', borderRadius: '999px', height: '6px', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: `${d.percent}%`, backgroundColor: '#94A3B8', borderRadius: '999px' }}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="card" style={{ padding: '0', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.04)', borderRadius: '12px', border: '1px solid var(--color-border)' }}>
         {loading ? (
