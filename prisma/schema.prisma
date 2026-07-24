@@ -194,4 +194,39 @@ model NaoConformidade {
   criadoPor         String   // Nome ou ID do usuário que criou
   criadoEm          DateTime @default(now())
   atualizadoEm      DateTime @updatedAt
+  
+  analises          AnaliseCausa[]
+}
+
+model AnaliseCausa {
+  id                String   @id @default(cuid())
+  naoConformidadeId String
+  metodologia       String   // Ishikawa, 5Porques, FMEA, Brainstorming
+  status            String   @default("Em Andamento") // Em Andamento, Concluída, Rejeitada
+  dadosJson         String   @db.Text // JSON estruturado armazenado como string para maior portabilidade e evitar problemas de migração no Prisma com Json nativo dependendo do banco
+  rpnCalculado      Int?     // Para métricas rápidas de FMEA
+  
+  // Rastreabilidade e Auditoria
+  criadoPor         String
+  atualizadoPor     String?
+  aprovadoPor       String?
+  dataCriacao       DateTime @default(now())
+  dataAtualizacao   DateTime @updatedAt
+  dataAprovacao     DateTime?
+
+  // Relações
+  sugestoesIA       LogSugestaoIA[]
+  naoConformidade   NaoConformidade @relation(fields: [naoConformidadeId], references: [id], onDelete: Cascade)
+}
+
+model LogSugestaoIA {
+  id              String   @id @default(cuid())
+  analiseCausaId  String
+  tipo            String   // Preenchimento de 5 Porques, Ishikawa, Resumo, etc.
+  conteudoSugerido String   @db.Text // JSON estruturado da sugestão
+  statusAprovacao String   // Aceito, Editado, Rejeitado
+  usuarioId       String
+  dataAcao        DateTime @default(now())
+  
+  analiseCausa    AnaliseCausa @relation(fields: [analiseCausaId], references: [id], onDelete: Cascade)
 }

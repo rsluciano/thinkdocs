@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { fetchAPI } from '@/lib/api';
+import CausaRaizTab from './components/CausaRaizTab';
 import {
   AreaChart, Area, BarChart, Bar, LineChart, Line,
   PieChart, Pie, Cell, ResponsiveContainer,
