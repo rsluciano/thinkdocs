@@ -257,6 +257,21 @@ export default function Dashboard() {
         .chart-row:hover {
           background-color: #F8FAFC;
         }
+
+        /* Animações Modernas */
+        @keyframes slideUpFade {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .anim-slide-up {
+          animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          opacity: 0;
+        }
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
       `}} />
 
       {/* Header Section */}
@@ -289,7 +304,7 @@ export default function Dashboard() {
       </div>
 
       {/* KPI Summary Bar */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
+      <div className="anim-slide-up stagger-1" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
         <div 
           className="saas-card" 
           style={{ padding: '1.5rem', opacity: hasFilters && !filtros.status ? 0.6 : 1 }}
@@ -350,7 +365,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+      <div className="anim-slide-up stagger-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
         
         {/* Gráfico de Categorias */}
         <div className="saas-card" style={{ padding: '1.5rem' }}>
@@ -439,13 +454,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#0F172A', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <h2 className="anim-slide-up stagger-3" style={{ fontSize: '1.25rem', fontWeight: 600, color: '#0F172A', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#64748B" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
         Controle de Vencimentos
       </h2>
 
       {docsCriticos.length > 0 && (
-        <div style={{ 
+        <div className="anim-slide-up stagger-3" style={{ 
           marginBottom: '2rem', padding: '1rem 1.5rem', borderRadius: '8px', 
           backgroundColor: countVermelho > 0 ? '#FEF2F2' : (countLaranja > 0 ? '#FFF7ED' : '#FEFCE8'),
           border: `1px solid ${countVermelho > 0 ? '#FECACA' : (countLaranja > 0 ? '#FFEDD5' : '#FEF08A')}`,
@@ -464,7 +479,7 @@ export default function Dashboard() {
       )}
 
       {/* Structured Metric Containers */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '3rem' }}>
+      <div className="anim-slide-up stagger-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '3rem' }}>
         
         <div className="saas-card" style={{ padding: '1.25rem', borderTop: '3px solid #10B981' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
@@ -513,10 +528,10 @@ export default function Dashboard() {
 
       </div>
 
-      <h2 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#0F172A', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <h2 className="anim-slide-up stagger-5" style={{ fontSize: '1.1rem', fontWeight: 600, color: '#0F172A', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         Lista de Vencimentos Críticos
       </h2>
-      <div className="saas-card" style={{ overflow: 'hidden' }}>
+      <div className="saas-card anim-slide-up stagger-5" style={{ overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
           <table className="saas-table" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
