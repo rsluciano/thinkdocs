@@ -68,19 +68,37 @@ export default function MeusLaboratorios() {
       if (res.ok) {
         setSuccess('Laboratório criado com sucesso! Alternando contexto...');
         
-        // Atualiza a sessão com a nova lista de empresas e troca para o novo lab
-        const updatedUser = { ...user };
-        updatedUser.empresasPermitidas = data.empresasPermitidas;
-        updatedUser.empresaId = data.empresa.id;
-        updatedUser.empresaNome = data.empresa.nome;
-        updatedUser.empresaLogo = data.empresa.logoUrl;
-
-        localStorage.setItem('thinkdocs_user', JSON.stringify(updatedUser));
-        
-        // Redireciona para o Dashboard do novo lab
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1500);
+        // Atualiza a sessão com a nova lista de empresas e solicita novo token para o novo lab
+        try {
+          const switchRes = await fetch('/api/auth/switch-context', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('thinkdocs_token')}`
+            },
+            body: JSON.stringify({ empresaId: data.empresa.id, empresaNome: data.empresa.nome })
+          });
+          
+          const switchData = await switchRes.json();
+          
+          if (switchRes.ok && switchData.token) {
+            localStorage.setItem('thinkdocs_token', switchData.token);
+            const updatedUser = { ...user };
+            updatedUser.empresasPermitidas = data.empresasPermitidas;
+            updatedUser.empresaId = data.empresa.id;
+            updatedUser.empresaNome = data.empresa.nome;
+            updatedUser.empresaLogo = data.empresa.logoUrl;
+            localStorage.setItem('thinkdocs_user', JSON.stringify(updatedUser));
+            
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 1000);
+          } else {
+            setError('Laboratório criado, mas erro ao trocar contexto. Tente acessar manualmente na lista.');
+          }
+        } catch(err) {
+          setError('Laboratório criado, mas falha de rede ao acessar.');
+        }
 
       } else {
         setError(data.error || 'Erro ao criar laboratório');
@@ -290,15 +308,33 @@ export default function MeusLaboratorios() {
                       </span>
                     ) : (
                       <button 
-                        onClick={() => {
-                          const updatedUser = { ...user, empresaId: emp.id, empresaNome: emp.nome, empresaLogo: emp.logoUrl || '' };
-                          localStorage.setItem('thinkdocs_user', JSON.stringify(updatedUser));
-                          window.location.href = '/';
+                        onClick={async () => {
+                          try {
+                            const res = await fetch('/api/auth/switch-context', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${localStorage.getItem('thinkdocs_token')}`
+                              },
+                              body: JSON.stringify({ empresaId: emp.id, empresaNome: emp.nome })
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.token) {
+                              localStorage.setItem('thinkdocs_token', data.token);
+                              const updatedUser = { ...user, empresaId: emp.id, empresaNome: emp.nome, empresaLogo: emp.logoUrl || '' };
+                              localStorage.setItem('thinkdocs_user', JSON.stringify(updatedUser));
+                              window.location.href = '/';
+                            } else {
+                              alert('Erro ao acessar laboratório: ' + (data.error || 'Desconhecido'));
+                            }
+                          } catch (err) {
+                            alert('Erro na conexão ao trocar de laboratório.');
+                          }
                         }}
                         style={{ 
                           padding: '0.4rem 0.8rem', backgroundColor: '#FFFFFF', color: '#0F172A', 
                           border: '1px solid #E2E8F0', borderRadius: '6px', cursor: 'pointer', 
-                          fontWeight: 500, fontSize: '0.8rem', transition: 'all 0.2s', boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
+                          fontSize: '0.8rem', fontWeight: 600, transition: 'all 0.2s'
                         }}
                         onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#F8FAFC'; e.currentTarget.style.borderColor = '#CBD5E1'; }}
                         onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#FFFFFF'; e.currentTarget.style.borderColor = '#E2E8F0'; }}
