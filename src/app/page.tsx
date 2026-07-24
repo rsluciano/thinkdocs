@@ -126,8 +126,8 @@ export default function Dashboard() {
     return acc;
   }, { ...setoresPermitidos } as Record<string, number>);
 
-  // Recalcular total real de entradas de setores para porcentagem
-  const totalParaSetor = Object.values(setoresCount).reduce((a: number, b: number) => a + b, 0) as number;
+  // A porcentagem deve ser relativa ao total de documentos no filtro, e não à soma das associações
+  const totalParaSetor = docsForSetor.length;
 
   const setoresChart = Object.keys(setoresCount).map(setor => ({
     setor: setor,
