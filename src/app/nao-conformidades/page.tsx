@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { fetchAPI } from '@/lib/api';
 import CausaRaizTab from './components/CausaRaizTab';
+import PlanoAcaoTab from './components/PlanoAcaoTab';
 import {
   AreaChart, Area, BarChart, Bar, LineChart, Line,
   PieChart, Pie, Cell, ResponsiveContainer,
@@ -297,53 +298,11 @@ const DetailDrawer = ({ rnc, onClose, onEdit, onQuickUpdate, idx }: { rnc: RNC; 
         )}
 
         {activeTab === 'causa' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
-            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Selecione a metodologia de análise de causa raiz:</p>
-            {[
-              { name: 'Diagrama de Ishikawa', desc: 'Causa e Efeito — 6M', color: '#7C3AED', emoji: '⚗️' },
-              { name: '5 Porquês', desc: 'Análise sequencial de causas', color: '#C2410C', emoji: '❓' },
-              { name: 'FMEA', desc: 'Análise de Risco e Modos de Falha', color: '#1D4ED8', emoji: '🔬' },
-              { name: 'Brainstorming', desc: 'Sessão colaborativa de causas', color: '#166534', emoji: '💡' },
-            ].map(m => (
-              <button key={m.name} style={{
-                display: 'flex', alignItems: 'center', gap: '0.875rem',
-                padding: '0.875rem 1rem', border: '1.5px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)', background: 'white', cursor: 'pointer',
-                textAlign: 'left', width: '100%', transition: 'all 0.15s'
-              }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = m.color)}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--color-border)')}
-              >
-                <span style={{ fontSize: '1.5rem' }}>{m.emoji}</span>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--color-text-primary)' }}>{m.name}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{m.desc}</div>
-                </div>
-                <span style={{ marginLeft: 'auto', color: 'var(--color-text-muted)' }}><Icon.ChevronRight /></span>
-              </button>
-            ))}
-          </div>
+          <CausaRaizTab rnc={rnc} />
         )}
 
         {activeTab === 'plano' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.25rem' }}>Plano de ação estruturado no método 5W2H:</p>
-            {[
-              { key: 'What',  label: 'O Quê?',   placeholder: 'O que será feito?' },
-              { key: 'Why',   label: 'Por Quê?', placeholder: 'Qual o motivo?' },
-              { key: 'Where', label: 'Onde?',    placeholder: 'Onde será realizado?' },
-              { key: 'Who',   label: 'Quem?',    placeholder: 'Quem é responsável?' },
-              { key: 'When',  label: 'Quando?',  placeholder: 'Qual o prazo?' },
-              { key: 'How',   label: 'Como?',    placeholder: 'Como será executado?' },
-              { key: 'HowMuch', label: 'Quanto?',placeholder: 'Qual o custo estimado?' },
-            ].map(f => (
-              <div key={f.key}>
-                <label className="input-label" style={{ fontSize: '0.7rem' }}>{f.label}</label>
-                <input className="input-field" placeholder={f.placeholder} style={{ fontSize: '0.8rem', padding: '0.5rem 0.75rem' }} />
-              </div>
-            ))}
-            <button className="btn btn-primary" style={{ marginTop: '0.5rem' }}>Salvar Plano de Ação</button>
-          </div>
+          <PlanoAcaoTab rnc={rnc} />
         )}
 
         {activeTab === 'evidencias' && (
@@ -438,6 +397,7 @@ export default function NaoConformidadesPage() {
   const [sortCol, setSortCol] = useState<'dataRegistro'|'titulo'|'criticidade'>('dataRegistro');
   const [sortDir, setSortDir] = useState<'asc'|'desc'>('desc');
   const [saving, setSaving] = useState(false);
+  const [dashMetrics, setDashMetrics] = useState<any>(null);
 
   // Form state (compartilhado entre criação e edição)
   const [titulo, setTitulo] = useState('');
@@ -449,7 +409,7 @@ export default function NaoConformidadesPage() {
   const [status, setStatus] = useState('Registrada');
   const [responsavelAcao, setResponsavelAcao] = useState('');
 
-  useEffect(() => { carregarRncs(); }, []);
+  useEffect(() => { carregarRncs(); carregarDashboard(); }, []);
 
   const carregarRncs = async () => {
     setLoading(true);
@@ -458,6 +418,13 @@ export default function NaoConformidadesPage() {
       if (res.ok) setRncs(await res.json());
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
+  };
+
+  const carregarDashboard = async () => {
+    try {
+      const res = await fetchAPI('/api/nao-conformidades/dashboard');
+      if (res.ok) setDashMetrics(await res.json());
+    } catch (e) { console.error(e); }
   };
 
   // Abrir modal para CRIAR
@@ -558,15 +525,15 @@ export default function NaoConformidadesPage() {
     } catch { alert('Erro de comunicação com a API.'); }
   };
 
-  // Computed stats
-  const stats = useMemo(() => ({
+  // Computed stats from API or fallback to local
+  const stats = dashMetrics?.stats || {
     total:     rncs.length,
     abertas:   rncs.filter(r => ['Registrada','Aberta'].includes(r.status)).length,
     emAnalise: rncs.filter(r => r.status === 'Em Análise').length,
     emAcao:    rncs.filter(r => ['Ação Pendente','Em Ação'].includes(r.status)).length,
     concluidas:rncs.filter(r => r.status === 'Concluída').length,
     criticas:  rncs.filter(r => r.criticidade === 'Alta').length,
-  }), [rncs]);
+  };
 
   // Filtered & sorted data
   const filteredRncs = useMemo(() => {
@@ -600,29 +567,29 @@ export default function NaoConformidadesPage() {
     </svg>
   );
 
-  // Sparkline mock data
-  const sparkData = [4, 6, 3, 8, 5, 9, 7, 11, 8, 12, 10, 14];
+  // Sparkline data from API
+  const sparkData = dashMetrics?.historicoMensal || [0,0,0,0,0,0,0];
 
   // Chart data for analytics
-  const monthlyData = [
-    { mes: 'Jan', abertas: 4, fechadas: 2 }, { mes: 'Fev', abertas: 6, fechadas: 4 },
-    { mes: 'Mar', abertas: 3, fechadas: 5 }, { mes: 'Abr', abertas: 8, fechadas: 3 },
-    { mes: 'Mai', abertas: 5, fechadas: 7 }, { mes: 'Jun', abertas: 9, fechadas: 6 },
-    { mes: 'Jul', abertas: stats.abertas, fechadas: stats.concluidas },
-  ];
-
-  const porCriticidade = [
+  const porCriticidade = dashMetrics?.porCriticidade || [
     { name: 'Alta',       value: stats.criticas,                       fill: '#EF4444' },
     { name: 'Média',      value: rncs.filter(r=>r.criticidade==='Média').length, fill: '#F59E0B' },
     { name: 'Baixa',      value: rncs.filter(r=>r.criticidade==='Baixa').length, fill: '#22C55E' },
     { name: 'Observação', value: rncs.filter(r=>!r.criticidade || r.criticidade==='Observação').length, fill: '#94A3B8' },
-  ].filter(d => d.value > 0);
+  ].filter((d: any) => d.value > 0);
 
-  const porSetor = useMemo(() => {
+  const porSetor = dashMetrics?.porSetor || (() => {
     const counts: Record<string, number> = {};
     rncs.forEach(r => { const s = r.setor || 'Geral'; counts[s] = (counts[s] || 0) + 1; });
     return Object.entries(counts).map(([name, value]) => ({ name, value })).sort((a,b) => b.value - a.value).slice(0, 6);
-  }, [rncs]);
+  })();
+
+  const metodologias = dashMetrics?.metodologias || [
+    { name: 'Diagrama Ishikawa', pct: 0, count: 0, color: '#7C3AED', emoji: '⚗️' },
+    { name: '5 Porquês',         pct: 0, count: 0, color: '#C2410C', emoji: '❓' },
+    { name: 'FMEA',              pct: 0, count: 0, color: '#1D4ED8', emoji: '🔬' },
+    { name: 'Outros',            pct: 0, count: 0, color: '#166534', emoji: '💡' },
+  ];
 
   const hasFilters = busca || filterStatus || filterCrit || filterSetor;
 
@@ -684,22 +651,22 @@ export default function NaoConformidadesPage() {
 
       {/* ─── KPI CARDS ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
-        <KpiCard value={stats.total}      label="Total de Não Conformidades" color="#2563EB" bg="#EFF6FF"   change={{ val: '+7', up: false }} sparkData={sparkData}
+        <KpiCard value={stats.total}      label="Total de Não Conformidades" color="#2563EB" bg="#EFF6FF"   sparkData={sparkData}
           icon={<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>}
         />
-        <KpiCard value={stats.abertas}    label="Abertas" color="#F59E0B" bg="#FFFBEB" change={{ val: '+3', up: false }} sparkData={[2,4,3,5,4,6,5]}
+        <KpiCard value={stats.abertas}    label="Abertas" color="#F59E0B" bg="#FFFBEB" sparkData={sparkData}
           icon={<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
         />
-        <KpiCard value={stats.emAnalise}  label="Em Análise" color="#7C3AED" bg="#F5F3FF" sparkData={[1,3,2,4,3,2,4]}
+        <KpiCard value={stats.emAnalise}  label="Em Análise" color="#7C3AED" bg="#F5F3FF" sparkData={sparkData}
           icon={<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>}
         />
-        <KpiCard value={stats.emAcao}     label="Em Ação" color="#0EA5E9" bg="#F0F9FF" sparkData={[3,2,4,3,5,4,6]}
+        <KpiCard value={stats.emAcao}     label="Em Ação" color="#0EA5E9" bg="#F0F9FF" sparkData={sparkData}
           icon={<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" /></svg>}
         />
-        <KpiCard value={stats.concluidas} label="Concluídas" color="#22C55E" bg="#F0FDF4" change={{ val: '+12%', up: true }} sparkData={[2,3,5,4,7,6,8]}
+        <KpiCard value={stats.concluidas} label="Concluídas" color="#22C55E" bg="#F0FDF4" sparkData={sparkData}
           icon={<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
         />
-        <KpiCard value={stats.criticas}   label="NC Críticas" color="#EF4444" bg="#FEF2F2" sparkData={[3,4,2,5,4,3,5]}
+        <KpiCard value={stats.criticas}   label="NC Críticas" color="#EF4444" bg="#FEF2F2" sparkData={sparkData}
           icon={<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>}
         />
       </div>
@@ -987,12 +954,7 @@ export default function NaoConformidadesPage() {
               <h3 style={{ fontWeight: 700, fontSize: '0.9375rem', marginBottom: '0.25rem', color: 'var(--color-text-primary)' }}>Metodologias de Causa</h3>
               <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>Ferramentas de análise utilizadas</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
-                {[
-                  { name: 'Diagrama Ishikawa', pct: 48, count: 12, color: '#7C3AED', emoji: '⚗️' },
-                  { name: '5 Porquês',         pct: 32, count: 8,  color: '#C2410C', emoji: '❓' },
-                  { name: 'FMEA',              pct: 12, count: 3,  color: '#1D4ED8', emoji: '🔬' },
-                  { name: 'Outros',            pct: 8,  count: 2,  color: '#166534', emoji: '💡' },
-                ].map(m => (
+                {metodologias.map((m: any) => (
                   <div key={m.name} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>{m.emoji}</span>
                     <div style={{ flex: 1, minWidth: 0 }}>

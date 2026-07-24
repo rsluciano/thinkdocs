@@ -148,8 +148,9 @@ model AuditoriaDocumento {
 }
 
 model PlanoAcao5W2H {
-  id              String   @id @default(cuid())
-  auditoriaRdcId  String
+  id                String   @id @default(cuid())
+  auditoriaRdcId    String?
+  naoConformidadeId String?
   what            String?  // O que será feito?
   why             String?  // Por que será feito?
   where           String?  // Onde será feito?
@@ -160,7 +161,8 @@ model PlanoAcao5W2H {
   status          String   @default("Pendente")
   criadoEm        DateTime @default(now())
 
-  auditoriaRdc    AuditoriaRdc @relation(fields: [auditoriaRdcId], references: [id], onDelete: Cascade)
+  auditoriaRdc    AuditoriaRdc?    @relation(fields: [auditoriaRdcId], references: [id], onDelete: Cascade)
+  naoConformidade NaoConformidade? @relation(fields: [naoConformidadeId], references: [id], onDelete: Cascade)
 }
 
 // ============================================================================
@@ -196,6 +198,7 @@ model NaoConformidade {
   atualizadoEm      DateTime @updatedAt
   
   analises          AnaliseCausa[]
+  planosAcao        PlanoAcao5W2H[]
 }
 
 model AnaliseCausa {

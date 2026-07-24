@@ -76,6 +76,24 @@ Retorne ESTRITAMENTE em formato JSON:
   "ideias": ["Ideia 1", "Ideia 2", "Ideia 3", "Ideia 4"]
 }`;
     }
+    else if (action === 'GENERATE_CAPA') {
+      systemPrompt = `Você é o Think Quality AI, especialista em Gestão da Qualidade.
+Com base na Não Conformidade fornecida (que inclui os dados da NC e da Causa Raiz mapeada), gere um Plano de Ação 5W2H sugerido e robusto para tratar as causas raízes e evitar a recorrência.
+Retorne ESTRITAMENTE em formato JSON, sendo um objeto com uma propriedade "acoes", que é um array de objetos 5W2H:
+{
+  "acoes": [
+    {
+      "what": "O que será feito (ação clara)",
+      "why": "Por que será feito (justificativa baseada na causa)",
+      "where": "Onde será feito (setor ou sistema)",
+      "when": "YYYY-MM-DD",
+      "who": "Cargo ou área responsável",
+      "how": "Como será feito (passo a passo resumido)",
+      "howMuch": "Custo estimado (pode ser '$0', 'R$ 500', 'Horas de trabalho')"
+    }
+  ]
+}`;
+    }
     else {
       return NextResponse.json({ error: 'Ação não suportada' }, { status: 400 });
     }

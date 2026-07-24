@@ -12,10 +12,11 @@ const TODOS_SETORES = [
 ];
 
 // ─── Animated SVG Icons per Setor ────────────────────────────
-const SetorIllustration = ({ name, active }: { name: string; active: boolean }) => {
-  const color = active ? '#fff' : 'var(--color-primary)';
-  const soft  = active ? 'rgba(255,255,255,0.25)' : '#EFF6FF';
-  const stroke = active ? 'white' : '#2563EB';
+const SetorIllustration = ({ name, active, customColor }: { name: string; active: boolean; customColor?: string }) => {
+  const baseColor = customColor || '#2563EB';
+  const color = active ? '#fff' : baseColor;
+  const soft  = active ? 'rgba(255,255,255,0.25)' : `${baseColor}15`;
+  const stroke = active ? 'white' : baseColor;
 
   const illustrations: Record<string, React.ReactNode> = {
     "Recepção e Atendimento": (
@@ -394,7 +395,7 @@ export default function SetoresPage() {
                     }} />
                   )}
 
-                  <SetorIllustration name={setor.name} active={isActive} />
+                  <SetorIllustration name={setor.name} active={isActive} customColor={pal.accent} />
 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <h3 style={{
@@ -441,7 +442,7 @@ export default function SetoresPage() {
                 background: 'var(--color-surface-2)', flexWrap: 'wrap'
               }}>
                 <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: 'white', border: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                  <SetorIllustration name={selectedFolder} active={false} />
+                  <SetorIllustration name={selectedFolder} active={false} customColor={SETOR_COLORS[selectedFolder]?.accent || '#475569'} />
                 </div>
                 <div style={{ flex: 1 }}>
                   <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>

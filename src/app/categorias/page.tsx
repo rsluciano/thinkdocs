@@ -4,9 +4,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
 // ─── Animated SVG Icons per Category ────────────────────────
-const CategoryIllustration = ({ name, active }: { name: string; active: boolean }) => {
-  const color = active ? '#fff' : '#2563EB';
-  const soft  = active ? 'rgba(255,255,255,0.25)' : '#EFF6FF';
+const CategoryIllustration = ({ name, active, customColor }: { name: string; active: boolean; customColor?: string }) => {
+  const baseColor = customColor || '#2563EB';
+  const color = active ? '#fff' : baseColor;
+  const soft  = active ? 'rgba(255,255,255,0.25)' : `${baseColor}15`;
 
   const illustrations: Record<string, React.ReactNode> = {
     "Formulários": (
@@ -164,18 +165,18 @@ const CategoryIllustration = ({ name, active }: { name: string; active: boolean 
 };
 
 // ─── Gradient palettes per category ──────────────────────────
-const CAT_GRADIENTS: Record<string, { from: string; to: string }> = {
-  "Formulários":                             { from: '#EFF6FF', to: '#DBEAFE' },
-  "Bulário":                                 { from: '#F0FDF4', to: '#DCFCE7' },
-  "FISPQs":                                  { from: '#FFF7ED', to: '#FED7AA' },
-  "Instrução de trabalho de Serviço":        { from: '#F5F3FF', to: '#DDD6FE' },
-  "Instrução de trabalho de Equipamentos":   { from: '#FFFBEB', to: '#FEF08A' },
-  "Instrução de trabalho de Exames":         { from: '#F0F9FF', to: '#BAE6FD' },
-  "Manuais":                                 { from: '#FFF1F2', to: '#FECDD3' },
-  "Documentos Mestres":                      { from: '#FEFCE8', to: '#FEF08A' },
-  "Procedimentos da qualidade":              { from: '#F0FDF4', to: '#BBF7D0' },
-  "Listas":                                  { from: '#EFF6FF', to: '#BFDBFE' },
-  "Geral":                                   { from: '#F8FAFC', to: '#E2E8F0' },
+const CAT_GRADIENTS: Record<string, { from: string; to: string; accent: string }> = {
+  "Formulários":                             { from: '#EFF6FF', to: '#DBEAFE', accent: '#2563EB' }, // Blue
+  "Bulário":                                 { from: '#F0FDF4', to: '#DCFCE7', accent: '#16A34A' }, // Green
+  "FISPQs":                                  { from: '#FFF7ED', to: '#FED7AA', accent: '#EA580C' }, // Orange
+  "Instrução de trabalho de Serviço":        { from: '#F5F3FF', to: '#DDD6FE', accent: '#7C3AED' }, // Purple
+  "Instrução de trabalho de Equipamentos":   { from: '#FFFBEB', to: '#FEF08A', accent: '#EAB308' }, // Yellow
+  "Instrução de trabalho de Exames":         { from: '#F0F9FF', to: '#BAE6FD', accent: '#0284C7' }, // Sky
+  "Manuais":                                 { from: '#FFF1F2', to: '#FECDD3', accent: '#E11D48' }, // Rose
+  "Documentos Mestres":                      { from: '#FEFCE8', to: '#FEF08A', accent: '#CA8A04' }, // Gold
+  "Procedimentos da qualidade":              { from: '#F0FDF4', to: '#BBF7D0', accent: '#059669' }, // Emerald
+  "Listas":                                  { from: '#EFF6FF', to: '#BFDBFE', accent: '#3B82F6' }, // Blue
+  "Geral":                                   { from: '#F8FAFC', to: '#E2E8F0', accent: '#475569' }, // Slate
 };
 
 export default function CategoriasPage() {
@@ -268,11 +269,11 @@ export default function CategoriasPage() {
                   onMouseLeave={() => setHoveredCard(null)}
                   style={{
                     background: isActive
-                      ? 'linear-gradient(135deg, var(--color-primary), #1D4ED8)'
+                      ? `linear-gradient(135deg, ${grad.accent}, ${grad.accent}DD)`
                       : isHovered
                         ? `linear-gradient(135deg, ${grad.from}, ${grad.to})`
                         : 'white',
-                    border: `1.5px solid ${isActive ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                    border: `1.5px solid ${isActive ? grad.accent : isHovered ? grad.accent + '40' : 'var(--color-border)'}`,
                     borderRadius: 'var(--radius-lg)',
                     padding: '1.25rem 1.5rem',
                     cursor: 'pointer',
@@ -289,7 +290,7 @@ export default function CategoriasPage() {
                     animation: `fadeIn 0.4s ease ${idx * 0.04}s both`,
                   }}
                 >
-                  <CategoryIllustration name={cat.name} active={isActive} />
+                  <CategoryIllustration name={cat.name} active={isActive} customColor={grad.accent} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <h3 style={{ fontWeight: 700, fontSize: '0.9375rem', color: isActive ? 'white' : 'var(--color-text-primary)', marginBottom: '0.25rem', lineHeight: 1.3 }}>{cat.name}</h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -321,7 +322,7 @@ export default function CategoriasPage() {
             <div className="card animate-slide-up" style={{ overflow: 'hidden', padding: 0 }}>
               <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'var(--color-surface-2)' }}>
                 <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: 'white', border: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <CategoryIllustration name={selectedFolder} active={false} />
+                  <CategoryIllustration name={selectedFolder} active={false} customColor={CAT_GRADIENTS[selectedFolder]?.accent || '#475569'} />
                 </div>
                 <div>
                   <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>Documentos: {selectedFolder}</h2>
