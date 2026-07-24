@@ -280,7 +280,7 @@ export default function Dashboard() {
             onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#64748B'; }}
           >
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-            Clear Filters
+            Limpar Filtros
           </button>
         )}
       </div>
@@ -293,7 +293,7 @@ export default function Dashboard() {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#64748B" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Documents</span>
+            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total de Documentos</span>
           </div>
           <div style={{ fontSize: '2rem', fontWeight: 700, color: '#0F172A', letterSpacing: '-0.03em' }}>{totalDocs}</div>
         </div>
@@ -305,7 +305,7 @@ export default function Dashboard() {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#10B981" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Approved</span>
+            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Aprovados</span>
           </div>
           <div style={{ fontSize: '2rem', fontWeight: 700, color: '#0F172A', letterSpacing: '-0.03em' }}>{countVigentes}</div>
         </div>
@@ -317,7 +317,7 @@ export default function Dashboard() {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#F59E0B" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pending</span>
+            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Aguardando</span>
           </div>
           <div style={{ fontSize: '2rem', fontWeight: 700, color: '#0F172A', letterSpacing: '-0.03em' }}>{countAguardando}</div>
         </div>
@@ -329,7 +329,7 @@ export default function Dashboard() {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#EF4444" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
-            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Returned</span>
+            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Devolvidos</span>
           </div>
           <div style={{ fontSize: '2rem', fontWeight: 700, color: '#0F172A', letterSpacing: '-0.03em' }}>{countDevolvidos}</div>
         </div>
@@ -341,7 +341,7 @@ export default function Dashboard() {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#2563EB" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Drafts</span>
+            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Em Elaboração</span>
           </div>
           <div style={{ fontSize: '2rem', fontWeight: 700, color: '#0F172A', letterSpacing: '-0.03em' }}>{countElaboracao}</div>
         </div>
@@ -353,10 +353,10 @@ export default function Dashboard() {
         <div className="saas-card" style={{ padding: '1.5rem' }}>
           <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#0F172A', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#64748B" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-            Distribution by Category
+            Distribuição por Categoria
           </h2>
           {categoriasChart.length === 0 ? (
-            <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', fontSize: '0.85rem' }}>No data matches the current filters.</div>
+            <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', fontSize: '0.85rem' }}>Nenhum dado corresponde aos filtros atuais.</div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {categoriasChart.map((cat, idx) => (
@@ -396,10 +396,10 @@ export default function Dashboard() {
         <div className="saas-card" style={{ padding: '1.5rem' }}>
           <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#0F172A', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#64748B" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-            Distribution by Sector
+            Distribuição por Setor
           </h2>
           {setoresChart.length === 0 ? (
-            <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', fontSize: '0.85rem' }}>No data matches the current filters.</div>
+            <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', fontSize: '0.85rem' }}>Nenhum dado corresponde aos filtros atuais.</div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {setoresChart.map((setor, idx) => (
@@ -438,7 +438,7 @@ export default function Dashboard() {
 
       <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#0F172A', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#64748B" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-        Expiration Control
+        Controle de Vencimentos
       </h2>
 
       {docsCriticos.length > 0 && (
@@ -452,9 +452,9 @@ export default function Dashboard() {
             <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
           </div>
           <div>
-            <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A', margin: 0 }}>Attention Required</h3>
+            <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A', margin: 0 }}>Atenção Necessária</h3>
             <p style={{ fontSize: '0.875rem', color: '#334155', margin: '0.2rem 0 0 0' }}>
-              There are <strong>{docsCriticos.length} documents</strong> approaching expiration. {countVermelho > 0 && <span style={{ color: '#EF4444', fontWeight: 600 }}>{countVermelho} documents have already expired.</span>}
+              Existem <strong>{docsCriticos.length} documentos</strong> se aproximando do vencimento. {countVermelho > 0 && <span style={{ color: '#EF4444', fontWeight: 600 }}>{countVermelho} documentos já estão vencidos.</span>}
             </p>
           </div>
         </div>
@@ -466,63 +466,63 @@ export default function Dashboard() {
         <div className="saas-card" style={{ padding: '1.25rem', borderTop: '3px solid #10B981' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
             <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981' }}></div>
-            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>On Track</span>
+            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>No Prazo</span>
           </div>
           <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A' }}>{countVerde}</div>
-          <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: '0.2rem' }}>&gt; 30 days</div>
+          <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: '0.2rem' }}>&gt; 30 dias</div>
         </div>
 
         <div className="saas-card" style={{ padding: '1.25rem', borderTop: '3px solid #3B82F6' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
             <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#3B82F6' }}></div>
-            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Attention</span>
+            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Atenção</span>
           </div>
           <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A' }}>{countAzul}</div>
-          <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: '0.2rem' }}>16-30 days</div>
+          <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: '0.2rem' }}>16-30 dias</div>
         </div>
 
         <div className="saas-card" style={{ padding: '1.25rem', borderTop: '3px solid #F59E0B' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
             <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#F59E0B' }}></div>
-            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Alert</span>
+            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Alerta</span>
           </div>
           <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A' }}>{countAmarelo}</div>
-          <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: '0.2rem' }}>8-15 days</div>
+          <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: '0.2rem' }}>8-15 dias</div>
         </div>
 
         <div className="saas-card" style={{ padding: '1.25rem', borderTop: '3px solid #F97316' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
             <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#F97316' }}></div>
-            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Critical</span>
+            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Crítico</span>
           </div>
           <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A' }}>{countLaranja}</div>
-          <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: '0.2rem' }}>1-7 days</div>
+          <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: '0.2rem' }}>1-7 dias</div>
         </div>
 
         <div className="saas-card" style={{ padding: '1.25rem', borderTop: '3px solid #EF4444', backgroundColor: countVermelho > 0 ? '#FEF2F2' : '#FFFFFF' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
             <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#EF4444' }}></div>
-            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Expired</span>
+            <span style={{ color: '#64748B', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Vencidos</span>
           </div>
           <div style={{ fontSize: '1.75rem', fontWeight: 700, color: countVermelho > 0 ? '#991B1B' : '#0F172A' }}>{countVermelho}</div>
-          <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: '0.2rem' }}>&le; 0 days</div>
+          <div style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: '0.2rem' }}>&le; 0 dias</div>
         </div>
 
       </div>
 
       <h2 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#0F172A', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        Critical Expirations List
+        Lista de Vencimentos Críticos
       </h2>
       <div className="saas-card" style={{ overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
           <table className="saas-table" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
               <tr>
-                <th>Identifier</th>
-                <th>Title</th>
-                <th>Sector</th>
-                <th>Time Remaining</th>
-                <th style={{ textAlign: 'right' }}>Action</th>
+                <th>Identificador</th>
+                <th>Título</th>
+                <th>Setor</th>
+                <th>Tempo Restante</th>
+                <th style={{ textAlign: 'right' }}>Ação</th>
               </tr>
             </thead>
             <tbody>
@@ -534,8 +534,8 @@ export default function Dashboard() {
                         <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#94A3B8" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                       </div>
                       <div>
-                        <h4 style={{ margin: 0, fontSize: '0.9rem', color: '#334155', fontWeight: 600 }}>No Critical Expirations</h4>
-                        <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.85rem', color: '#94A3B8' }}>All filtered documents are currently in a safe state.</p>
+                        <h4 style={{ margin: 0, fontSize: '0.9rem', color: '#334155', fontWeight: 600 }}>Nenhum Vencimento Crítico</h4>
+                        <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.85rem', color: '#94A3B8' }}>Todos os documentos filtrados estão em estado seguro.</p>
                       </div>
                     </div>
                   </td>
@@ -553,7 +553,7 @@ export default function Dashboard() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: doc.cor }}></div>
                       <span style={{ fontWeight: 600, color: doc.corNome === 'red' ? '#EF4444' : '#334155', fontSize: '0.85rem' }}>
-                        {doc.diasParaVencer < 0 ? `Expired ${Math.abs(doc.diasParaVencer)} days ago` : `${doc.diasParaVencer} days`}
+                        {doc.diasParaVencer < 0 ? `Vencido há ${Math.abs(doc.diasParaVencer)} dias` : `${doc.diasParaVencer} dias`}
                       </span>
                     </div>
                   </td>
@@ -568,7 +568,7 @@ export default function Dashboard() {
                       onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#F8FAFC'; e.currentTarget.style.borderColor = '#CBD5E1'; }}
                       onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#FFFFFF'; e.currentTarget.style.borderColor = '#E2E8F0'; }}
                     >
-                      Review
+                      Revisar
                     </button>
                   </td>
                 </tr>
