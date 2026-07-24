@@ -10,7 +10,6 @@ export default function ArquivoMorto() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
 
-  // Auth Check Simples (Protótipo)
   useEffect(() => {
     const savedUser = localStorage.getItem('thinkdocs_user');
     if (!savedUser) {
@@ -36,107 +35,112 @@ export default function ArquivoMorto() {
     }
   };
 
-  // Função para calcular o status e a cor com base na data de validade
-  const getStatusInfo = (validadeStr: string | null) => {
-    if (!validadeStr) return { label: 'Sem Validade', bg: '#f1f5f9', text: '#475569' };
-
-    let validade: Date;
-    // Tenta fazer parse se for string ISO ou DD/MM/YYYY
-    if (validadeStr.includes('T')) {
-      validade = new Date(validadeStr);
-    } else {
-      validade = new Date(validadeStr.split('/').reverse().join('-'));
-    }
-    
-    const hoje = new Date();
-    
-    // Zera as horas para comparar apenas os dias
-    validade.setHours(0, 0, 0, 0);
-    hoje.setHours(0, 0, 0, 0);
-    
-    const diffTime = validade.getTime() - hoje.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays > 30) return { label: 'Em Uso', bg: '#dcfce7', text: '#166534' }; // Verde
-    if (diffDays > 15 && diffDays <= 30) return { label: 'Vence em 30 dias', bg: '#dbeafe', text: '#1e40af' }; // Azul
-    if (diffDays > 7 && diffDays <= 15) return { label: 'Vence em 15 dias', bg: '#fef9c3', text: '#854d0e' }; // Amarelo
-    if (diffDays > 3 && diffDays <= 7) return { label: 'Vence em 7 dias', bg: '#ffedd5', text: '#9a3412' }; // Laranja
-    if (diffDays >= 0 && diffDays <= 3) return { label: 'Vence em 3 dias', bg: '#fee2e2', text: '#991b1b' }; // Vermelho
-    return { label: 'Vencido', bg: '#fee2e2', text: '#991b1b' }; // Vermelho (Vencido)
-  };
-
   return (
-    <div className="animate-fade-in">
-    <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer', padding: 0 }}>← Voltar ao Dashboard</button>
+    <div className="animate-fade-in" style={{ paddingBottom: '3rem' }}>
+      <button onClick={() => router.push('/')} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: 'var(--color-primary)', fontWeight: 700, cursor: 'pointer', padding: 0, fontSize: '0.95rem' }}>
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Voltar ao Dashboard
+      </button>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <div>
-          <h1 className="text-3xl font-bold">Arquivo Morto (Histórico)</h1>
-          <p className="text-muted" style={{ marginTop: '0.5rem' }}>Visualizando o histórico de documentos obsoletos que já foram substituídos.</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--color-surface-3)', color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>🗄️</div>
+          <div>
+            <h1 className="text-3xl font-bold" style={{ margin: 0 }}>Arquivo Morto (Histórico)</h1>
+            <p style={{ color: 'var(--color-text-secondary)', marginTop: '0.2rem', fontSize: '1.05rem', margin: 0 }}>Visualizando o histórico de documentos obsoletos que já foram substituídos.</p>
+          </div>
         </div>
       </div>
 
-      <div className="card" style={{ overflowX: 'auto' }}>
+      <div className="card" style={{ padding: '0', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.04)', borderRadius: '12px', border: '1px solid var(--color-border)' }}>
         {loading ? (
-          <div style={{ padding: '2rem', textAlign: 'center' }}>Carregando Lista Mestra...</div>
+          <div style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+            <div style={{ display: 'inline-block', width: '40px', height: '40px', border: '4px solid rgba(37,99,235,0.2)', borderTopColor: '#2563eb', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '1rem' }}></div>
+            <div>Carregando Histórico...</div>
+          </div>
         ) : documentos.length === 0 ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--muted)' }}>Nenhum documento obsoleto encontrado no histórico.</div>
+          <div style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--color-text-muted)', backgroundColor: 'var(--color-surface-1)' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0, color: 'var(--color-text-primary)' }}>Arquivo vazio</h2>
+            <p style={{ marginTop: '0.5rem' }}>Nenhum documento obsoleto encontrado no histórico.</p>
+          </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead>
-              <tr style={{ borderBottom: '2px solid var(--border)' }}>
-                <th style={{ padding: '1rem' }}>Código</th>
-                <th style={{ padding: '1rem' }}>Título</th>
-                <th style={{ padding: '1rem' }}>Categoria</th>
-                <th style={{ padding: '1rem' }}>Revisão</th>
-                <th style={{ padding: '1rem' }}>Datas</th>
-                <th style={{ padding: '1rem' }}>Autor/Aprovador</th>
-                <th style={{ padding: '1rem' }}>Status</th>
-                <th style={{ padding: '1rem' }}>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {documentos.map(doc => (
-                <tr key={doc.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                  <td style={{ padding: '1rem', fontWeight: 'bold' }}>{doc.codigo}</td>
-                  <td style={{ padding: '1rem' }}>{doc.titulo}</td>
-                  <td style={{ padding: '1rem' }}>{doc.categoria}</td>
-                  <td style={{ padding: '1rem', textAlign: 'center' }}>v{doc.revisao}</td>
-                  <td style={{ padding: '1rem', fontSize: '0.85rem' }}>
-                    <div style={{ marginBottom: '0.2rem' }}>
-                      <span style={{ fontWeight: 'bold' }}>Vigência:</span> {doc.dataAtualizacao ? new Date(doc.dataAtualizacao).toLocaleDateString('pt-BR') : 'N/D'}
-                    </div>
-                    <div>
-                      <span style={{ fontWeight: 'bold' }}>Vencimento:</span> {doc.dataVencimento ? new Date(doc.dataVencimento).toLocaleDateString('pt-BR') : 'N/D'}
-                    </div>
-                  </td>
-                  <td style={{ padding: '1rem', fontSize: '0.9rem' }}>
-                    <div>Por: {doc.autor}</div>
-                    <div style={{ color: 'var(--muted)' }}>Apr: {doc.aprovadoPor}</div>
-                  </td>
-                  <td style={{ padding: '1rem' }}>
-                    <span style={{
-                      padding: '0.25rem 0.75rem',
-                      borderRadius: '999px',
-                      fontSize: '0.85rem',
-                      fontWeight: 'bold',
-                      backgroundColor: doc.status === 'Substituído' ? '#dbeafe' : '#fee2e2',
-                      color: doc.status === 'Substituído' ? '#1e40af' : '#991b1b'
-                    }}>
-                      {doc.status}
-                    </span>
-                  </td>
-                  <td style={{ padding: '1rem' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                      <a href={`/api/download?empresa=${user?.empresaId}&categoria=${doc.categoria}&file=${doc.arquivoUrl}`} target="_blank" rel="noreferrer" style={{ padding: '0.4rem 0.8rem', textDecoration: 'none', backgroundColor: 'var(--primary)', color: 'white', fontWeight: 'bold', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}>
-                        Visualizar Histórico
-                      </a>
-                    </div>
-                  </td>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', backgroundColor: '#fff' }}>
+              <thead style={{ backgroundColor: 'var(--color-surface-2)', borderBottom: '1px solid var(--color-border)' }}>
+                <tr>
+                  <th style={{ padding: '1.2rem 1.5rem', fontWeight: 700, color: 'var(--color-text-secondary)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Identificação</th>
+                  <th style={{ padding: '1.2rem 1.5rem', fontWeight: 700, color: 'var(--color-text-secondary)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Datas de Validade</th>
+                  <th style={{ padding: '1.2rem 1.5rem', fontWeight: 700, color: 'var(--color-text-secondary)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Responsáveis</th>
+                  <th style={{ padding: '1.2rem 1.5rem', fontWeight: 700, color: 'var(--color-text-secondary)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status Atual</th>
+                  <th style={{ padding: '1.2rem 1.5rem', fontWeight: 700, color: 'var(--color-text-secondary)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'right' }}>Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {documentos.map((doc, i) => (
+                  <tr key={doc.id} style={{ borderBottom: i === documentos.length - 1 ? 'none' : '1px solid var(--color-border)', transition: 'background-color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--color-surface-1)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                    <td style={{ padding: '1.5rem', verticalAlign: 'middle' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem' }}>
+                        <span style={{ fontWeight: 700, color: 'var(--color-primary)', fontSize: '1rem' }}>{doc.codigo}</span>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, backgroundColor: 'var(--color-surface-3)', padding: '0.1rem 0.5rem', borderRadius: '4px', color: 'var(--color-text-primary)' }}>v{doc.revisao}</span>
+                      </div>
+                      <div style={{ fontWeight: 600, color: 'var(--color-text-primary)', fontSize: '1.1rem', marginBottom: '0.3rem' }}>{doc.titulo}</div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                        {doc.categoria}
+                      </div>
+                    </td>
+                    <td style={{ padding: '1.5rem', verticalAlign: 'middle', fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.4rem' }}>
+                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        <strong>Início:</strong> {doc.dataAtualizacao ? new Date(doc.dataAtualizacao).toLocaleDateString('pt-BR') : 'N/D'}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <strong>Fim:</strong> {doc.dataVencimento ? new Date(doc.dataVencimento).toLocaleDateString('pt-BR') : 'N/D'}
+                      </div>
+                    </td>
+                    <td style={{ padding: '1.5rem', verticalAlign: 'middle', fontSize: '0.9rem' }}>
+                      <div style={{ marginBottom: '0.3rem', color: 'var(--color-text-primary)' }}>
+                        <strong>Autor:</strong> {doc.autor}
+                      </div>
+                      <div style={{ color: 'var(--color-text-secondary)' }}>
+                        <strong>Aprovador:</strong> {doc.aprovadoPor || 'N/A'}
+                      </div>
+                    </td>
+                    <td style={{ padding: '1.5rem', verticalAlign: 'middle' }}>
+                      <span style={{
+                        display: 'inline-block',
+                        padding: '0.35rem 0.85rem',
+                        borderRadius: '999px',
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        backgroundColor: doc.status === 'Substituído' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(71, 85, 105, 0.1)',
+                        color: doc.status === 'Substituído' ? '#2563eb' : '#475569',
+                        border: doc.status === 'Substituído' ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid rgba(71, 85, 105, 0.2)'
+                      }}>
+                        {doc.status}
+                      </span>
+                    </td>
+                    <td style={{ padding: '1.5rem', verticalAlign: 'middle', textAlign: 'right' }}>
+                      <a 
+                        href={`/api/download?empresa=${user?.empresaId}&categoria=${doc.categoria}&file=${doc.arquivoUrl}`} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem 1rem', textDecoration: 'none', backgroundColor: 'var(--color-surface-2)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border)', fontWeight: 700, borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', transition: 'all 0.2s' }}
+                        onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-surface-3)'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; }}
+                      >
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                        Ver Documento
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
