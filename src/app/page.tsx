@@ -324,7 +324,7 @@ export default function Dashboard() {
                       <div style={{ 
                         height: '100%', 
                         width: `${cat.percent}%`, 
-                        backgroundColor: 'var(--primary)',
+                        backgroundColor: '#2563eb', // Azul
                         borderRadius: '999px',
                         transition: 'width 0.5s ease-in-out'
                       }}></div>
